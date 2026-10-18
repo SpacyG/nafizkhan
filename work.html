@@ -1549,14 +1549,14 @@ main, section, .content-section, .review-section, #about.content-section, .portf
 /* ---- Cosmic tic-tac-toe ---- */
 #ttt-launch[hidden], #ttt[hidden] { display:none !important; }
 @keyframes ttt-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
-#ttt-launch { position:fixed; left:104px; bottom:34px; z-index:41; width:46px; height:46px; padding:0; border-radius:50%;
+#ttt-launch { position:fixed; right:26px; bottom:30px; z-index:41; width:46px; height:46px; padding:0; border-radius:50%;
   border:1px solid rgba(190,165,255,.65); background:radial-gradient(circle at 35% 30%,rgba(140,105,230,.95),rgba(30,22,60,.96));
   display:grid; place-items:center; cursor:pointer; box-shadow:0 0 18px rgba(150,110,255,.55); animation:ttt-float 4s ease-in-out infinite;
   transition:box-shadow .2s ease, scale .2s ease; }
 #ttt-launch:hover, #ttt-launch:focus-visible { scale:1.14; box-shadow:0 0 30px rgba(200,170,255,.95); outline:none; }
 #ttt-launch svg { width:26px; height:26px; }
-#ttt-launch span { position:absolute; left:calc(100% + 10px); white-space:nowrap; font-size:.72rem; color:#f3eeff; padding:5px 10px; border-radius:9px;
-  background:rgba(20,15,36,.94); border:1px solid rgba(190,165,255,.4); opacity:0; transform:translateX(-4px); transition:.2s ease; pointer-events:none; }
+#ttt-launch span { position:absolute; right:calc(100% + 10px); white-space:nowrap; font-size:.72rem; color:#f3eeff; padding:5px 10px; border-radius:9px;
+  background:rgba(20,15,36,.94); border:1px solid rgba(190,165,255,.4); opacity:0; transform:translateX(4px); transition:.2s ease; pointer-events:none; }
 #ttt-launch:hover span, #ttt-launch:focus-visible span { opacity:1; transform:none; }
 #ttt { position:fixed; left:20px; bottom:20px; z-index:45; width:226px; padding:12px; border-radius:20px; color:#f3eeff; font-family:inherit;
   background:linear-gradient(160deg,rgba(36,27,66,.95),rgba(14,10,28,.97)); border:1px solid rgba(190,165,255,.45);
@@ -1586,7 +1586,7 @@ main, section, .content-section, .review-section, #about.content-section, .portf
 .ttt-status { margin:9px 0 6px; min-height:1.3em; text-align:center; font-size:.84rem; color:#fff; }
 .ttt-foot { display:flex; align-items:center; justify-content:space-between; gap:6px; font-size:.68rem; color:#cdbcff; }
 .ttt-new { font-size:.7rem; padding:4px 9px; }
-@media (max-width:700px) { #ttt-launch { left:80px; bottom:30px; } #ttt { left:50%; bottom:14px; margin-left:-113px; } }
+@media (max-width:700px) { #ttt-launch { right:14px; bottom:22px; } #ttt { left:50%; bottom:14px; margin-left:-113px; } }
 @media (prefers-reduced-motion:reduce) { #ttt-launch, .mk, .ttt-cell.win, #mascot.is-happy .mascot-body, #mascot.is-shrug .mascot-body { animation:none; } }
 
 
@@ -1674,6 +1674,123 @@ header.bh-live { position:sticky; }
 #robot-sign.flip .rs-name { animation:rs-flip .4s ease; }
 #mascot.has-sign:not(.is-happy):not(.is-sad):not(.is-shrug):not(.is-flying):not(.is-holding) .robot-arm.r { transform:rotate(-158deg); }
 @media (prefers-reduced-motion:reduce) { #robot-sign, #robot-sign.flip .rs-name { transition:none; animation:none; } }
+
+/* ===== v5: every star has its own character ===== */
+.sd { position:absolute; display:block; pointer-events:none; }
+.is-hole .sd { display:none !important; }
+@keyframes sd-spin { to { transform:rotate(360deg); } }
+@keyframes sd-ring { from{transform:perspective(320px) rotateX(70deg) rotateZ(0deg)} to{transform:perspective(320px) rotateX(70deg) rotateZ(360deg)} }
+@keyframes sd-twinkle { 0%,100%{opacity:.45} 50%{opacity:1} }
+@keyframes sd-orbit { from{transform:rotate(0deg) translateX(var(--orb,230%)) rotate(0deg)} to{transform:rotate(360deg) translateX(var(--orb,230%)) rotate(-360deg)} }
+/* pulsar: a sweeping lighthouse beam and a tilted ring */
+.star-pulsar .sd-a { left:50%; top:-100%; width:4px; height:300%; margin-left:-2px; border-radius:3px; filter:blur(.6px);
+  background:linear-gradient(transparent,rgba(190,230,255,.95) 40%,#fff 50%,rgba(190,230,255,.95) 60%,transparent); animation:sd-spin 6s linear infinite; }
+.star-pulsar .sd-b { inset:-28%; border-radius:50%; border:1px solid rgba(160,210,255,.5); box-shadow:0 0 14px rgba(120,180,255,.5); animation:sd-ring 18s linear infinite; }
+/* red giant: puffy, blotchy surface and slow flares */
+.star-giant::before { inset:3% !important; }
+.star-giant .sd-a { inset:5%; border-radius:50%; animation:sd-spin 60s linear infinite; opacity:.9;
+  background:radial-gradient(circle at 28% 30%,rgba(255,215,160,.6) 0 8%,transparent 9%),radial-gradient(circle at 66% 38%,rgba(120,20,30,.5) 0 11%,transparent 12%),
+    radial-gradient(circle at 48% 72%,rgba(255,195,135,.55) 0 9%,transparent 10%),radial-gradient(circle at 77% 68%,rgba(110,20,40,.45) 0 7%,transparent 8%),
+    radial-gradient(circle at 34% 58%,rgba(100,15,30,.4) 0 10%,transparent 11%); }
+.star-giant .sd-b { inset:-16%; border-radius:50%; animation:sd-spin 26s linear infinite reverse;
+  background:conic-gradient(transparent 0 10%,rgba(255,140,90,.75) 12% 14%,transparent 16% 40%,rgba(255,120,80,.65) 42% 45%,transparent 47% 70%,rgba(255,175,110,.75) 72% 74%,transparent 76%);
+  -webkit-mask:radial-gradient(circle,transparent 56%,#000 61%,transparent 70%); mask:radial-gradient(circle,transparent 56%,#000 61%,transparent 70%); }
+/* binary: a small companion star circles the main one */
+.star-binary .sd-a { left:50%; top:50%; width:30%; height:30%; margin:-15% 0 0 -15%; border-radius:50%; --orb:230%;
+  background:radial-gradient(circle at 35% 30%,#fff,#ffc27a 45%,#ff7a4a); box-shadow:0 0 14px 4px rgba(255,170,100,.7); animation:sd-orbit 7s linear infinite; }
+.star-binary .sd-b { inset:-19%; border-radius:50%; border:1px dashed rgba(255,205,155,.35); }
+/* ringed star: two tilted rings turning in opposite directions */
+.star-halo .sd-a { inset:-34%; border-radius:50%; border:3px solid rgba(150,240,225,.55); border-top-color:rgba(255,255,255,.95);
+  box-shadow:0 0 12px rgba(120,230,210,.6), inset 0 0 12px rgba(120,230,210,.45); animation:sd-ring 14s linear infinite; }
+.star-halo .sd-b { inset:-54%; border-radius:50%; border:1px dashed rgba(150,240,225,.45); animation:sd-ring 30s linear infinite reverse; }
+/* flare: a twinkling lens-flare cross */
+.star-flare .sd-a, .star-flare .sd-b { left:-95%; top:50%; width:290%; height:2px; margin-top:-1px; background:linear-gradient(90deg,transparent,#fff 50%,transparent); animation:sd-twinkle 3.2s ease-in-out infinite; }
+.star-flare .sd-b { transform:rotate(90deg); animation-delay:1.6s; }
+/* radiant: a slowly turning sunburst */
+.star-rays .sd-a, .sd-rays { inset:-85%; border-radius:50%; opacity:.6; animation:sd-spin 80s linear infinite;
+  background:repeating-conic-gradient(rgba(255,226,160,.75) 0 2.4deg,transparent 2.4deg 14deg);
+  -webkit-mask:radial-gradient(circle,transparent 20%,#000 29%,transparent 62%); mask:radial-gradient(circle,transparent 20%,#000 29%,transparent 62%); }
+.distant-sun .sd-rays { inset:-70%; opacity:.5; }
+@media (prefers-reduced-motion:reduce) { .sd, .sd-rays { animation:none !important; } }
+
+/* ===== v5: the spaceship wears a different livery each visit, and has running lights ===== */
+@keyframes ship-blink { 0%,100%{opacity:1} 50%{opacity:.15} }
+.ship-blink { animation:ship-blink 1.3s steps(1) infinite; }
+.ship-blink.b { animation-delay:.65s; }
+@media (prefers-reduced-motion:reduce) { .ship-blink { animation:none; } }
+
+
+/* ===== v6: richer stars ===== */
+.sd { z-index:1; }
+.sd-c { inset:17%; border-radius:50%; box-shadow:inset 0 0 12px 3px rgba(20,8,30,.55), inset 3px 3px 8px rgba(255,255,255,.22); }
+.sd-c::before { content:""; position:absolute; inset:0; border-radius:50%; background:var(--tex,none); }
+.star-giant .sd-c::before, .star-rays .sd-c::before, .distant-sun .sd-c::before { animation:sd-spin 130s linear infinite; }
+.star-pulsar .sd-c { --tex:repeating-linear-gradient(100deg,rgba(255,255,255,.2) 0 2px,transparent 2px 6px),radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.75),transparent 42%),radial-gradient(ellipse at 50% 100%,rgba(255,255,255,.6),transparent 42%); }
+.star-giant .sd-c { --tex:radial-gradient(circle at 32% 38%,rgba(40,5,10,.75) 0 7%,rgba(130,30,30,.35) 8% 13%,transparent 14%),radial-gradient(circle at 68% 30%,rgba(40,5,10,.65) 0 5%,rgba(130,30,30,.3) 6% 10%,transparent 11%),radial-gradient(circle at 58% 70%,rgba(40,5,10,.7) 0 8%,rgba(130,30,30,.35) 9% 14%,transparent 15%),radial-gradient(circle at 26% 68%,rgba(255,225,170,.5) 0 6%,transparent 7%); }
+.star-binary .sd-c { --tex:radial-gradient(circle,rgba(255,255,255,.22) 0 1px,transparent 1.5px) 0 0/6px 6px,radial-gradient(circle at 60% 40%,rgba(60,20,90,.55) 0 6%,transparent 7%); }
+.star-halo .sd-c { --tex:repeating-linear-gradient(18deg,rgba(255,255,255,.24) 0 3px,rgba(0,70,80,.24) 3px 7px); }
+.star-flare .sd-c { --tex:radial-gradient(circle at 40% 35%,#fff 0 22%,transparent 62%); }
+.star-rays .sd-c, .distant-sun .sd-c { --tex:radial-gradient(circle,rgba(255,255,255,.09) 0 1px,transparent 1.6px) 0 0/5px 5px,radial-gradient(circle at 36% 40%,rgba(90,35,10,.7) 0 5%,rgba(160,80,30,.3) 6% 10%,transparent 11%),radial-gradient(circle at 64% 62%,rgba(90,35,10,.6) 0 4%,rgba(160,80,30,.28) 5% 8%,transparent 9%),radial-gradient(circle at 56% 28%,rgba(255,250,220,.6) 0 5%,transparent 6%); }
+/* outer detail: field lines, loops, trails, ring dust, flare spikes, streamers */
+.star-pulsar .sd-d { inset:-46%; border-radius:50%; border:1px solid rgba(160,210,255,.4); transform:scaleX(.5) rotate(25deg); }
+.star-pulsar .sd-d::after { content:""; position:absolute; inset:0; border-radius:50%; border:1px solid rgba(160,210,255,.28); transform:rotate(90deg) scaleX(.9); }
+.star-giant .sd-d { inset:-30%; border-radius:50%; animation:sd-spin 45s linear infinite;
+  background:conic-gradient(transparent 0 6%,rgba(255,200,140,.5) 7% 8%,transparent 9% 33%,rgba(255,170,110,.45) 34% 36%,transparent 37% 58%,rgba(255,210,150,.5) 59% 60%,transparent 61% 83%,rgba(255,160,100,.45) 84% 86%,transparent 87%);
+  -webkit-mask:radial-gradient(circle,transparent 62%,#000 66%,transparent 78%); mask:radial-gradient(circle,transparent 62%,#000 66%,transparent 78%); }
+.star-binary .sd-d { inset:-19%; border-radius:50%; animation:sd-spin 7s linear infinite;
+  background:conic-gradient(transparent 0deg 10deg,rgba(255,195,140,.8) 88deg,transparent 90deg,transparent 360deg);
+  -webkit-mask:radial-gradient(circle,transparent 90%,#000 93% 98%,transparent 100%); mask:radial-gradient(circle,transparent 90%,#000 93% 98%,transparent 100%); }
+.star-halo .sd-d { inset:-34%; border-radius:50%; animation:sd-ring 14s linear infinite reverse;
+  background:repeating-conic-gradient(rgba(255,255,255,.95) 0 .9deg,transparent .9deg 8deg);
+  -webkit-mask:radial-gradient(circle,transparent 90%,#000 93% 98%,transparent 100%); mask:radial-gradient(circle,transparent 90%,#000 93% 98%,transparent 100%); }
+.star-flare .sd-d { left:-60%; top:50%; width:220%; height:1px; transform:rotate(38deg); background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent); }
+.star-flare .sd-d::after { content:""; position:absolute; left:0; top:0; width:100%; height:1px; background:inherit; transform:rotate(104deg); }
+.star-rays .sd-d, .distant-sun .sd-d { inset:-52%; border-radius:50%; opacity:.55; animation:sd-spin 150s linear infinite reverse;
+  background:repeating-conic-gradient(rgba(255,244,210,.6) 0 1deg,transparent 1deg 7deg);
+  -webkit-mask:radial-gradient(circle,transparent 26%,#000 33%,transparent 56%); mask:radial-gradient(circle,transparent 26%,#000 33%,transparent 56%); }
+.distant-sun .sd-b { inset:-14%; border-radius:50%; animation:sd-spin 40s linear infinite reverse;
+  background:conic-gradient(transparent 0 8%,rgba(255,150,90,.75) 10% 12%,transparent 14% 38%,rgba(255,130,80,.65) 40% 43%,transparent 45% 71%,rgba(255,180,110,.7) 73% 75%,transparent 77%);
+  -webkit-mask:radial-gradient(circle,transparent 50%,#000 53%,transparent 61%); mask:radial-gradient(circle,transparent 50%,#000 53%,transparent 61%); opacity:.8; }
+@media (prefers-reduced-motion:reduce) { .sd::before, .sd-c::before { animation:none !important; } }
+
+.star-rays .sd-a, .sd-rays { opacity:.4 !important; }
+.distant-sun .sd-rays { inset:-62% !important; opacity:.28 !important; }
+
+/* ===== v6: the home solar system moves right to fill the space the portrait left ===== */
+@media (min-width:701px) { .distant-sun { right:clamp(0px,3.8vw,64px) !important; } }
+
+/* ===== v6: the little spaceship signals with its lights instead of waving ===== */
+@keyframes ship-wobble { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-7deg)} 75%{transform:rotate(7deg)} }
+#sship.is-waving .ship-flip svg { animation:ship-wobble .5s ease-in-out 6; transform-origin:50% 50%; }
+#sship.is-waving .ship-blink { animation-duration:.28s; }
+
+/* ===== v6: space station (modelled on the ISS) ===== */
+.hero > .space-station, .space-station { position:absolute !important; left:auto !important; top:auto !important; right:-3% !important; bottom:3% !important; width:clamp(190px,25vw,340px) !important; z-index:0 !important; pointer-events:none; filter:drop-shadow(0 6px 18px rgba(0,0,0,.5)); }
+.space-station svg { display:block; width:100%; height:auto; overflow:visible; }
+.ss-float { animation:ss-drift 18s ease-in-out infinite alternate; }
+@keyframes ss-drift { from{transform:translate(0,0) rotate(-2deg)} to{transform:translate(-14px,-10px) rotate(2.2deg)} }
+@keyframes ss-glint { 0%,68%,100%{opacity:0} 80%{opacity:1} }
+.ss-gl { opacity:0; animation:ss-glint 7s ease-in-out infinite; }
+.ss-blink { animation:ship-blink 1.6s steps(1) infinite; } .ss-blink.b { animation-delay:.8s; }
+.ss-win { animation:sd-twinkle 3.5s ease-in-out infinite; }
+@media (max-width:700px) { .hero > .space-station, .space-station { width:150px !important; right:-6% !important; bottom:1% !important; opacity:.85; } }
+@media (prefers-reduced-motion:reduce) { .ss-float, .ss-gl, .ss-blink, .ss-win { animation:none; } }
+
+/* ===== v6: GitHub ===== */
+.gh-link { position:relative; display:inline-grid; place-items:center; width:38px; height:38px; margin-left:14px; vertical-align:middle; border-radius:50%;
+  color:#e9defd; border:1px solid rgba(190,165,255,.4); background:rgba(255,255,255,.05);
+  transition:transform .25s cubic-bezier(.2,.9,.25,1.2), box-shadow .25s ease, background .25s ease, color .25s ease; }
+.gh-link svg, .gh-foot svg { fill:currentColor; }
+.gh-link svg { width:20px; height:20px; }
+.gh-link::after { content:"\2605"; position:absolute; top:-8px; right:-5px; font-size:.72rem; color:#ffe9a8; text-shadow:0 0 8px rgba(255,220,140,.95); animation:sd-twinkle 2.6s ease-in-out infinite; }
+.gh-link:hover, .gh-link:focus-visible { transform:translateY(-3px) scale(1.1) rotate(-6deg); color:#fff; background:rgba(150,110,255,.35); box-shadow:0 0 22px rgba(180,150,255,.75); outline:none; }
+.gh-foot { display:inline-flex; align-items:center; gap:7px; color:inherit; text-decoration:none; transition:text-shadow .25s ease, color .25s ease; }
+.gh-foot svg { width:16px; height:16px; }
+.gh-foot:hover, .gh-foot:focus-visible { color:#fff; text-shadow:0 0 12px rgba(200,175,255,.95); }
+.portfolio-page-header .container { position:relative; }
+.gh-float { position:absolute; top:6px; right:0; margin:0; }
+@media (prefers-reduced-motion:reduce) { .gh-link::after { animation:none; } }
+
 </style>
 
 </head>
@@ -1682,10 +1799,10 @@ header.bh-live { position:sticky; }
 <canvas id="orbitRings" aria-hidden="true"></canvas>
 <canvas id="debrisFx" aria-hidden="true"></canvas>
 <div class="planet-playground" aria-label="Decorative solar systems; drag a planet and it will orbit the nearest star" role="group">
-  <div class="star star-blue" data-star-id="wh" data-section=".portfolio-page-header" data-x="90" data-y="50" style="--size:70px" aria-hidden="true"></div>
-  <div class="star star-ember" data-star-id="wg1" data-section=".portfolio-page-grid" data-x="8" data-y="10" style="--size:80px" aria-hidden="true"></div>
-  <div class="star" data-star-id="wg2" data-section=".portfolio-page-grid" data-x="92" data-y="45" style="--size:84px" aria-hidden="true"></div>
-  <div class="star star-violet" data-star-id="wg3" data-section=".portfolio-page-grid" data-x="8" data-y="82" style="--size:66px" aria-hidden="true"></div>
+  <div class="star star-blue star-pulsar" data-star-id="wh" data-section=".portfolio-page-header" data-x="85" data-y="50" style="--size:70px" aria-hidden="true"><i class="sd sd-a"></i><i class="sd sd-b"></i><i class="sd sd-c"></i><i class="sd sd-d"></i></div>
+  <div class="star star-ember star-giant" data-star-id="wg1" data-section=".portfolio-page-grid" data-x="8" data-y="10" style="--size:80px" aria-hidden="true"><i class="sd sd-a"></i><i class="sd sd-b"></i><i class="sd sd-c"></i><i class="sd sd-d"></i></div>
+  <div class="star star-rays" data-star-id="wg2" data-section=".portfolio-page-grid" data-x="92" data-y="45" style="--size:84px" aria-hidden="true"><i class="sd sd-a"></i><i class="sd sd-b"></i><i class="sd sd-c"></i><i class="sd sd-d"></i></div>
+  <div class="star star-violet star-binary" data-star-id="wg3" data-section=".portfolio-page-grid" data-x="8" data-y="82" style="--size:66px" aria-hidden="true"><i class="sd sd-a"></i><i class="sd sd-b"></i><i class="sd sd-c"></i><i class="sd sd-d"></i></div>
   <div class="planet planet-gold" data-star="wh" data-r="100" data-a="20" tabindex="0" role="img" aria-label="Golden planet. Drag to explore."></div>
   <div class="planet planet-lilac" data-star="wh" data-r="175" data-a="200" tabindex="0" role="img" aria-label="Lilac ringed planet. Drag to explore."><span class="planet-ring"></span></div>
   <div class="planet planet-orchid" data-star="wg1" data-r="115" data-a="60" tabindex="0" role="img" aria-label="Orchid planet. Drag to explore."></div>
@@ -1734,6 +1851,7 @@ header.bh-live { position:sticky; }
     <header class="portfolio-page-header">
       <div class="container">
         <a class="back-link" href="index.html">← Back to main portfolio</a>
+        <a class="gh-link gh-float" data-github href="https://github.com/" target="_blank" rel="noopener" aria-label="GitHub (opens in a new tab)" title="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.921.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
         <p class="eyebrow">Writing archive</p>
         <h1>More of my work.</h1>
         <p>A growing collection of copywriting samples, experiments, and practice projects. These concepts are fictional unless explicitly stated otherwise.</p>
@@ -2233,7 +2351,7 @@ header.bh-live { position:sticky; }
     /* ---- black hole: too many bodies crowded around one star ---- */
     const emit = (type, extra) => window.dispatchEvent(new CustomEvent('cosmos', { detail: Object.assign({ type }, extra || {}) }));   // lets the robot react
     let hole = null, wordsReady = false;
-    const WHOLE = '.button, .work-more-btn, .back-link, .label, .email, .card, .contact-panel, .review-panel, .future-work-note, header, footer, .section-title, .eyebrow, .principle';      // framed things are swallowed as a whole, frame and all
+    const WHOLE = '.space-station, .button, .work-more-btn, .back-link, .label, .email, .card, .contact-panel, .review-panel, .future-work-note, header, footer, .section-title, .eyebrow, .principle';      // framed things are swallowed as a whole, frame and all
     window.cosmosHole = () => hole ? { x: hole.s.x, y: hole.s.y, state: hole.state } : null;
     function ensureWords(){
       if (wordsReady) return; wordsReady = true;
@@ -2297,7 +2415,7 @@ header.bh-live { position:sticky; }
       const words = [...document.querySelectorAll('.gw, .bhw, ' + WHOLE)].filter(el => !(el.parentElement && el.parentElement.closest(WHOLE))).map(el => {   // outermost framed blocks only
         const r = el.getBoundingClientRect(), cx = r.left + r.width/2 + scrollX, cy = r.top + r.height/2 + scrollY;
         const dx = cx - s.x, dy = cy - s.y, d = Math.hypot(dx, dy);
-        return { el, cx, cy, d, a0: Math.atan2(dy, dx), start: d / 70 + Math.random() * 1.4, live:false, whole: el.matches(WHOLE), rot: r.width > 220 ? 140 : 420 };
+        return { el, cx, cy, d, a0: Math.atan2(dy, dx), start: (Math.sqrt(4900 + 24 * d) - 70) / 12 + Math.random() * 1.2, live:false, whole: el.matches(WHOLE), rot: r.width > 220 ? 140 : 420 };
       });
       // 'feeding' first (bodies are swallowed), then the star collapses into a black hole
       const starPull = stars.filter(other => other !== s).map(other => ({ star:other, x:other.x, y:other.y, opacity:other.el.style.opacity }));
@@ -2316,7 +2434,7 @@ header.bh-live { position:sticky; }
     function endHole(now){
       const h = hole, s = h.s; h.state = 'ending'; h.endAt = now;
       for (const item of h.starPull || []) {
-        const other = item.star; other.x = item.x; other.y = item.y; other.el.style.opacity = item.opacity;
+        const other = item.star; other.x = item.x; other.y = item.y; other.el.style.opacity = item.opacity; other.el.style.scale = ''; other.el.style.visibility = '';
         if (!other.home) { other.el.style.transition = 'left 1.2s ease, top 1.2s ease, opacity 1.2s ease'; other.el.style.left = (item.x - other.el.offsetWidth/2) + 'px'; other.el.style.top = (item.y - other.el.offsetHeight/2) + 'px'; setTimeout(() => { other.el.style.transition = ''; }, 1300); }
       }
       emit('hole-end');
@@ -2344,15 +2462,17 @@ header.bh-live { position:sticky; }
       }
       const t = (now - h.t0) / 1000;
       if (h.state === 'active') {
-        const pull = Math.min(.94, Math.max(0, t / 1.8));
+        const pull = Math.min(1, Math.max(0, t / 1.8));
         for (const item of h.starPull || []) {
           const other = item.star;
           other.x = item.x + (h.s.x - item.x) * pull; other.y = item.y + (h.s.y - item.y) * pull;
           if (!other.home) { other.el.style.left = (other.x - other.el.offsetWidth/2) + 'px'; other.el.style.top = (other.y - other.el.offsetHeight/2) + 'px'; }
-          other.el.style.opacity = String(1 - pull);
+          other.el.style.opacity = String(Math.max(0, 1 - pull * 1.15));
+          other.el.style.scale = (1 - .88 * pull).toFixed(3);
+          other.el.style.visibility = pull >= .995 ? 'hidden' : '';
         }
       }
-      if (h.state === 'active' && t > 38) endHole(now);
+      if (h.state === 'active' && t > 42) endHole(now);
       let endK = 0;
       if (h.state === 'ending') {
         endK = clamp((now - h.endAt) / 3000, 0, 1);
@@ -2365,11 +2485,17 @@ header.bh-live { position:sticky; }
       }
       const wt = ((h.state === 'ending' ? h.endAt : now) - h.t0) / 1000 - .5;
       const vy0 = scrollY - 500, vy1 = scrollY + innerHeight + 500, S = h.s;
-      for (const w of h.words) {
-        if (w.cy < vy0 || w.cy > vy1) continue;
+      h.sweep = ((h.sweep || 0) + 1) & 7;
+      for (let wi = 0; wi < h.words.length; wi++) {
+        const w = h.words[wi];
         let p = clamp((wt - w.start) / 5.5, 0, 1);
         if (h.state === 'ending') p *= 1 - endK * endK * (3 - 2 * endK);
         const e = p * p;
+        if (e === w.lastE) continue;                                            // already drawn correctly
+        const py = S.y + Math.sin(w.a0 + e * 3.4) * w.d * (1 - e);              // page-y where the word is drawn right now
+        const near = (w.cy >= vy0 && w.cy <= vy1) || (py >= vy0 && py <= vy1) || (w.ry >= vy0 && w.ry <= vy1);
+        if (!near && (wi & 7) !== h.sweep) continue;                           // far off screen: refreshed by the background sweep
+        w.lastE = e; w.ry = py;
         if (e < .0005) { if (w.live) { clearWord(w); w.live = false; } continue; }
         if (!w.live) { w.el.classList.add('bh-live'); if (w.whole) w.el.style.transition = 'none'; w.live = true; }
         const a = w.a0 + e * 3.4, rr = w.d * (1 - e);
@@ -2535,7 +2661,7 @@ header.bh-live { position:sticky; }
         const r = ttt.getBoundingClientRect();
         return innerWidth < 700 ? { x: innerWidth / 2, y: Math.max(60, r.top - 46) } : { x: r.right + 54, y: r.top + r.height * .5 };
       }
-      return { x: innerWidth < 700 ? 40 : 56, y: innerHeight - (innerWidth < 700 ? 150 : 116) };
+      return { x: innerWidth - (innerWidth < 700 ? 44 : 72), y: innerHeight * (innerWidth < 700 ? .56 : .52) };
     };
     function emote(cls, ms){ m.classList.add(cls); setTimeout(() => m.classList.remove(cls), ms); }
     /* ---- Talking: a speech bubble with short chats, quick replies and context-aware lines ---- */
@@ -2570,6 +2696,7 @@ header.bh-live { position:sticky; }
       if (r.fn) r.fn();
       if (r.go || r.href) goTo(r.go, r.href);
       if (r.play && launch) launch.click();
+      if (r.bank === 'joke') { tellJoke(true); return; }
       if (r.bank) { speak(bankNode(r.bank), { force:true }); return; }
       if (r.ask) { askNext(true); return; }
       if (r.menu) { openMenu(); return; }
@@ -2627,12 +2754,31 @@ header.bh-live { position:sticky; }
         "There is no sound in space. Black holes are very polite that way.", "A teaspoon of a neutron star would weigh as much as a mountain.", "Jupiter's Great Red Spot is a storm that has been raging for centuries."],
       tip: ["Lead with what the reader gets, not with what you offer.", "Read your copy out loud. If you stumble, your reader will too.", "Try cutting your first sentence. The real start is often the second.",
         "Write to one person, not to an audience.", "Swap vague words for specific ones. 'Fast' becomes 'ready in 10 minutes'.", "One email, one idea, one clear next step."],
-      joke: ["Why did the sun skip college? It already had millions of degrees.", "How does the moon cut its hair? Eclipse it.", "Why did the robot go to therapy? Too many unresolved bugs.", "What do you call a tick on the moon? A luna-tick. Sorry."]
+      joke: ["Why did the sun skip college? It already had millions of degrees.", "How does the moon cut its hair? Eclipse it.", "Why did the robot go to therapy? Too many unresolved bugs.",
+        "What do you call a tick on the moon? A luna-tick. Sorry.", "Why don't aliens ever get lost? They always follow the Milky Way.", "How do you organize a space party? You planet.",
+        "Why did the astronaut break up with the Earth? He needed more space.", "What do you call a robot who takes the long way around? R2-Detour.", "Why was the black hole such a bad listener? It just took everything in.",
+        "What's a copywriter's favorite kind of exercise? Running through drafts.", "Why did the headline go to the gym? To get stronger hooks.", "Why did the email feel lonely? Nobody opened it.",
+        "How many copywriters does it take to change a lightbulb? Just one, but it needs to be 'brighter, bolder, and more benefit-driven'.", "What did the comma say to the sentence? Take a breath, we'll get there.",
+        "Why was the planet so good at writing? It had a great orbit-inal voice.", "Why do robots never panic? They have nerves of steel.", "What did Saturn say to its ring? Put a ring on it.",
+        "I told my circuits a joke about the moon. It went over their heads.", "Why did the star get a promotion? It was outstanding.", "What do you call a comet with great copy? A tail with a hook."]
     };
     const lastBank = {};
     function bankNode(k){
       const list = BANK[k]; let t; do { t = rnd(list); } while (list.length > 1 && t === lastBank[k]);
       lastBank[k] = t; return { t, replies:[ { l:'Another one', bank:k }, { l:'Thanks!', r:'Anytime!' } ] };
+    }
+    let jokeT = 0;
+    function tellJoke(force){
+      const list = BANK.joke; let t; do { t = rnd(list); } while (list.length > 1 && t === lastBank.joke); lastBank.joke = t;
+      const replies = [ { l:'Another one', bank:'joke' }, { l:'Ha!', emote:'is-happy', r:rnd(["I know. I'm very funny.", "Thank you, thank you. I'm here all week."]) }, { l:'Groan', emote:'is-shrug', r:rnd(["Worth it.", "A groan means it landed."]) } ];
+      const i = t.search(/[?!] /);                                   // setup, a short beat, then the punchline
+      clearTimeout(jokeT);
+      if (i > 0 && i < t.length - 8) {
+        if (!speak({ t: t.slice(0, i + 1) }, { force })) return false;
+        jokeT = setTimeout(() => { speak({ t: t.slice(i + 2), replies }, { force:true }); emote('is-happy', 1200); }, 2300 + i * 20);
+        return true;
+      }
+      const ok = speak({ t, replies }, { force }); if (ok) setTimeout(() => emote('is-happy', 1000), 1800); return ok;
     }
     const nice = t => ({ t, chain:true });
     function greeting(){
@@ -2816,8 +2962,9 @@ header.bh-live { position:sticky; }
     }, 2800);
     setInterval(() => {
       const now = performance.now();
-      if (now - lastActive > 12000 && !quietFor(26000) && !busy && !crisis) { lastActive = now - 6000; askNext(false); }
+      if (now - lastActive > 12000 && !quietFor(26000) && !busy && !crisis) { lastActive = now - 6000; if (Math.random() < .5 && !gameOpen) tellJoke(false); else askNext(false); }
     }, 4000);
+    setInterval(() => { if (!busy && !crisis && !quiet && !gameOpen && !document.hidden && !quietFor(45000) && performance.now() > 20000 && Math.random() < .35) tellJoke(false); }, 20000);   // now and then, unprompted
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) mem.hiddenAt = performance.now();
       else if (mem.hiddenAt && performance.now() - mem.hiddenAt > 30000 && !crisis) { mem.hiddenAt = 0; speak(rnd(["Oh, you're back! How's it going?", "Welcome back, space traveler!"])); }
@@ -3015,29 +3162,48 @@ header.bh-live { position:sticky; }
   const emit = type => window.dispatchEvent(new CustomEvent('cosmos', { detail:{ type } }));
   const btn = document.createElement('button');
   btn.id = 'sship'; btn.type = 'button'; btn.setAttribute('aria-label', 'Tiny spaceship. Activate to open a hologram of Nafiz');
-  btn.innerHTML = '<span class="ship-flip"><svg viewBox="0 0 96 50" width="86" height="45" aria-hidden="true">' +
-    '<defs><linearGradient id="shA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3df"/><stop offset=".6" stop-color="#e6d0b6"/><stop offset="1" stop-color="#b09783"/></linearGradient>' +
-    '<linearGradient id="shB" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#17808f"/><stop offset="1" stop-color="#5fe0e8"/></linearGradient>' +
-    '<linearGradient id="shC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffa457"/><stop offset="1" stop-color="#d4502e"/></linearGradient>' +
-    '<radialGradient id="shGlass" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#f0fdff" stop-opacity=".95"/><stop offset="1" stop-color="#58c8ff" stop-opacity=".6"/></radialGradient>' +
-    '<radialGradient id="shFire" cx=".5" cy=".5" r=".6"><stop offset="0" stop-color="#e8fdff"/><stop offset=".45" stop-color="#6fe6ff"/><stop offset="1" stop-color="#3f7bff" stop-opacity="0"/></radialGradient></defs>' +
-    '<ellipse class="ship-fire" cx="6" cy="20" rx="10" ry="3.4" fill="url(#shFire)"/><ellipse class="ship-fire" cx="6" cy="33" rx="10" ry="3.4" fill="url(#shFire)"/>' +
-    '<path d="M40 19 L28 5 L54 13 Z" fill="#126673" stroke="#0a4650" stroke-width=".6"/>' +
-    '<rect x="11" y="16" width="22" height="8" rx="3.5" fill="#3b4058" stroke="#1d2030" stroke-width=".8"/><rect x="11" y="29" width="22" height="8" rx="3.5" fill="#3b4058" stroke="#1d2030" stroke-width=".8"/>' +
-    '<rect x="26" y="16" width="3" height="8" fill="#ff9a4d"/><rect x="26" y="29" width="3" height="8" fill="#ff9a4d"/><rect x="11" y="18.5" width="3" height="3" rx="1" fill="#8ff1ff"/><rect x="11" y="31.5" width="3" height="3" rx="1" fill="#8ff1ff"/>' +
-    '<path d="M38 31 L19 47 L36 49 L66 33 Z" fill="url(#shB)" stroke="#0c5560" stroke-width=".8"/><path d="M40 33 L30 44 L38 45 L56 34 Z" fill="#0f6c78" opacity=".55"/>' +
-    '<path d="M20 26 L30 18 L58 16 L82 23 L94 26 L82 30 L56 34 L30 33 Z" fill="url(#shA)" stroke="#8a7461" stroke-width=".8"/>' +
-    '<path d="M33 27.5 L74 24.5 L86 26.5 L74 29.5 L33 30.5 Z" fill="url(#shC)"/><path d="M82 23 L94 26 L82 30 L87 26.5 Z" fill="#ff9a4d"/>' +
-    '<path d="M36 18 L31 6 L48 14 L52 17 Z" fill="url(#shC)" stroke="#9a3a22" stroke-width=".6"/>' +
-    '<path d="M44 17 L44 33 M52 16.5 L52 34" stroke="#8a7461" stroke-width=".6" opacity=".7"/><circle cx="40" cy="26" r="1.3" fill="#8ff1ff"/><circle cx="47" cy="27" r="1.3" fill="#8ff1ff"/>' +
-    '<ellipse cx="64" cy="19.5" rx="11" ry="6.8" fill="url(#shGlass)" stroke="#d6f6ff" stroke-width=".9"/>' +
-    '<circle cx="65" cy="20.5" r="3.6" fill="#fff" stroke="#6e60b8" stroke-width=".7"/><circle cx="66.2" cy="20.5" r="1" fill="#0b0818"/>' +
-    '<g class="ship-arm"><line x1="68" y1="22" x2="74" y2="13" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="74.6" cy="12" r="1.9" fill="#fff"/></g></svg></span>';
+  btn.innerHTML = `<span class="ship-flip"><svg viewBox="0 0 96 50" width="86" height="45" aria-hidden="true"><defs>
+<linearGradient id="shA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3df"/><stop offset=".6" stop-color="#e6d0b6"/><stop offset="1" stop-color="#b09783"/></linearGradient>
+<linearGradient id="shB" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#17808f"/><stop offset="1" stop-color="#5fe0e8"/></linearGradient>
+<linearGradient id="shC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffa457"/><stop offset="1" stop-color="#d4502e"/></linearGradient>
+<linearGradient id="shGlass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a6ecff"/><stop offset=".45" stop-color="#2a7fb0"/><stop offset="1" stop-color="#0c2744"/></linearGradient>
+<radialGradient id="shFire" cx=".5" cy=".5" r=".6"><stop offset="0" stop-color="#e8fdff"/><stop offset=".45" stop-color="#6fe6ff"/><stop offset="1" stop-color="#3f7bff" stop-opacity="0"/></radialGradient></defs>
+<ellipse class="ship-fire" cx="6" cy="18.5" rx="10" ry="3.2" fill="url(#shFire)"/><ellipse class="ship-fire" cx="6" cy="32" rx="10" ry="3.2" fill="url(#shFire)"/>
+<path d="M46 17 L39 8 L62 15 Z" fill="url(#shB)" opacity=".55" stroke="#0a4650" stroke-width=".5"/>
+<path d="M33 18 L27 3.5 L47 10.5 L53 16.5 Z" fill="url(#shC)" stroke="#9a3a22" stroke-width=".6"/><path d="M31 15 L28 6.5 L40 11 Z" fill="#fff" opacity=".22"/><path d="M36 14 L48 14.5" stroke="#9a3a22" stroke-width=".5" opacity=".7"/>
+<rect x="9" y="13" width="25" height="9" rx="4.2" fill="#363c55" stroke="#1b2033" stroke-width=".8"/><rect x="9" y="28" width="25" height="9" rx="4.2" fill="#363c55" stroke="#1b2033" stroke-width=".8"/>
+<rect x="10" y="15" width="3" height="5" rx="1.2" fill="#8ff1ff"/><rect x="10" y="30" width="3" height="5" rx="1.2" fill="#8ff1ff"/><rect x="27" y="13" width="3.2" height="9" fill="url(#shC)"/><rect x="27" y="28" width="3.2" height="9" fill="url(#shC)"/>
+<path d="M14 15 L26 15 M14 20 L26 20 M14 30 L26 30 M14 35 L26 35" stroke="#565e7e" stroke-width=".5"/>
+<path d="M40 31 L19 47.5 L38 49 L71 33 Z" fill="url(#shB)" stroke="#0c5560" stroke-width=".8"/><path d="M43 33 L32 44.5 L41 45.5 L60 34 Z" fill="#0b5460" opacity=".5"/><path d="M19 47.5 L40 31" stroke="#fff" stroke-width=".7" opacity=".4"/><path d="M33 38 L50 36 M30 42 L47 39" stroke="#0a4650" stroke-width=".5" opacity=".7"/>
+<path d="M17 25.5 L25 19 L40 15.8 L62 15.3 L78 18.5 L95 25.5 L78 31.8 L62 34.8 L40 34.8 L25 32.2 Z" fill="url(#shA)" stroke="#8a7461" stroke-width=".9"/>
+<path d="M17 25.5 L25 32.2 L40 34.8 L62 34.8 L78 31.8 L95 25.5 L62 29.6 L40 30 Z" fill="#2a1d17" opacity=".17"/>
+<path d="M28 26.8 L70 24.3 L89 25.5 L70 28.7 L28 29.4 Z" fill="url(#shC)"/><path d="M84 21.8 L95 25.5 L84 29.2 L88.5 25.5 Z" fill="#ff9a4d"/>
+<path d="M42 16 L42 34.6 M55 15.6 L55 34.7" stroke="#8a7461" stroke-width=".6" opacity=".7"/><circle cx="48.5" cy="22" r="2.3" fill="none" stroke="#8a7461" stroke-width=".7"/><circle cx="48.5" cy="22" r=".9" fill="#8a7461"/>
+<rect x="31" y="22.6" width="3" height="1.5" rx=".5" fill="#8ff1ff" opacity=".85"/><rect x="36" y="22.6" width="3" height="1.5" rx=".5" fill="#8ff1ff" opacity=".85"/>
+<path d="M58 16 L65.5 10.5 L75.5 15.2 L81 20.3 L59 20.3 Z" fill="url(#shGlass)" stroke="#d6f6ff" stroke-width=".9" stroke-linejoin="round"/>
+<path d="M65.5 10.5 L65 20.3 M72.4 14 L73 20.3" stroke="#d6f6ff" stroke-width=".6" opacity=".85"/><path d="M60.5 18.6 L65 12.6 L66.6 12 L62.6 19 Z" fill="#fff" opacity=".5"/><path d="M67 17.5 L71 14.6 L72 14.8 L68.6 18.4 Z" fill="#fff" opacity=".3"/>
+<rect x="74" y="30.6" width="12" height="2.1" rx="1" fill="#3b4058"/><rect x="84.2" y="30.7" width="2.8" height="1.9" rx=".8" fill="#8ff1ff"/>
+<path d="M24 19.5 L17.5 8.5" stroke="#8a7461" stroke-width="1"/>
+<circle class="ship-blink" cx="17.5" cy="8" r="1.5" fill="#ff6b6b"/><circle class="ship-blink" cx="27" cy="3.5" r="1.7" fill="#ff6b6b"/><circle class="ship-blink b" cx="19.5" cy="47.4" r="1.6" fill="#7dffb2"/>
+</svg></span>`;
   const holo = document.createElement('div');
   holo.id = 'holo'; holo.setAttribute('role', 'dialog'); holo.setAttribute('aria-label', 'Hologram of Nafiz Khan');
   holo.innerHTML = '<div class="holo-beam"></div><div class="holo-panel"><img class="holo-img" alt="Portrait of Nafiz Khan" width="620" height="775">' +
     '<div class="holo-fallback" aria-hidden="true">NK</div><div class="holo-cap"><strong>Nafiz Khan</strong><br>The person behind the words.</div></div>';
   document.body.appendChild(btn); document.body.appendChild(holo);
+  const LIV = [
+    { A:['#fff3df','#e6d0b6','#b09783'], B:['#17808f','#5fe0e8'], C:['#ffa457','#d4502e'] },
+    { A:['#f6ecff','#d6c2f2','#9c88c4'], B:['#5a2fa8','#c58bff'], C:['#ff7ab8','#c23a86'] },
+    { A:['#f7f6dc','#cfe2b4','#8ea978'], B:['#127a58','#5ae6a8'], C:['#ffd75e','#d98a1c'] },
+    { A:['#ffffff','#e6e8f2','#a7abc2'], B:['#8f1d33','#ff7070'], C:['#ff5d4d','#a0241c'] },
+    { A:['#e8f6ff','#bfd9ee','#7f9bb8'], B:['#223d8f','#68a8ff'], C:['#ffe45e','#e0a010'] } ];
+  let livIdx = 0;
+  function livery(){
+    let i; do { i = (Math.random() * LIV.length) | 0; } while (i === livIdx);
+    livIdx = i; const L = LIV[i];
+    [['shA', L.A], ['shB', L.B], ['shC', L.C]].forEach(([id, cols]) => btn.querySelectorAll('#' + id + ' stop').forEach((s, k) => s.setAttribute('stop-color', cols[Math.min(k, cols.length - 1)])));
+  }
+  livery();
   const flipEl = btn.querySelector('.ship-flip'), img = holo.querySelector('.holo-img');
   img.addEventListener('error', () => holo.classList.add('noimg'));
 
@@ -3087,7 +3253,7 @@ header.bh-live { position:sticky; }
       const hx = (d.x || innerWidth / 2) - scrollX, hy = (d.y || innerHeight / 2) - scrollY;
       let dx = x - hx, dy = y - hy; const l = Math.hypot(dx, dy) || 1; fleeDir = { x: dx / l, y: dy / l };
     } else if (d.type === 'hole-end') {
-      setTimeout(() => { if (state === 'flee' || state === 'away') { x = fleeDir.x > 0 ? -140 : innerWidth + 140; y = rnd(120, innerHeight - 120); vx = vy = 0; state = 'in'; btn.style.pointerEvents = ''; btn.classList.add('on'); } }, 2500);
+      setTimeout(() => { if (state === 'flee' || state === 'away') { x = fleeDir.x > 0 ? -140 : innerWidth + 140; y = rnd(120, innerHeight - 120); vx = vy = 0; state = 'in'; livery(); btn.style.pointerEvents = ''; btn.classList.add('on'); } }, 2500);
     }
   });
 
@@ -3119,6 +3285,11 @@ header.bh-live { position:sticky; }
   }
   requestAnimationFrame(frame);
 })();
+</script>
+<script>
+// Put your GitHub profile address here: every GitHub link on the page uses it.
+const GITHUB_URL = "https://github.com/YOUR-USERNAME";
+document.querySelectorAll("[data-github]").forEach(a => { a.href = GITHUB_URL; });
 </script>
 </body>
 </html>
