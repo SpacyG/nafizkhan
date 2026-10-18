@@ -1298,7 +1298,7 @@ footer .footer-inner span:first-child::before{content:"✦";margin-right:.5rem;c
   
 /* Living cosmos: subtle pointer-reactive stars and tactile planet artwork */
 #cosmicStarfield { position:fixed; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; opacity:.82; }
-body > *:not(#cosmicStarfield):not(.planet-playground):not(#rocketCursor):not(#orbitRings):not(#debrisFx):not(#mascot):not(#ttt):not(#ttt-launch):not(#mascot-bubble):not(#mascot-live):not(#sship):not(#holo):not(#robot-sign) { position:relative; z-index:2; }
+body > *:not(#cosmicStarfield):not(.planet-playground):not(#rocketCursor):not(#orbitRings):not(#debrisFx):not(#mascot):not(#ttt):not(#ttt-launch):not(#mascot-bubble):not(#mascot-live):not(#sship):not(#holo):not(#robot-sign):not(#robot-ledge) { position:relative; z-index:2; }
 
 
 
@@ -1777,18 +1777,6 @@ header.bh-live { position:sticky; }
 #sship.is-waving .ship-flip svg { animation:ship-wobble .5s ease-in-out 6; transform-origin:50% 50%; }
 #sship.is-waving .ship-blink { animation-duration:.28s; }
 
-/* ===== v6: space station (modelled on the ISS) ===== */
-.hero > .space-station, .space-station { position:absolute !important; left:auto !important; top:auto !important; right:-3% !important; bottom:3% !important; width:clamp(190px,25vw,340px) !important; z-index:0 !important; pointer-events:none; filter:drop-shadow(0 6px 18px rgba(0,0,0,.5)); }
-.space-station svg { display:block; width:100%; height:auto; overflow:visible; }
-.ss-float { animation:ss-drift 18s ease-in-out infinite alternate; }
-@keyframes ss-drift { from{transform:translate(0,0) rotate(-2deg)} to{transform:translate(-14px,-10px) rotate(2.2deg)} }
-@keyframes ss-glint { 0%,68%,100%{opacity:0} 80%{opacity:1} }
-.ss-gl { opacity:0; animation:ss-glint 7s ease-in-out infinite; }
-.ss-blink { animation:ship-blink 1.6s steps(1) infinite; } .ss-blink.b { animation-delay:.8s; }
-.ss-win { animation:sd-twinkle 3.5s ease-in-out infinite; }
-@media (max-width:700px) { .hero > .space-station, .space-station { width:150px !important; right:-6% !important; bottom:1% !important; opacity:.85; } }
-@media (prefers-reduced-motion:reduce) { .ss-float, .ss-gl, .ss-blink, .ss-win { animation:none; } }
-
 /* ===== v6: GitHub ===== */
 .gh-link { position:relative; display:inline-grid; place-items:center; width:38px; height:38px; margin-left:14px; vertical-align:middle; border-radius:50%;
   color:#e9defd; border:1px solid rgba(190,165,255,.4); background:rgba(255,255,255,.05);
@@ -1804,6 +1792,25 @@ header.bh-live { position:sticky; }
 .gh-float { position:absolute; top:6px; right:0; margin:0; }
 @media (prefers-reduced-motion:reduce) { .gh-link::after { animation:none; } }
 
+
+/* ===== v7: smoother stars, canvas black hole, 3D station, hands-on robot ===== */
+body::before { display:none !important; }
+.is-hole { visibility:hidden !important; }
+.space-station { position:absolute; z-index:5; width:clamp(230px,27vw,380px); pointer-events:none; filter:drop-shadow(0 8px 22px rgba(0,0,0,.45)); }
+.space-station canvas { display:block; width:100%; }
+.space-station.bh-live { position:absolute; }
+@media (max-width:700px) { .space-station { width:170px; } }
+.mascot-body { touch-action:none; }
+#mascot.is-held .robot-arm.l { transform:rotate(150deg); } #mascot.is-held .robot-arm.r { transform:rotate(-150deg); }
+#mascot.is-held .robot-eye { animation:none; transform:scale(1.18); }
+#mascot.is-held .robot-flame { opacity:.25; }
+#mascot.is-resist .mascot-body { animation:robot-shake .1s linear infinite; }
+#robot-ledge { position:fixed; right:0; top:62%; width:190px; height:8px; z-index:41; border-radius:5px 0 0 5px; pointer-events:none;
+  background:linear-gradient(90deg,#9d8cf0,#efe8ff); box-shadow:0 0 14px rgba(190,160,255,.8), 0 3px 10px rgba(0,0,0,.5);
+  transform:translateX(105%); transition:transform .35s cubic-bezier(.2,1.2,.4,1); }
+#robot-ledge.show { transform:none; }
+#robot-ledge::before { content:""; position:absolute; right:0; top:-3px; bottom:-3px; width:6px; background:#cdbfff; border-radius:2px; }
+@media (prefers-reduced-motion:reduce) { #robot-ledge { transition:none; } #mascot.is-resist .mascot-body { animation:none; } }
 </style>
 
 </head>
@@ -1892,73 +1899,6 @@ header.bh-live { position:sticky; }
   <main>
     <section class="container hero" id="home">
       <div class="distant-sun" data-star-id="home" aria-hidden="true"><i class="sd sd-rays"></i><i class="sd sd-b"></i><i class="sd sd-c"></i><i class="sd sd-d"></i><span></span></div>
-      <div class="space-station" aria-hidden="true"><div class="ss-float"><svg viewBox="0 0 330 200" width="330" height="200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-<defs>
- <pattern id="ssCells" width="7.2" height="6" patternUnits="userSpaceOnUse"><rect width="7.2" height="6" fill="#b9792b"/><rect x=".5" y=".5" width="6.2" height="5" fill="#d99a3d"/><rect x=".5" y=".5" width="6.2" height="1.4" fill="#f0c36a" opacity=".6"/></pattern>
- <linearGradient id="ssGlint" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".42" stop-color="#fff" stop-opacity=".0"/><stop offset=".5" stop-color="#fff" stop-opacity=".55"/><stop offset=".58" stop-color="#fff" stop-opacity="0"/></linearGradient>
- <pattern id="ssTruss" width="9" height="9" patternUnits="userSpaceOnUse"><rect width="9" height="9" fill="#b7bdd0"/><path d="M0 0 L9 9 M9 0 L0 9 M0 4.5 H9" stroke="#6d748c" stroke-width=".8"/></pattern>
- <linearGradient id="ssMod" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".35" stop-color="#e3e7f1"/><stop offset=".8" stop-color="#a1a9bf"/><stop offset="1" stop-color="#6c7590"/></linearGradient>
- <linearGradient id="ssGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6dc86"/><stop offset=".55" stop-color="#c9952f"/><stop offset="1" stop-color="#7e5a16"/></linearGradient>
- <radialGradient id="ssGlow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
-</defs>
-<!-- arrays behind the truss -->
-<g transform="translate(34 92) skewX(-9)" class="ss-arr">
- <rect x="-1.6" y="-74" width="3.2" height="148" fill="#8a91a8"/>
- <rect x="-17" y="-72" width="14.5" height="144" fill="url(#ssCells)" stroke="#4d3510" stroke-width=".7"/>
- <rect x="2.5" y="-72" width="14.5" height="144" fill="url(#ssCells)" stroke="#4d3510" stroke-width=".7"/>
- <rect x="-17" y="-72" width="34" height="144" fill="url(#ssGlint)" class="ss-gl" style="animation-delay:0s"/>
- <circle cx="0" cy="0" r="5.2" fill="#c7cde0" stroke="#6e7690" stroke-width=".8"/>
-</g><g transform="translate(78 92) skewX(-9)" class="ss-arr">
- <rect x="-1.6" y="-74" width="3.2" height="148" fill="#8a91a8"/>
- <rect x="-17" y="-72" width="14.5" height="144" fill="url(#ssCells)" stroke="#4d3510" stroke-width=".7"/>
- <rect x="2.5" y="-72" width="14.5" height="144" fill="url(#ssCells)" stroke="#4d3510" stroke-width=".7"/>
- <rect x="-17" y="-72" width="34" height="144" fill="url(#ssGlint)" class="ss-gl" style="animation-delay:1.3s"/>
- <circle cx="0" cy="0" r="5.2" fill="#c7cde0" stroke="#6e7690" stroke-width=".8"/>
-</g><g transform="translate(252 92) skewX(-9)" class="ss-arr">
- <rect x="-1.6" y="-74" width="3.2" height="148" fill="#8a91a8"/>
- <rect x="-17" y="-72" width="14.5" height="144" fill="url(#ssCells)" stroke="#4d3510" stroke-width=".7"/>
- <rect x="2.5" y="-72" width="14.5" height="144" fill="url(#ssCells)" stroke="#4d3510" stroke-width=".7"/>
- <rect x="-17" y="-72" width="34" height="144" fill="url(#ssGlint)" class="ss-gl" style="animation-delay:2.4s"/>
- <circle cx="0" cy="0" r="5.2" fill="#c7cde0" stroke="#6e7690" stroke-width=".8"/>
-</g><g transform="translate(296 92) skewX(-9)" class="ss-arr">
- <rect x="-1.6" y="-74" width="3.2" height="148" fill="#8a91a8"/>
- <rect x="-17" y="-72" width="14.5" height="144" fill="url(#ssCells)" stroke="#4d3510" stroke-width=".7"/>
- <rect x="2.5" y="-72" width="14.5" height="144" fill="url(#ssCells)" stroke="#4d3510" stroke-width=".7"/>
- <rect x="-17" y="-72" width="34" height="144" fill="url(#ssGlint)" class="ss-gl" style="animation-delay:3.6s"/>
- <circle cx="0" cy="0" r="5.2" fill="#c7cde0" stroke="#6e7690" stroke-width=".8"/>
-</g>
-<!-- integrated truss -->
-<rect x="10" y="87" width="310" height="10" fill="url(#ssTruss)" stroke="#6d748c" stroke-width=".8"/>
-<rect x="10" y="87" width="310" height="2.2" fill="#fff" opacity=".35"/>
-<g class="ss-rad"><rect x="112.0" y="98" width="6" height="52" fill="#f6f8fd" stroke="#98a1b8" stroke-width=".6"/><path d="M115.0 98 V150" stroke="#c7cde0" stroke-width=".5"/><rect x="119.2" y="98" width="6" height="52" fill="#f6f8fd" stroke="#98a1b8" stroke-width=".6"/><path d="M122.2 98 V150" stroke="#c7cde0" stroke-width=".5"/><rect x="126.4" y="98" width="6" height="52" fill="#f6f8fd" stroke="#98a1b8" stroke-width=".6"/><path d="M129.4 98 V150" stroke="#c7cde0" stroke-width=".5"/><rect x="133.6" y="98" width="6" height="52" fill="#f6f8fd" stroke="#98a1b8" stroke-width=".6"/><path d="M136.6 98 V150" stroke="#c7cde0" stroke-width=".5"/><rect x="111" y="94" width="30.5" height="5" fill="#9aa3b8"/></g><g class="ss-rad"><rect x="190.0" y="98" width="6" height="52" fill="#f6f8fd" stroke="#98a1b8" stroke-width=".6"/><path d="M193.0 98 V150" stroke="#c7cde0" stroke-width=".5"/><rect x="197.2" y="98" width="6" height="52" fill="#f6f8fd" stroke="#98a1b8" stroke-width=".6"/><path d="M200.2 98 V150" stroke="#c7cde0" stroke-width=".5"/><rect x="204.4" y="98" width="6" height="52" fill="#f6f8fd" stroke="#98a1b8" stroke-width=".6"/><path d="M207.4 98 V150" stroke="#c7cde0" stroke-width=".5"/><rect x="211.6" y="98" width="6" height="52" fill="#f6f8fd" stroke="#98a1b8" stroke-width=".6"/><path d="M214.6 98 V150" stroke="#c7cde0" stroke-width=".5"/><rect x="189" y="94" width="30.5" height="5" fill="#9aa3b8"/></g>
-<!-- central node on the truss -->
-<rect x="146" y="78" width="34" height="28" rx="3" fill="url(#ssMod)" stroke="#7c849e" stroke-width=".9"/><rect x="146" y="78" width="34" height="5" fill="url(#ssGold)" opacity=".8"/>
-<!-- pressurised modules (rotated cluster, like the ISS seen from an angle) -->
-<g transform="translate(163 106) rotate(19) scale(.72)">
- <g class="ss-arm"><path d="M24 -8 L33 -34 L56 -42" fill="none" stroke="#e9edf7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 -8 L33 -34 L56 -42" fill="none" stroke="#7c849e" stroke-width=".8" stroke-linecap="round" stroke-linejoin="round" opacity=".6"/><circle cx="24" cy="-8" r="3" fill="#fff" stroke="#7c849e" stroke-width=".7"/><circle cx="33" cy="-34" r="3" fill="#fff" stroke="#7c849e" stroke-width=".7"/><circle cx="56" cy="-42" r="2.4" fill="#ffd36b"/></g>
- <!-- Russian segment (aft) with docked capsule -->
- <rect x="-56" y="-6" width="52" height="12" rx="4" fill="url(#ssMod)" stroke="#7c849e" stroke-width=".8"/><rect x="-56" y="-6" width="7" height="12" rx="3" fill="url(#ssGold)"/>
- <rect x="-44" y="-17" width="5" height="11" fill="#c28a2b"/><rect x="-44" y="6" width="5" height="11" fill="#c28a2b"/>
- <path d="M-56 -4 L-72 -2.5 L-76 0 L-72 2.5 L-56 4 Z" fill="#eef1f8" stroke="#7c849e" stroke-width=".7"/><rect x="-70" y="-12" width="3.6" height="9" fill="#d99a3d"/><rect x="-70" y="3" width="3.6" height="9" fill="#d99a3d"/>
- <!-- Unity / Zarya -->
- <rect x="-4" y="-7" width="24" height="14" rx="6" fill="url(#ssMod)" stroke="#7c849e" stroke-width=".8"/>
- <!-- US laboratory -->
- <rect x="20" y="-8.5" width="38" height="17" rx="3.5" fill="url(#ssMod)" stroke="#7c849e" stroke-width=".8"/>
- <path d="M30 -8.5 V8.5 M44 -8.5 V8.5" stroke="#9aa3b8" stroke-width=".7"/><rect x="22" y="-6" width="6" height="4" rx="1" fill="#2d3a63"/>
- <!-- Harmony node + visiting capsule -->
- <rect x="58" y="-7.5" width="19" height="15" rx="5" fill="url(#ssMod)" stroke="#7c849e" stroke-width=".8"/>
- <path d="M77 -5.5 L93 -3 L99 0 L93 3 L77 5.5 Z" fill="#f7f9fd" stroke="#7c849e" stroke-width=".7"/><path d="M93 -3 L99 0 L93 3 Z" fill="#3b4058"/>
- <!-- Columbus (up) and Kibo (down) -->
- <rect x="62" y="-27" width="13" height="19" rx="5" fill="url(#ssMod)" stroke="#7c849e" stroke-width=".8"/>
- <rect x="60" y="7" width="17" height="27" rx="5.5" fill="url(#ssMod)" stroke="#7c849e" stroke-width=".8"/><rect x="62" y="31" width="13" height="9" rx="2" fill="#dfe4ef" stroke="#7c849e" stroke-width=".7"/>
- <!-- cupola -->
- <ellipse cx="6" cy="9" rx="5" ry="3.4" fill="#cfe9ff" stroke="#7c849e" stroke-width=".7"/><path d="M2 8 H10" stroke="#8aa8c8" stroke-width=".5"/>
- <circle class="ss-win" cx="14" cy="-1" r="1.1" fill="#ffe9a8"/><circle class="ss-win" cx="40" cy="1" r="1.1" fill="#ffe9a8"/>
-</g>
-<!-- comms dish + beacons -->
-<path d="M222 87 L222 74" stroke="#8a91a8" stroke-width="1.2"/><ellipse cx="222" cy="72" rx="7" ry="3.2" fill="#eef1f8" stroke="#7c849e" stroke-width=".7" transform="rotate(-20 222 72)"/><path d="M112 87 L112 77" stroke="#8a91a8" stroke-width="1.2"/><circle cx="112" cy="75" r="3" fill="#eef1f8" stroke="#7c849e" stroke-width=".7"/>
-<circle class="ss-blink" cx="12" cy="92" r="2.4" fill="#ff5a5a"/><circle class="ss-blink b" cx="318" cy="92" r="2.4" fill="#68ff9d"/><circle class="ss-blink" cx="163" cy="80" r="1.8" fill="#fff"/>
-</svg></div></div>
       <div>
         <p class="eyebrow">Email · Sales · Landing Page Copy</p>
 
@@ -2222,11 +2162,21 @@ header.bh-live { position:sticky; }
     const ctx = canvas.getContext('2d');
     let w=0,h=0,dpr=1,stars=[],px=-9999,py=-9999,raf=0,last=0,lastScroll=window.scrollY,scrollKick=0;
     const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const sprites = {};
+    function sprite(tint){                                   // a soft round glow, pre-rendered once: smooth edges, no hard pixels
+      if (sprites[tint]) return sprites[tint];
+      const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d');
+      const rg = g.createRadialGradient(32,32,0,32,32,32);
+      rg.addColorStop(0,'rgba('+tint+',1)'); rg.addColorStop(.16,'rgba('+tint+',.9)'); rg.addColorStop(.42,'rgba('+tint+',.24)'); rg.addColorStop(1,'rgba('+tint+',0)');
+      g.fillStyle = rg; g.fillRect(0,0,64,64); return sprites[tint] = c;
+    }
+    const TINTS = ['236,228,255','255,255,255','198,214,255','255,236,214'];
     function resize(){
-      dpr=Math.min(devicePixelRatio||1,1.5); w=innerWidth; h=innerHeight;
+      dpr=Math.min(devicePixelRatio||1,2); w=innerWidth; h=innerHeight;
       canvas.width=Math.round(w*dpr); canvas.height=Math.round(h*dpr);
       canvas.style.width=w+'px'; canvas.style.height=h+'px'; ctx.setTransform(dpr,0,0,dpr,0,0);
-      stars=Array.from({length:Math.min(1800,Math.floor(w*h/760))},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.45+.2,a:Math.random()*.7+.16,dx:(Math.random()-.5)*.15,dy:(Math.random()-.5)*.15,phase:Math.random()*6.28,ox:0,oy:0,scrollVy:0,homeY:Math.random()*h}));
+      ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
+      stars=Array.from({length:Math.min(1800,Math.floor(w*h/760))},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.45+.2,a:Math.random()*.7+.16,dx:(Math.random()-.5)*.15,dy:(Math.random()-.5)*.15,phase:Math.random()*6.28,ox:0,oy:0,scrollVy:0,homeY:Math.random()*h,tint:TINTS[(Math.random()*TINTS.length)|0]}));
       if(!raf) raf=requestAnimationFrame(draw);
     }
     function draw(t){
@@ -2238,10 +2188,11 @@ header.bh-live { position:sticky; }
         p.x+=p.ox*dt;p.y+=p.oy*dt;
         if(p.x<0)p.x=w;if(p.x>w)p.x=0;if(p.y<0)p.y=h;if(p.y>h)p.y=0;
         const tw=reduced?1:.76+.24*Math.sin(t*.0012+p.phase);
-        const sy=((p.y%h)+h)%h;
-        ctx.beginPath();ctx.arc(p.x,sy,p.r,0,Math.PI*2);ctx.fillStyle='rgba(218,203,255,'+(p.a*tw)+')';ctx.fill();
-        if(p.r>1.25){ctx.beginPath();ctx.moveTo(p.x-3,sy);ctx.lineTo(p.x+3,sy);ctx.moveTo(p.x,sy-3);ctx.lineTo(p.x,sy+3);ctx.strokeStyle='rgba(195,170,255,'+(p.a*.28)+')';ctx.stroke();}
+        const sy=((p.y%h)+h)%h, sz=p.r*2.2+1.1;
+        ctx.globalAlpha=Math.min(1,p.a*tw*1.25); ctx.drawImage(sprite(p.tint),p.x-sz,sy-sz,sz*2,sz*2);
+        if(p.r>1.25){ctx.globalAlpha=1;ctx.lineWidth=.8;ctx.lineCap='round';const L=3+p.r*2.2;ctx.beginPath();ctx.moveTo(p.x-L,sy);ctx.lineTo(p.x+L,sy);ctx.moveTo(p.x,sy-L);ctx.lineTo(p.x,sy+L);ctx.strokeStyle='rgba(205,185,255,'+(p.a*.3*tw)+')';ctx.stroke();}
       }
+      ctx.globalAlpha=1;
       if(!reduced) raf=requestAnimationFrame(draw);
     }
     addEventListener('pointermove',e=>{px=e.clientX;py=e.clientY;if(!raf&&!reduced)raf=requestAnimationFrame(draw)} ,{passive:true});
@@ -2550,6 +2501,7 @@ header.bh-live { position:sticky; }
     let hole = null, wordsReady = false;
     const WHOLE = '.space-station, .button, .work-more-btn, .back-link, .label, .email, .card, .contact-panel, .review-panel, .future-work-note, header, footer, .section-title, .eyebrow, .principle';      // framed things are swallowed as a whole, frame and all
     window.cosmosHole = () => hole ? { x: hole.s.x, y: hole.s.y, state: hole.state } : null;
+    window.cosmosBodies = () => ({ stars: stars.map(s => ({ x:s.x, y:s.y, r:s.r })), planets: planets.filter(p => p.mode === 'orbit' || p.mode === 'drag').map(p => ({ x:p.cx, y:p.cy, r:p.size / 2 })) });
     function ensureWords(){
       if (wordsReady) return; wordsReady = true;
       const skip = 'script,style,noscript,canvas,iframe,textarea,.planet-playground,.orbit-nav,#rocketCursor,#mascot,#mascot-bubble,#mascot-live,#ttt,#ttt-launch,#sship,#holo,#robot-sign,.gw,.bhw,' + WHOLE;
@@ -2703,6 +2655,66 @@ header.bh-live { position:sticky; }
       }
     }
 
+    /* ---- the black hole itself: a lensed accretion disk, photon ring and event-horizon shadow, painted on a canvas ---- */
+    let bhCv = null, bhCx = null, bhW = 0, bhDpr = 1, bhOn = false;
+    const bhRings = Array.from({ length: 64 }, (_, k) => ({ u: k / 63, dash: [.4 + Math.random() * 2.2, .1 + Math.random() * 1.1], off: Math.random() * 50, a: .55 + Math.random() * .45, w: .028 + Math.random() * .03 }));
+    const bhSpecks = Array.from({ length: 70 }, () => ({ u: Math.random(), th: Math.random() * TAU, s: .5 + Math.random() * 1.3 }));
+    function hideHole(){ if (bhCv && bhOn) { bhCv.style.opacity = '0'; bhOn = false; } }
+    function drawHole(now){
+      if (!hole || hole.state === 'feeding') { hideHole(); return; }
+      const h = hole, s = h.s;
+      const vis = h.state === 'active' ? 1 - Math.pow(1 - clamp((now - h.t0) / 1400, 0, 1), 3) : 1 - clamp((now - h.endAt) / 1400, 0, 1);
+      if (vis <= .004) { hideHole(); return; }
+      const R = s.r * 1.75, Wd = Math.ceil(R * 10), dpr = Math.min(devicePixelRatio || 1, 1.5);
+      if (!bhCv) { bhCv = document.createElement('canvas'); bhCv.setAttribute('aria-hidden', 'true'); bhCv.style.cssText = 'position:absolute;pointer-events:none;z-index:4;opacity:0'; field.appendChild(bhCv); bhCx = bhCv.getContext('2d'); }
+      if (bhW !== Wd || bhDpr !== dpr) { bhW = Wd; bhDpr = dpr; bhCv.width = bhCv.height = Math.round(Wd * dpr); bhCv.style.width = bhCv.style.height = Wd + 'px'; }
+      bhCv.style.left = (s.x - Wd / 2).toFixed(1) + 'px'; bhCv.style.top = (s.y - Wd / 2).toFixed(1) + 'px';
+      if (!bhOn) { bhCv.style.opacity = '1'; bhOn = true; }
+      const g = bhCx, t = now / 1000, grow = .3 + .7 * vis;
+      g.setTransform(bhDpr, 0, 0, bhDpr, 0, 0); g.clearRect(0, 0, Wd, Wd);
+      g.save(); g.translate(Wd / 2, Wd / 2); g.rotate(-.2); g.scale(R * grow, R * grow); g.globalAlpha = Math.min(1, vis * 1.3);
+      g.globalCompositeOperation = 'lighter';
+      const gr = g.createRadialGradient(0, 0, .8, 0, 0, 5);
+      gr.addColorStop(0, 'rgba(255,170,90,.30)'); gr.addColorStop(.3, 'rgba(170,100,255,.16)'); gr.addColorStop(.7, 'rgba(70,40,160,.06)'); gr.addColorStop(1, 'rgba(40,20,100,0)');
+      g.fillStyle = gr; g.beginPath(); g.arc(0, 0, 5, 0, TAU); g.fill();
+      const disk = front => {
+        g.save(); g.beginPath(); if (front) g.rect(-6, 0, 12, 6); else g.rect(-6, -6, 12, 6); g.clip();
+        g.globalCompositeOperation = 'lighter';
+        for (const r of bhRings) {
+          const rad = 1.16 + r.u * 2.45, heat = 1 - r.u;
+          const gg = Math.round(110 + 130 * heat * heat), bb = Math.round(50 + 170 * Math.pow(heat, 3)), al = (.05 + .5 * Math.pow(heat, 1.5)) * r.a;
+          const lg = g.createLinearGradient(-rad, 0, rad, 0);                       // one side of the disk races toward us and glows brighter
+          lg.addColorStop(0, 'rgba(255,' + Math.min(255, gg + 40) + ',' + Math.min(255, bb + 60) + ',' + Math.min(1, al * 1.9).toFixed(3) + ')');
+          lg.addColorStop(.55, 'rgba(255,' + gg + ',' + bb + ',' + al.toFixed(3) + ')');
+          lg.addColorStop(1, 'rgba(255,' + gg + ',' + bb + ',' + (al * .3).toFixed(3) + ')');
+          g.strokeStyle = lg; g.lineWidth = r.w * (1 + heat);
+          g.setLineDash([r.dash[0] * rad, r.dash[1] * rad]); g.lineDashOffset = -(t * (2.2 / Math.pow(rad, 1.5)) + r.off) * rad;
+          g.beginPath(); g.ellipse(0, 0, rad, rad * .24, 0, 0, TAU); g.stroke();
+        }
+        g.setLineDash([]);
+        for (const p of bhSpecks) {
+          const rad = 1.2 + p.u * 2.3, th = p.th + t * (1.6 / Math.pow(rad, 1.5)), py = Math.sin(th) * rad * .24;
+          if ((py > 0) !== front) continue;
+          const dop = .55 + .45 * -Math.cos(th);
+          g.fillStyle = 'rgba(255,' + Math.round(200 - p.u * 90) + ',' + Math.round(150 - p.u * 90) + ',' + (.5 * dop).toFixed(2) + ')';
+          g.beginPath(); g.arc(Math.cos(th) * rad, py, .02 * p.s, 0, TAU); g.fill();
+        }
+        g.restore();
+      };
+      disk(false);                                                                  // the far side of the disk, behind the hole
+      g.save(); g.globalCompositeOperation = 'lighter';                             // its light, bent over the top (and thinly underneath)
+      for (let i = 0; i < 14; i++) { g.strokeStyle = 'rgba(255,' + (190 - i * 4) + ',' + (120 - i * 3) + ',' + (.5 * Math.pow(1 - i / 14, 1.4)).toFixed(3) + ')'; g.lineWidth = .045; g.beginPath(); g.arc(0, 0, 1.04 + i * .035, Math.PI, TAU); g.stroke(); }
+      for (let i = 0; i < 6; i++) { g.strokeStyle = 'rgba(255,170,100,' + (.22 * (1 - i / 6)).toFixed(3) + ')'; g.lineWidth = .04; g.beginPath(); g.arc(0, 0, 1.03 + i * .03, 0, Math.PI); g.stroke(); }
+      g.restore();
+      g.globalCompositeOperation = 'source-over'; g.fillStyle = '#000'; g.beginPath(); g.arc(0, 0, 1, 0, TAU); g.fill();   // event horizon
+      g.globalCompositeOperation = 'lighter';
+      g.strokeStyle = 'rgba(255,200,130,.28)'; g.lineWidth = .16; g.beginPath(); g.arc(0, 0, 1.04, 0, TAU); g.stroke();       // photon ring
+      const pg = g.createLinearGradient(-1, -1, 1, 1); pg.addColorStop(0, 'rgba(255,250,235,.95)'); pg.addColorStop(.5, 'rgba(255,205,140,.8)'); pg.addColorStop(1, 'rgba(255,160,90,.55)');
+      g.strokeStyle = pg; g.lineWidth = .04; g.beginPath(); g.arc(0, 0, 1.018, 0, TAU); g.stroke();
+      disk(true);                                                                   // the near side, sweeping in front of the shadow
+      g.restore();
+    }
+
     /* ---- main loop ---- */
     let last = performance.now(), frame = 0;
     function tick(now){
@@ -2710,7 +2722,7 @@ header.bh-live { position:sticky; }
       stepPlanets(dt); collisions(now); stepParts(dt, now); stepHole(now);
       if (frame % 2 === 0) updateFade();
       if (frame % 6 === 0) checkCrowd(now);
-      drawRings(); drawFx(now);
+      drawRings(); drawFx(now); drawHole(now);
       requestAnimationFrame(tick);
     }
 
@@ -3004,6 +3016,22 @@ header.bh-live { position:sticky; }
       { id:'ship', node: () => ({ t:"Have you spotted the little spaceship yet?", replies:[
         { l:'Yes!', r:nice("It's friendly. A bit shy, but friendly.") }, { l:'Not yet', r:{ t:"Keep an eye on the sky. It waves sometimes. Click it for a surprise.", chain:true } } ] }) },
       { id:'nav', node: () => ({ t:"Need to get somewhere? Click me or my sign and I'll take you there.", replies:[ { l:'Show me', menu:true }, { l:'Later' } ] }) },
+      { id:'hobby', node: () => ({ t:"What do you like doing when you're away from the screen?", replies:[
+        { l:'Reading', r:nice("A reader! The best writers usually are.") }, { l:'Gaming', r:nice("Game on! I'm decent at tic-tac-toe myself.") }, { l:'Outdoors', r:nice("Fresh air! Good for ideas, too.") }, { l:'Sleeping', r:nice("Respectable. Sleep is where the best headlines are hiding.") } ] }) },
+      { id:'pets', node: () => ({ t:"Important debate: cats or dogs?", replies:[
+        { l:'Cats', r:nice("Independent, mysterious, knocks things off tables. Relatable.") }, { l:'Dogs', r:nice("Loyal and enthusiastic. Basically a golden retriever with fur.") }, { l:'Both', r:nice("Diplomatic. I respect that.") }, { l:'Robots', r:nice("Finally, someone with taste.") } ] }) },
+      { id:'aliens', node: () => ({ t:"Do you think we're alone in the universe?", replies:[
+        { l:'No way', r:nice("Agreed. Space is far too big to be this empty.") }, { l:'Maybe', r:nice("Fair. The honest answer is: nobody knows yet.") }, { l:'Yes, alone', r:nice("Lonely thought. Good thing there's a robot around.") } ] }) },
+      { id:'mars', node: () => ({ t:"Would you move to Mars if you could?", replies:[
+        { l:'Absolutely', r:nice("Pack light. The Wi-Fi is terrible.") }, { l:'No thanks', r:nice("Same. I like it here. The stars are right there.") }, { l:'For a visit', r:nice("A weekend trip! The view alone is worth it.") } ] }) },
+      { id:'music', node: () => ({ t:"What do you listen to while you work?", replies:[
+        { l:'Lo-fi', r:nice("The classic. Beats to write copy to.") }, { l:'Rock', r:nice("Loud and proud. Your headlines must hit hard.") }, { l:'Silence', r:nice("Pure focus. Impressive.") }, { l:'Podcasts', r:nice("Learning while working. Efficient!") } ] }) },
+      { id:'wyr', node: () => ({ t:"Would you rather write one perfect headline, or ten good ones?", replies:[
+        { l:'One perfect', r:nice("A perfectionist! Just remember: be better, not perfect.") }, { l:'Ten good', r:nice("Quantity leads to quality. Every writer's secret.") } ] }) },
+      { id:'proud', node: () => ({ t:"Ever written something you were really proud of?", replies:[
+        { l:'Yes!', r:nice("Hold on to that feeling. It's what keeps writers going.") }, { l:'Not yet', r:nice("You will. It usually arrives on a boring Tuesday.") } ] }) },
+      { id:'secret', node: () => ({ t:"Want to know a secret? You can pick me up and throw me. I'm very bouncy.", replies:[
+        { l:'Really?', r:nice("Really. But keep me away from stars and planets. I get nervous.") }, { l:'Noted', r:nice("Good. Gently, please.") } ] }) },
       { id:'feel', cond: () => mem.mood === 'rough', node: () => ({ t:"Hey, are you feeling any better than earlier?", replies:[
         { l:'Yes', fn:() => setMood('okay'), r:nice("Good. I'm glad.") }, { l:'A bit', r:nice("Small steps count. Keep going.") }, { l:'Not really', emote:'is-sad', r:nice("That's okay. You don't have to rush it. I'll be here.") } ] }) }
     ];
@@ -3015,6 +3043,10 @@ header.bh-live { position:sticky; }
       mem.asked[q.id] = 1; remember();
       return speak(q.node(), { force:!!force });
     }
+    const CHAT = ["Space is mostly empty. Kind of like my to-do list.", "I've been thinking. Mostly about stars.", "Fun fact: I have never once been tired. Still, I like naps.", "Did you know copy can change how a person feels? Words are powerful.",
+      "I could watch the planets orbit all day.", "Beep boop. That's robot for 'good to see you'.", "Somewhere out there, a black hole is hungry.", "Psst. Try pulling a planet near a star. See what happens.", "Is it just me, or is that spaceship waving?",
+      "I like it here. It's quiet. Mostly.", "Good copy is clear, kind and short. Like a good robot.", "Don't tell the planets, but I like the blue one best."];
+    let chatN = 0;
     const GRAB = ["Got it! Hold still…", "Ooh, this one looks good.", "I've got the frame. Nice and steady.", "Reading this one with you."];
     const SECT = [
       ['#services', ["These are the kinds of copy Nafiz writes. Hover a card and I might grab it!", "Emails, sales pages, landing pages. The good stuff."]],
@@ -3022,6 +3054,7 @@ header.bh-live { position:sticky; }
       ['#about', ["Curious who's behind the words? That's this part."]],
       ['#reviews', ["People say nice things here. Worth a read."]],
       ['#contact', [{ t:"Ready to work together? Say hi. I'll cheer from here." }]],
+      ['footer', [{ t:"You made it to the bottom! Anything I can help you find?", replies:[ { l:'Back to top', go:'#home, .portfolio-page-header' }, { l:'Contact Nafiz', go:'#contact', href:'index.html#contact' } ] }]],
       ['.portfolio-page-grid', ["More samples! These concepts are fictional unless stated otherwise."]]
     ];
     if ('IntersectionObserver' in window) {
@@ -3093,13 +3126,17 @@ header.bh-live { position:sticky; }
       }));
       return best;
     }
+    /* ---- ledge: when the whole page is gone he grabs the edge of the screen ---- */
+    const ledge = document.createElement('div'); ledge.id = 'robot-ledge'; ledge.setAttribute('aria-hidden', 'true'); document.body.appendChild(ledge);
     function crisisStart(){
       if (crisis) return;
       crisisTimers.forEach(clearTimeout); crisisTimers = [];
       const now = performance.now();
-      hover = null; release(); hideBubble();
-      const anchor = pickAnchor(GRIPS, { x, y }) || pickAnchor(STABLE, { x, y });
-      crisis = { t0: now, anchor, grip: !!(anchor && GRIPS.some(s => anchor.matches(s))), since: 0, nextSlip: now + 3800, slipUntil: 0, ripped: false };
+      hover = null; release(); hideBubble(); drag = null; free = false; m.classList.remove('is-held', 'is-resist');
+      const anchor = pickAnchor(GRIPS, { x, y });
+      crisis = { t0: now, anchor, grip: !!(anchor && GRIPS.some(s => anchor.matches(s))), since: 0, nextSlip: now + 3800, slipUntil: 0, ripped: false, gripEl: null };
+      ledge.style.top = Math.round(innerHeight * .62) + 'px';
+      if (!anchor) ledge.classList.add('show');
       emote('is-shrug', 1000);
       speak(crisis.grip ? "WHOA! Black hole! Hold on, hold on, hold on!" : "WHOA! Black hole! Where do I grab?!", { force:true });
       [[3500, "It is eating the whole page! Hold on!"], [9500, "Nothing left to grab! I'm holding the edge of the screen!"], [17000, "My arms are getting tired…"], [26000, "Is it over yet? Please say it's over."]]
@@ -3107,11 +3144,70 @@ header.bh-live { position:sticky; }
     }
     function crisisEnd(){
       if (!crisis) return;
+      if (crisis.gripEl) crisis.gripEl.classList.remove('is-grabbed');
       crisis = null; crisisTimers.forEach(clearTimeout); crisisTimers = [];
-      m.classList.remove('is-clinging', 'is-holding');
+      ledge.classList.remove('show'); m.classList.remove('is-clinging', 'is-holding');
       emote('is-happy', 1600);
       speak(rnd(["…We made it. That was WAY too close.", "I'm still here! Barely. My arms will never forgive me."]), { force:true });
     }
+    /* ---- picking him up, throwing him, and keeping him away from planets and stars ---- */
+    let drag = null, free = false, calmSince = 0, nextLine = 0, escapeOkAt = 0, nextBounce = 0;
+    const say2 = (arr, gap) => { const n = performance.now(); if (n < nextLine) return; nextLine = n + (gap || 2500); speak(rnd(arr), { force:true }); };
+    function dangerNear(qx, qy){
+      const B = window.cosmosBodies && window.cosmosBodies(); if (!B) return null;
+      let best = null;
+      const test = (o, isStar) => {
+        const cx = o.x - scrollX, cy = o.y - scrollY;
+        if (cx < -250 || cx > innerWidth + 250 || cy < -250 || cy > innerHeight + 250) return;
+        const dx = qx - cx, dy = qy - cy, dd = Math.hypot(dx, dy) || 1, rr = o.r * (isStar ? 1.7 : 1), d = dd - rr - 30;
+        if (!best || d < best.d) best = { d, ux: dx / dd, uy: dy / dd, star: isStar, cx, cy, rr };
+      };
+      B.stars.forEach(s => test(s, true)); B.planets.forEach(p => test(p, false));
+      return best;
+    }
+    function flee(bd, speedPx){
+      if (drag) { try { body.releasePointerCapture(drag.id); } catch(_e) {} drag = null; }
+      m.classList.remove('is-held', 'is-resist');
+      vx = bd.ux * speedPx; vy = bd.uy * speedPx; free = true; calmSince = 0; escapeOkAt = performance.now() + 1200;
+      say2(bd.star ? ["Hot hot hot! Not the star!", "That's a STAR! Stars are hot!", "Nope! That thing will melt me!"] : ["Whoa, that planet looks heavy. No thanks!", "I'm not going near that!", "Nope nope nope!"], 1200);
+    }
+    body.addEventListener('pointerdown', e => {
+      if (crisis || (e.button !== undefined && e.button > 0)) return;
+      e.preventDefault();
+      drag = { id: e.pointerId, sx: e.clientX, sy: e.clientY, px: e.clientX, py: e.clientY, ox: x - e.clientX, oy: y - e.clientY, moved: false, t0: performance.now(), samples: [] };
+      try { body.setPointerCapture(e.pointerId); } catch(_e) {}
+      free = false; vx = vy = 0;
+    });
+    body.addEventListener('pointermove', e => {
+      if (!drag || e.pointerId !== drag.id) return;
+      if (!drag.moved && Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) > 7) {
+        drag.moved = true; m.classList.add('is-held'); hideBubble();
+        say2(["Whoa! Put me down!", "Hey! Hands off the chassis!", "Wheee! I'm flying!", "Careful, careful, delicate circuits!"], 1500);
+      }
+      drag.px = e.clientX; drag.py = e.clientY;
+      const t = performance.now(); drag.samples.push({ x: e.clientX, y: e.clientY, t }); while (drag.samples.length && t - drag.samples[0].t > 90) drag.samples.shift();
+    });
+    const endDrag = e => {
+      if (!drag || e.pointerId !== drag.id) return;
+      const d = drag; drag = null; m.classList.remove('is-held', 'is-resist');
+      try { body.releasePointerCapture(e.pointerId); } catch(_e) {}
+      if (!d.moved) {
+        if (performance.now() - d.t0 > 650) { emote('is-happy', 1300); speak(rnd(["Hehe! That tickles!", "Stop, stop, I'm ticklish! …Wait, I'm a robot.", "Tickle mode activated. Beep."]), { force:true }); }
+        else { mem.pokes++; emote('is-happy', 700); if (mem.pokes % 5 === 0) askNext(true); else openMenu(); }
+        return;
+      }
+      let tvx = 0, tvy = 0; const s = d.samples;
+      if (s.length > 1) { const a = s[0], b = s[s.length - 1], dtm = Math.max(16, b.t - a.t) / 1000; tvx = (b.x - a.x) / dtm; tvy = (b.y - a.y) / dtm; }
+      const sp = Math.hypot(tvx, tvy); if (sp > 1800) { tvx *= 1800 / sp; tvy *= 1800 / sp; }
+      vx = tvx; vy = tvy; free = true; calmSince = 0;
+      const bd = dangerNear(x, y);
+      if (bd && bd.d < 60) { flee(bd, 760); return; }                      // let go beside a planet or star and he bolts the other way
+      if (sp > 650) say2(["WHEEEEE!", "Aaaaah! Yeet!", "I'm a rocket now!"], 1000); else say2(["Gently, please!", "Oh. Okay. Down I go."], 1000);
+    };
+    body.addEventListener('pointerup', endDrag); body.addEventListener('pointercancel', endDrag);
+    let hoverLines = 0;
+    body.addEventListener('pointerenter', () => { if (!fine || crisis || drag || busy || performance.now() < nextLine || ++hoverLines % 4 !== 1) return; say2(["Oh, hi! You can pick me up, you know.", "Hello! Want to throw me around? Gently.", "Hi there! Click me and I'll show you around."], 6000); });
+
     // the game board and its launcher get swallowed too, and come back afterwards
     const doomed = [ttt && { el:ttt, delay:.7, dur:2.8 }, launch && { el:launch, delay:1.6, dur:2.6 }].filter(Boolean).map(d => Object.assign(d, { e:0, t:0, on:false, bx:0, by:0, hx:0, hy:0 }));
     function suckStep(dt){
@@ -3160,16 +3256,12 @@ header.bh-live { position:sticky; }
     }, 2800);
     setInterval(() => {
       const now = performance.now();
-      if (now - lastActive > 12000 && !quietFor(26000) && !busy && !crisis) { lastActive = now - 6000; if (Math.random() < .5 && !gameOpen) tellJoke(false); else askNext(false); }
+      if (now - lastActive > 12000 && !quietFor(26000) && !busy && !crisis) { lastActive = now - 6000; const dice = Math.random(); if (dice < .25 && !gameOpen) tellJoke(false); else if (dice < .45) speak(rnd(CHAT)); else askNext(false); }
     }, 4000);
     setInterval(() => { if (!busy && !crisis && !quiet && !gameOpen && !document.hidden && !quietFor(45000) && performance.now() > 20000 && Math.random() < .35) tellJoke(false); }, 20000);   // now and then, unprompted
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) mem.hiddenAt = performance.now();
       else if (mem.hiddenAt && performance.now() - mem.hiddenAt > 30000 && !crisis) { mem.hiddenAt = 0; speak(rnd(["Oh, you're back! How's it going?", "Welcome back, space traveler!"])); }
-    });
-    body.addEventListener('click', () => {                                  // click him: he opens the section menu (every 5th poke he asks something instead)
-      mem.pokes++; emote('is-happy', 700);
-      if (mem.pokes % 5 === 0) askNext(true); else openMenu();
     });
     if (fine) document.addEventListener('pointermove', e => {
       px = e.clientX; py = e.clientY;
@@ -3185,27 +3277,39 @@ header.bh-live { position:sticky; }
     function frame(now){
       const dt = Math.min(.05, (now - last) / 1000); last = now;
       if (gameOpen) { if (grabbed) release(); hover = null; }
-      let tx, ty, lean = 0, shake = 0, ux = 0, uy = 0, hxv = px, hyv = py;
+      let tx, ty, lean = 0, shake = 0, ux = 0, uy = 0, hxv = px, hyv = py, resist = 0, hz = null;
       if (crisis) {
         hover = null; if (grabbed) release();
         const h = holeNow(); if (h) { hxv = h.x - scrollX; hyv = h.y - scrollY; }
         const a = crisis.anchor;
-        if (a && (a.classList.contains('bh-live') || !a.isConnected)) {          // his grip is being swallowed: let go and grab something that stays
+        if (a && (a.classList.contains('bh-live') || !a.isConnected)) {          // his grip is being swallowed: let go
+          if (crisis.gripEl) { crisis.gripEl.classList.remove('is-grabbed'); crisis.gripEl = null; }
           if (crisis.grip && !crisis.ripped) { crisis.ripped = true; speak("NOOO! It got sucked in!", { force:true }); }
           crisis.anchor = pickAnchor(STABLE, { x, y }); crisis.grip = false; crisis.slipUntil = now + 900;
         }
-        if (!crisis.anchor && now - crisis.since > 700) { crisis.since = now; crisis.anchor = pickAnchor(STABLE, { x, y }) || pickAnchor(GRIPS, { x, y }); crisis.grip = false; }
-        const ap = crisis.anchor ? anchorPoint(crisis.anchor) : { x: innerWidth < 700 ? 30 : 38, y: innerHeight * .62 };      // nothing left: he braces against the edge of the screen
+        if (!crisis.anchor) { ledge.classList.add('show'); if (now - crisis.since > 700) { crisis.since = now; crisis.anchor = pickAnchor(GRIPS, { x, y }); if (crisis.anchor) { crisis.grip = true; ledge.classList.remove('show'); } } }
+        const ap = crisis.anchor ? anchorPoint(crisis.anchor) : { x: innerWidth - (innerWidth < 700 ? 60 : 90), y: innerHeight * .62 - 29 };   // his hands (29px below his centre) land exactly on the edge
         const dx0 = hxv - ap.x, dy0 = hyv - ap.y, dl = Math.hypot(dx0, dy0) || 1;
         ux = dx0 / dl; uy = dy0 / dl;
         const k = clamp((now - crisis.t0) / 7000, 0, 1);
         if (now > crisis.nextSlip) { crisis.slipUntil = now + 520; crisis.nextSlip = now + 4200 + Math.random() * 3200; }
         const slip = now < crisis.slipUntil ? 1 : 0;
-        const pull = 11 + 14 * k + slip * 38 + (reduced ? 0 : Math.sin(now * .045) * 2.2);
-        tx = ap.x + ux * pull; ty = ap.y + uy * pull;
-        lean = clamp(ux * (12 + 12 * k + slip * 12), -30, 30);
-        shake = reduced ? 0 : Math.sin(now * .09) * (1.2 + k * 1.6);
-      } else {
+        tx = ap.x + ux * (1.5 + 1.5 * k + slip * 4); ty = ap.y + uy * (1.5 + 1.5 * k + slip * 4);   // the pull stretches his body, but his hands stay on the edge
+        lean = clamp(ux * (14 + 14 * k + slip * 16), -34, 34);
+        shake = reduced ? 0 : Math.sin(now * .09) * (1.2 + k * 1.6 + slip * 2);
+      } else if (drag && drag.moved) {
+        hover = null; if (grabbed) release();
+        tx = drag.px + drag.ox; ty = drag.py + drag.oy;
+        const bd = dangerNear(tx, ty);
+        if (bd && bd.d < 130) {                                                // near a planet or star: he digs his heels in and lags behind the cursor
+          resist = clamp(1 - bd.d / 130, 0, 1); hz = bd;
+          tx += bd.ux * resist * 85; ty += bd.uy * resist * 85;
+          shake = reduced ? 0 : Math.sin(now * .08) * (2 + resist * 5);
+          if (resist > .45) say2(bd.star ? ["Not the star! It's HOT!", "Too close! Too close!"] : ["Not that planet! It looks heavy.", "I don't want to go over there!"], 3500);
+          if (bd.d < 22 && now > escapeOkAt) { flee(bd, 820); }
+        }
+        m.classList.toggle('is-resist', resist > .3);
+      } else if (!free) {
         if (hover && hover.matches(':hover')) lastOver = now;
         if (hover && now - lastOver > 380) hover = null;
         if (hover && now - hoverSince > 160 && grabbed !== hover) { release(); grabbed = hover; }
@@ -3217,30 +3321,53 @@ header.bh-live { position:sticky; }
           const s = idleSpot(); tx = s.x + (reduced ? 0 : Math.sin(now * .0007) * 16); ty = s.y + (reduced ? 0 : Math.cos(now * .0009) * 9);
         }
       }
-      vx += ((tx - x) * 70 - vx * 15) * dt; vy += ((ty - y) * 70 - vy * 15) * dt;
-      if (crisis && Math.hypot(tx - x, ty - y) > 60) { vx += ux * 260 * dt; vy += uy * 260 * dt; }     // the hole drags him while he is still flying to a grip
-      x += vx * dt; y += vy * dt;
+      if (free && !drag) {                                                     // thrown: he coasts, bounces off the screen edges and off planets and stars
+        hover = null; if (grabbed) release();
+        const f = Math.exp(-1.1 * dt); vx *= f; vy *= f;
+        x += vx * dt; y += vy * dt;
+        const bounce = () => { if (now > nextBounce) { nextBounce = now + 1600; say2(["Ow!", "Oof!", "My circuits!", "Hey, watch it!"], 900); } };
+        if (x < 44) { x = 44; vx = Math.abs(vx) * .66; bounce(); } else if (x > innerWidth - 44) { x = innerWidth - 44; vx = -Math.abs(vx) * .66; bounce(); }
+        if (y < 62) { y = 62; vy = Math.abs(vy) * .66; bounce(); } else if (y > innerHeight - 60) { y = innerHeight - 60; vy = -Math.abs(vy) * .66; bounce(); }
+        const bd = dangerNear(x, y);
+        if (bd && bd.d < -6) {
+          const vn = vx * bd.ux + vy * bd.uy;
+          if (vn < 0) { vx -= 1.8 * vn * bd.ux; vy -= 1.8 * vn * bd.uy; }
+          x = bd.cx + bd.ux * (bd.rr + 32); y = bd.cy + bd.uy * (bd.rr + 32);
+          if (bd.star) { vx += bd.ux * 260; vy += bd.uy * 260; say2(["Hot hot hot!", "Ow ow ow! That's a star!"], 900); } else bounce();
+        }
+        lean = clamp(vx * .04, -40, 40);
+        if (Math.hypot(vx, vy) < 70) { if (!calmSince) calmSince = now; if (now - calmSince > 700) { free = false; say2(["Ta-da! Nailed the landing.", "I meant to do that.", "Ten out of ten landing."], 800); emote('is-happy', 900); } } else calmSince = 0;
+        tx = x; ty = y;
+      } else {
+        vx += ((tx - x) * 70 - vx * 15) * dt; vy += ((ty - y) * 70 - vy * 15) * dt;
+        if (crisis && Math.hypot(tx - x, ty - y) > 60) { vx += ux * 260 * dt; vy += uy * 260 * dt; }     // the hole drags him while he is still flying to a grip
+        x += vx * dt; y += vy * dt;
+      }
       const dist = Math.hypot(tx - x, ty - y), speed = Math.hypot(vx, vy);
       const clinging = !!crisis && dist < 30;
       m.classList.toggle('is-clinging', clinging);
-      if (crisis) m.classList.toggle('is-holding', clinging);
-      if (!crisis && grabbed && !holding && dist < 10 && speed < 120) {
+      if (crisis) {
+        m.classList.toggle('is-holding', clinging);
+        const a = crisis.anchor, want = clinging && a && a.nodeType === 1 && !a.classList.contains('bh-live') ? a : null;     // lights up whatever he is touching
+        if (crisis.gripEl !== want) { if (crisis.gripEl) crisis.gripEl.classList.remove('is-grabbed'); if (want) want.classList.add('is-grabbed'); crisis.gripEl = want; }
+      }
+      if (!crisis && !free && !drag && grabbed && !holding && dist < 10 && speed < 120) {
         holding = true; m.classList.add('is-holding'); grabbed.classList.add('is-grabbed');
         if (Math.random() < .3 && !quietFor(10000)) speak(rnd(GRAB));
         const s = sway.get(grabbed) || { g:0, target:1 }; s.target = 1; sway.set(grabbed, s);
       }
       m.classList.toggle('is-flying', speed > 140 && !holding && !clinging);
-      const canPoke = !grabbed && !crisis && !gameOpen && speed < 90;
+      const canPoke = !grabbed && !crisis && !gameOpen;
       if (canPoke !== pokeOn) { pokeOn = canPoke; m.style.pointerEvents = canPoke ? 'auto' : 'none'; }
       if (busy) place();
       m.style.transform = 'translate3d(' + (x - 36).toFixed(1) + 'px,' + (y - 36).toFixed(1) + 'px,0)';
-      body.style.rotate = (crisis ? clamp(lean + shake, -34, 34) : clamp(vx * .02, -16, 16)).toFixed(1) + 'deg';
-      // eyes glance toward the cursor (or at the black hole, wide-eyed)
-      let gx = crisis ? hxv : px, gy = crisis ? hyv : py;
+      body.style.rotate = (crisis ? clamp(lean + shake, -34, 34) : (drag && drag.moved) ? clamp(vx * .03 + shake, -30, 30) : free ? lean : clamp(vx * .02, -16, 16)).toFixed(1) + 'deg';
+      // eyes glance toward the cursor (at the hole when it is eating the page, at the thing he is afraid of while being dragged)
+      let gx = crisis ? hxv : hz ? hz.cx : px, gy = crisis ? hyv : hz ? hz.cy : py;
       if (thinking && ttt && !crisis) { const r = ttt.getBoundingClientRect(); gx = r.left + r.width / 2; gy = r.top + r.height * .55; }
       const ex = clamp((gx - x) / 90, -1, 1) * 2.6, ey = clamp((gy - y) / 90, -1, 1) * 2;
       eyes.style.transform = 'translate(' + ex.toFixed(2) + 'px,' + ey.toFixed(2) + 'px)';
-      const showSign = !crisis && !grabbed && !gameOpen && !holding && speed < 140 && !document.hidden;
+      const showSign = !crisis && !grabbed && !gameOpen && !holding && !drag && !free && speed < 140 && !document.hidden;
       sign.classList.toggle('show', showSign); m.classList.toggle('has-sign', showSign);
       if (showSign || sign.classList.contains('show')) {
         const sw = sign.offsetWidth, sh = sign.offsetHeight;
@@ -3488,6 +3615,189 @@ header.bh-live { position:sticky; }
 // Put your GitHub profile address here: every GitHub link on the page uses it.
 const GITHUB_URL = "https://github.com/YOUR-USERNAME";
 document.querySelectorAll("[data-github]").forEach(a => { a.href = GITHUB_URL; });
+</script>
+<script>
+/* ===== Space station: a real 3D model (software-rendered, flat-shaded) that tumbles slowly as it wanders the sky ===== */
+(function(){
+  const field = document.querySelector('.planet-playground'), anchor = document.querySelector('.hero');
+  if (!field || !anchor) return;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const TAU = Math.PI * 2, clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+  const host = document.createElement('div'); host.className = 'space-station'; host.setAttribute('aria-hidden', 'true');
+  const cv = document.createElement('canvas'); host.appendChild(cv); field.appendChild(host);   // lives in the sky layer, AFTER the planets, so it always draws in front of them
+  const ctx = cv.getContext('2d');
+
+  /* ---- tiny 3D toolkit ---- */
+  const hex = h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
+  const mul = (a,b) => [a[0]*b[0]+a[1]*b[3]+a[2]*b[6], a[0]*b[1]+a[1]*b[4]+a[2]*b[7], a[0]*b[2]+a[1]*b[5]+a[2]*b[8],
+                        a[3]*b[0]+a[4]*b[3]+a[5]*b[6], a[3]*b[1]+a[4]*b[4]+a[5]*b[7], a[3]*b[2]+a[4]*b[5]+a[5]*b[8],
+                        a[6]*b[0]+a[7]*b[3]+a[8]*b[6], a[6]*b[1]+a[7]*b[4]+a[8]*b[7], a[6]*b[2]+a[7]*b[5]+a[8]*b[8]];
+  const rx = a => { const c = Math.cos(a), s = Math.sin(a); return [1,0,0, 0,c,-s, 0,s,c]; };
+  const ry = a => { const c = Math.cos(a), s = Math.sin(a); return [c,0,s, 0,1,0, -s,0,c]; };
+  const rz = a => { const c = Math.cos(a), s = Math.sin(a); return [c,-s,0, s,c,0, 0,0,1]; };
+  const ap = (m,v) => [m[0]*v[0]+m[1]*v[1]+m[2]*v[2], m[3]*v[0]+m[4]*v[1]+m[5]*v[2], m[6]*v[0]+m[7]*v[1]+m[8]*v[2]];
+  const G = { core:{ f:[], pos:[0,0,0] }, ring:{ f:[], pos:[0,0,0] }, wingL:{ f:[], pos:[-.9,-1.7,0] }, wingR:{ f:[], pos:[.9,-1.7,0] }, dish:{ f:[], pos:[.62,2.0,0] }, shuttle:{ f:[], pos:[1.12,-2.35,0] } };
+  const add = (g, v, n, c, e, ph) => G[g].f.push({ v, n, c, e: e || 0, ph: ph || 0 });
+  function box(g, cx,cy,cz, sx,sy,sz, col, em, ph){
+    const x0=cx-sx/2, x1=cx+sx/2, y0=cy-sy/2, y1=cy+sy/2, z0=cz-sz/2, z1=cz+sz/2, c = hex(col);
+    const P = [[x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0],[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]];
+    [[[0,3,2,1],[0,0,-1]],[[4,5,6,7],[0,0,1]],[[0,4,7,3],[-1,0,0]],[[1,2,6,5],[1,0,0]],[[0,1,5,4],[0,-1,0]],[[3,7,6,2],[0,1,0]]].forEach(([ix,n]) => add(g, ix.map(i => P[i]), n, c, em, ph));
+  }
+  function cylY(g, cx,cy,cz, r0,r1, h, sides, colFn, cap0, cap1){        // frustum along Y, r0 at the bottom, r1 at the top
+    const sl = (r0 - r1) / h, nl = Math.hypot(1, sl);
+    for (let i = 0; i < sides; i++) {
+      const a0 = i / sides * TAU, a1 = (i + 1) / sides * TAU, m = (a0 + a1) / 2;
+      add(g, [[cx+r0*Math.cos(a0),cy-h/2,cz+r0*Math.sin(a0)],[cx+r0*Math.cos(a1),cy-h/2,cz+r0*Math.sin(a1)],[cx+r1*Math.cos(a1),cy+h/2,cz+r1*Math.sin(a1)],[cx+r1*Math.cos(a0),cy+h/2,cz+r1*Math.sin(a0)]],
+        [Math.cos(m)/nl, sl/nl, Math.sin(m)/nl], hex(typeof colFn === 'function' ? colFn(i) : colFn));
+    }
+    const cap = (y, ny, col, r) => { if (!col || r <= 0) return; const v = []; for (let i = 0; i < sides; i++) { const a = i / sides * TAU; v.push([cx + r*Math.cos(a), y, cz + r*Math.sin(a)]); } add(g, v, [0,ny,0], hex(col)); };
+    cap(cy - h/2, -1, cap0, r0); cap(cy + h/2, 1, cap1, r1);
+  }
+  function coneY(g, cx,cy,cz, r, h, sides, col){
+    const nl = Math.hypot(h, r);
+    for (let i = 0; i < sides; i++) {
+      const a0 = i / sides * TAU, a1 = (i + 1) / sides * TAU, m = (a0 + a1) / 2;
+      add(g, [[cx+r*Math.cos(a0),cy,cz+r*Math.sin(a0)],[cx+r*Math.cos(a1),cy,cz+r*Math.sin(a1)],[cx,cy+h,cz]], [h*Math.cos(m)/nl, r/nl, h*Math.sin(m)/nl], hex(col));
+    }
+  }
+  function bend(g, from, m){ for (let i = from; i < G[g].f.length; i++) { const f = G[g].f[i]; f.v = f.v.map(v => ap(m, v)); f.n = ap(m, f.n); } }   // re-orient faces built along Y
+
+  /* ---- the station ---- */
+  const WH = '#e8ecf7', TEAL = '#29b7c4', ORG = '#ff9a4d', DK = '#4a5068', GOLD = '#e0b04a';
+  cylY('core', 0,-2.8,0, .78,.56, 1.2, 12, DK, '#2a2d3d', null);
+  cylY('core', 0,-2.86,0, .64,.64, .16, 12, ORG, null, null);
+  cylY('core', 0,-1.6,0, .55,.55, 1.2, 12, i => i % 6 === 0 ? '#cfd6ea' : WH, null, null);
+  cylY('core', 0,-.85,0, .64,.64, .3, 12, TEAL, null, null);
+  cylY('core', 0,0,0, .55,.55, 1.4, 12, i => i % 6 === 3 ? '#cfd6ea' : WH, null, null);
+  cylY('core', 0,.85,0, .64,.64, .3, 12, TEAL, null, null);
+  cylY('core', 0,1.7,0, .55,.55, 1.4, 12, i => i % 6 === 0 ? '#cfd6ea' : WH, null, null);
+  cylY('core', 0,2.55,0, .3,.3, .7, 10, '#6a7190', '#6a7190', '#222638');
+  coneY('core', 0,2.9,0, .3, .5, 10, ORG);
+  cylY('core', 0,3.7,0, .035,.035, 1.2, 6, '#9aa3bd', null, null);
+  // habitat ring (spins), with spokes, modules and lit windows
+  (function(){
+    const R = 2.65, rt = .34, segs = 32, sides = 6;
+    for (let i = 0; i < segs; i++) for (let j = 0; j < sides; j++) {
+      const t0 = i / segs * TAU, t1 = (i + 1) / segs * TAU, p0 = j / sides * TAU, p1 = (j + 1) / sides * TAU, pm = (p0 + p1) / 2, tm = (t0 + t1) / 2;
+      const pt = (t, p) => [(R + rt*Math.cos(p)) * Math.cos(t), rt * Math.sin(p), (R + rt*Math.cos(p)) * Math.sin(t)];
+      add('ring', [pt(t0,p0), pt(t1,p0), pt(t1,p1), pt(t0,p1)], [Math.cos(pm)*Math.cos(tm), Math.sin(pm), Math.cos(pm)*Math.sin(tm)], hex(i % 8 === 0 ? TEAL : (i % 2 ? '#dfe4f1' : '#c9d0e4')));
+    }
+    for (let i = 0; i < segs; i++) {                                    // windows on the outer wall
+      const tm = (i + .5) / segs * TAU, rh = [Math.cos(tm), 0, Math.sin(tm)], th = [-Math.sin(tm), 0, Math.cos(tm)], c = [rh[0]*(R+rt+.012), 0, rh[2]*(R+rt+.012)];
+      const w = .17, hgt = .12, q = [[-1,-1],[1,-1],[1,1],[-1,1]].map(([a,b]) => [c[0]+th[0]*w*a, b*hgt, c[2]+th[2]*w*a]);
+      add('ring', q, rh, hex(i % 3 ? '#7ff3ff' : '#ffd27a'), .9, i * 1.7);
+    }
+    for (let a = 0; a < 4; a++) { const an = a * Math.PI / 2, ca = Math.cos(an), sa = Math.sin(an);
+      const L = 1.9, mid = 1.5, ex = Math.abs(ca) > .5 ? L : .16, ez = Math.abs(sa) > .5 ? L : .16;
+      box('ring', ca*mid, 0, sa*mid, ex, .16, ez, '#aab2c8'); }
+    [.4, 2.3, 4.2].forEach(an => { const ca = Math.cos(an), sa = Math.sin(an), s = 2.65 + .34 + .2; const f0 = G.ring.f.length;
+      box('ring', ca*s, 0, sa*s, .5, .5, .5, TEAL); box('ring', ca*(s+.3), .05, sa*(s+.3), .12, .3, .3, '#7ff3ff', .8, an);
+      const m = ry(-an); for (let i = f0; i < G.ring.f.length; i++) { const f = G.ring.f[i]; f.v = f.v.map(v => { const l = [v[0]-ca*s, v[1], v[2]-sa*s]; const r = ap(m, l); return [r[0]+ca*s, r[1], r[2]+sa*s]; }); f.n = ap(m, f.n); } });
+  })();
+  // solar wings: a boom with four blue panels either side (they tilt to follow the "sun")
+  [['wingL',-1],['wingR',1]].forEach(([g, sg]) => {
+    box(g, sg*1.75, 0, 0, 3.5, .09, .09, '#9aa3bd');
+    [[1.15,'#2a58c9'],[2.55,'#2f63d6'],[3.95,'#2a58c9']].forEach(([cxm, col], k) => {
+      if (k === 2) return;
+      for (let s2 = 0; s2 < 4; s2++) box(g, sg*(cxm - .52 + s2 * .35 + .17), 0, 0, .32, 1.55, .05, s2 % 2 ? '#2a58c9' : '#3168dd');
+    });
+    box(g, sg*3.4, .86, 0, .06, .16, .06, '#9aa3bd');
+  });
+  // comms dish
+  (function(){ const f0 = G.dish.f.length; coneY('dish', 0,0,0, .55, .2, 14, '#dfe4f1'); cylY('dish', 0,.28,0, .03,.03, .5, 6, '#9aa3bd', null, '#ff9a4d'); bend('dish', f0, rz(-Math.PI/2 + .35)); })();
+  // docked shuttle
+  (function(){ box('shuttle', 0,0,0, 1.0,.26,.42, '#f2f4fb'); box('shuttle', .2,.17,0, .34,.1,.3, '#7ff3ff', .85, 1); box('shuttle', -.05,0,0, .5,.05,1.1, '#c9d0e4'); box('shuttle', -.42,.2,0, .16,.36,.05, ORG);
+    const f0 = G.shuttle.f.length; coneY('shuttle', 0,0,0, .17, .5, 8, ORG); bend('shuttle', f0, mul(rz(-Math.PI/2), [1,0,0,0,1,0,0,0,1])); G.shuttle.f.slice(f0).forEach(f => f.v = f.v.map(v => [v[0]+.5, v[1], v[2]])); })();
+  const BEACONS = [['wingL',[-3.4,.98,0],'#ff4d4d',0], ['wingR',[3.4,.98,0],'#4dff8f',1.6], ['core',[0,4.35,0],'#ffffff',.8]];
+
+  /* ---- render ---- */
+  let cw = 0, ch = 0, dpr = 1;
+  function size(){
+    cw = host.clientWidth || 300; ch = Math.round(cw * .75); dpr = Math.min(devicePixelRatio || 1, 2);
+    cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr); cv.style.height = ch + 'px';
+  }
+  const LS = (() => { const l = Math.hypot(-.45,.75,-.5); return [-.45/l, .75/l, -.5/l]; })();
+  const rim = (() => { const l = Math.hypot(.6,-.3,.7); return [.6/l, -.3/l, .7/l]; })();
+  function render(t, spinBoost){
+    if (!cw) size();
+    ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,cw,ch);
+    const depth = reduced ? 0 : Math.sin(t * .11) * 1.4, D = 17 + depth, F = cw * 1.58, cx = cw / 2, cy = ch / 2;
+    const yaw = reduced ? .6 : t * .12 * (spinBoost || 1) + .5, pitch = -.42 + (reduced ? 0 : .07 * Math.sin(t * .2)), roll = reduced ? .05 : .09 * Math.sin(t * .15);
+    const M = mul(rx(pitch), mul(ry(yaw), rz(roll)));
+    const gm = {
+      core: [1,0,0,0,1,0,0,0,1], ring: ry(reduced ? 0 : t * .28),
+      wingL: rx(reduced ? .2 : .35 * Math.sin(t * .23)), wingR: rx(reduced ? .2 : .35 * Math.sin(t * .23 + .8)),
+      dish: ry(reduced ? 0 : t * .45), shuttle: [1,0,0,0,1,0,0,0,1]
+    };
+    const out = [];
+    for (const k in G) {
+      const g = G[k], R = mul(M, gm[k]), off = ap(M, g.pos);
+      for (const f of g.f) {
+        const n = ap(R, f.n);
+        const vs = f.v.map(v => { const p = ap(R, v); return [p[0] + off[0], p[1] + off[1], p[2] + off[2] + D]; });
+        let mx = 0, my = 0, mz = 0; for (const v of vs) { mx += v[0]; my += v[1]; mz += v[2]; } mx /= vs.length; my /= vs.length; mz /= vs.length;
+        if (n[0]*mx + n[1]*my + n[2]*mz >= 0) continue;                 // facing away
+        out.push({ f, n, vs, z: mz, c: [mx, my, mz] });
+      }
+    }
+    out.sort((a,b) => b.z - a.z);
+    ctx.lineJoin = 'round'; ctx.lineWidth = .7;
+    for (const o of out) {
+      const f = o.f, n = o.n, V = [-o.c[0], -o.c[1], -o.c[2]], vl = Math.hypot(V[0],V[1],V[2]) || 1;
+      const diff = Math.max(0, n[0]*LS[0] + n[1]*LS[1] + n[2]*LS[2]);
+      const hx = LS[0] + V[0]/vl, hy = LS[1] + V[1]/vl, hz = LS[2] + V[2]/vl, hl = Math.hypot(hx,hy,hz) || 1;
+      const spec = Math.pow(Math.max(0, (n[0]*hx + n[1]*hy + n[2]*hz) / hl), 26) * .32;
+      const rm = Math.max(0, n[0]*rim[0] + n[1]*rim[1] + n[2]*rim[2]) * .22;
+      const sh = .26 + .1 * (n[1] * .5 + .5) + .92 * diff;
+      let e = f.e; if (e) e *= .62 + .38 * Math.sin(t * .7 + f.ph);
+      const r = clamp(f.c[0] * sh + spec * 255 + rm * 70 + e * 255, 0, 255), g2 = clamp(f.c[1] * sh + spec * 255 + rm * 110 + e * 255, 0, 255), b = clamp(f.c[2] * sh + spec * 255 + rm * 255 + e * 255, 0, 255);
+      const col = 'rgb(' + (r|0) + ',' + (g2|0) + ',' + (b|0) + ')';
+      ctx.fillStyle = col; ctx.strokeStyle = col; ctx.beginPath();
+      o.vs.forEach((v, i) => { const s = F / v[2], X = cx + v[0] * s, Y = cy - v[1] * s; i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); });
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+    }
+    // glows: engine, beacons
+    ctx.globalCompositeOperation = 'lighter';
+    const glow = (p, rad, col, a) => { const s = F / p[2], X = cx + p[0] * s, Y = cy - p[1] * s, r = rad * s, gr = ctx.createRadialGradient(X,Y,0,X,Y,r); gr.addColorStop(0, 'rgba(' + col + ',' + a + ')'); gr.addColorStop(1, 'rgba(' + col + ',0)'); ctx.fillStyle = gr; ctx.fillRect(X-r, Y-r, r*2, r*2); };
+    const wp = (g, v) => { const R = mul(M, gm[g]), p = ap(R, v), off = ap(M, G[g].pos); return [p[0]+off[0], p[1]+off[1], p[2]+off[2]+D]; };
+    glow(wp('core',[0,-3.5,0]), .9, '120,230,255', .8);
+    for (const [g, v, col, ph] of BEACONS) { const on = reduced ? 1 : (Math.sin(t * 2.4 + ph * 3) > .2 ? 1 : .15); const c = hex(col); glow(wp(g, v), .5, c[0] + ',' + c[1] + ',' + c[2], .9 * on); }
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  /* ---- wandering ---- */
+  let x = 0, y = 0, vx = 0, vy = 0, tx = 0, ty = 0, nextPick = 0, vis = true, frames = 0, last = performance.now(), spinBoost = 1;
+  const region = () => { const r = anchor.getBoundingClientRect(); return { l: r.left + scrollX, t: r.top + scrollY, w: r.width, h: r.height }; };
+  function pick(now){
+    const r = region(), W = host.offsetWidth, H = host.offsetHeight;
+    tx = clamp(r.l + r.w * (.46 + Math.random() * .56), 20, innerWidth - W - 10); ty = r.t + r.h * (.04 + Math.random() * .62) - H * .1;
+    nextPick = now + 9000 + Math.random() * 9000;
+  }
+  function place(){ host.style.left = x.toFixed(1) + 'px'; host.style.top = y.toFixed(1) + 'px'; }
+  function init(){
+    size(); const r = region(), W = host.offsetWidth, H = host.offsetHeight;
+    x = clamp(r.l + r.w * .84, 20, innerWidth - W - 10); y = r.t + r.h * .52 - H / 2; tx = x; ty = y; place();
+    render(performance.now() / 1000, 1);
+  }
+  function frame(now){
+    const dt = Math.min(.05, (now - last) / 1000); last = now; frames++;
+    const holeOn = !!(window.cosmosHole && window.cosmosHole());
+    if (frames % 15 === 1) { const r = host.getBoundingClientRect(); vis = r.bottom > -120 && r.top < innerHeight + 120 && !document.hidden; if (host.clientWidth !== cw) { size(); } }
+    if (!holeOn && !reduced) {                                          // frozen while a black hole eats the page, so the swallow animation stays aligned
+      if (now > nextPick) pick(now);
+      vx += ((tx - x) * .55 - vx * 1.5) * dt; vy += ((ty - y) * .55 - vy * 1.5) * dt;
+      const sp = Math.hypot(vx, vy); if (sp > 34) { vx *= 34 / sp; vy *= 34 / sp; }
+      x += vx * dt; y += vy * dt; place();
+    }
+    spinBoost += ((holeOn ? 4 : 1) - spinBoost) * Math.min(1, dt * 2);
+    if (vis && !reduced) render(now / 1000, spinBoost);
+    requestAnimationFrame(frame);
+  }
+  addEventListener('resize', () => { cw = 0; if (reduced) { init(); } });
+  addEventListener('load', init);
+  init(); nextPick = performance.now() + 4000;
+  if (!reduced) requestAnimationFrame(frame);
+})();
 </script>
 </body>
 </html>
