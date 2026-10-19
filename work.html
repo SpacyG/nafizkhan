@@ -1877,6 +1877,7 @@ a, button, [role="button"], input, select, textarea { -webkit-tap-highlight-colo
 .footer-link:hover, .calm-toggle:hover, .footer-link:focus-visible, .calm-toggle:focus-visible { color:#fff; border-color:rgba(220,205,255,.7); background:rgba(150,110,255,.14); outline:none; }
 .calm-toggle[aria-pressed="true"] { color:#fff; border-color:rgba(220,205,255,.7); background:rgba(150,110,255,.22); }
 .calm-toggle .ct-state { font-weight:700; }
+footer .footer-inner span span::before, footer .calm-toggle span::before { content:none !important; display:none !important; }   /* stray decorative icons inside the year and the toggle */
 
 /* Calm mode: the clean, quiet version of the page (no robot, ship, station, planets or custom cursor) */
 html.calm #mascot, html.calm #mascot-bubble, html.calm #mascot-live, html.calm #robot-sign, html.calm #robot-ledge, html.calm #ttt, html.calm #ttt-launch,
