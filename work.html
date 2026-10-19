@@ -1896,6 +1896,10 @@ html.calm a, html.calm button, html.calm [role="button"], html.calm summary { cu
   a { text-decoration:underline; }
   a[href^="http"]::after, a[href^="mailto"]::after { content:" (" attr(href) ")"; font-size:.8em; }
 }
+
+/* ===== v10: ship and station share the page's palette: pearl, lilac and violet with a soft violet glow ===== */
+.space-station { filter:drop-shadow(0 8px 22px rgba(8,3,26,.5)) drop-shadow(0 0 22px rgba(150,112,255,.22)); }
+.ship-cv { filter:drop-shadow(0 4px 8px rgba(8,3,26,.5)) drop-shadow(0 0 10px rgba(160,125,255,.28)); }
 </style>
 
 </head>
@@ -3610,7 +3614,7 @@ html.calm a, html.calm button, html.calm [role="button"], html.calm summary { cu
 
 </script>
 <script>
-/* ===== Tiny 3D spaceship: a real mesh that banks, pitches and turns in 3D as it roams; hover or click it for a hologram ===== */
+/* ===== Tiny 3D spaceship: a smooth pearl-and-violet mesh (WebGL) that banks, pitches and turns in 3D as it roams; hover or click it for a hologram ===== */
 (function(){
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
@@ -3622,7 +3626,6 @@ html.calm a, html.calm button, html.calm [role="button"], html.calm summary { cu
   btn.id = 'sship'; btn.type = 'button'; btn.setAttribute('aria-label', 'Tiny spaceship. Activate to open a hologram of Nafiz');
   const cv = document.createElement('canvas'); cv.className = 'ship-cv'; cv.width = W * DPR; cv.height = H * DPR; cv.setAttribute('aria-hidden', 'true');
   btn.appendChild(cv);
-  const g = cv.getContext('2d');
   const holo = document.createElement('div');
   holo.id = 'holo'; holo.setAttribute('role', 'dialog'); holo.setAttribute('aria-label', 'Hologram of Nafiz Khan');
   holo.innerHTML = '<div class="holo-beam"></div><div class="holo-panel"><img class="holo-img" alt="Portrait of Nafiz Khan" width="620" height="775">' +
@@ -3630,8 +3633,7 @@ html.calm a, html.calm button, html.calm [role="button"], html.calm summary { cu
   document.body.appendChild(btn); document.body.appendChild(holo);
 
   /* ---- tiny 3D toolkit ---- */
-  const hexc = h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
-  const mix = (a,b,t) => [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t];
+  const hexc = h => [parseInt(h.slice(1,3),16)/255, parseInt(h.slice(3,5),16)/255, parseInt(h.slice(5,7),16)/255];
   const mmul = (a,b) => [a[0]*b[0]+a[1]*b[3]+a[2]*b[6], a[0]*b[1]+a[1]*b[4]+a[2]*b[7], a[0]*b[2]+a[1]*b[5]+a[2]*b[8],
                          a[3]*b[0]+a[4]*b[3]+a[5]*b[6], a[3]*b[1]+a[4]*b[4]+a[5]*b[7], a[3]*b[2]+a[4]*b[5]+a[5]*b[8],
                          a[6]*b[0]+a[7]*b[3]+a[8]*b[6], a[6]*b[1]+a[7]*b[4]+a[8]*b[7], a[6]*b[2]+a[7]*b[5]+a[8]*b[8]];
@@ -3640,129 +3642,152 @@ html.calm a, html.calm button, html.calm [role="button"], html.calm summary { cu
   const rz = a => { const c = Math.cos(a), s = Math.sin(a); return [c,-s,0, s,c,0, 0,0,1]; };
   const ap = (m,v) => [m[0]*v[0]+m[1]*v[1]+m[2]*v[2], m[3]*v[0]+m[4]*v[1]+m[5]*v[2], m[6]*v[0]+m[7]*v[1]+m[8]*v[2]];
   const norm = v => { const l = Math.hypot(v[0],v[1],v[2]) || 1; return [v[0]/l, v[1]/l, v[2]/l]; };
+  const sub = (a,b) => [a[0]-b[0], a[1]-b[1], a[2]-b[2]];
+  const cross = (a,b) => [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];
+  const colMajor = m => new Float32Array([m[0],m[3],m[6], m[1],m[4],m[7], m[2],m[5],m[8]]);
 
-  /* ---- the mesh: nose points along +x, up is +y ---- */
-  const mesh = [];
-  function face(part, v, ctr){                                   // normal from the vertices, flipped to point away from ctr
-    let nx = 0, ny = 0, nz = 0;
-    for (let i = 0; i < v.length; i++) { const a = v[i], b = v[(i+1) % v.length]; nx += (a[1]-b[1])*(a[2]+b[2]); ny += (a[2]-b[2])*(a[0]+b[0]); nz += (a[0]-b[0])*(a[1]+b[1]); }
-    const l = Math.hypot(nx,ny,nz) || 1; nx /= l; ny /= l; nz /= l;
-    let cx = 0, cy = 0, cz = 0; v.forEach(p => { cx += p[0]; cy += p[1]; cz += p[2]; }); cx /= v.length; cy /= v.length; cz /= v.length;
-    if ((cx-ctr[0])*nx + (cy-ctr[1])*ny + (cz-ctr[2])*nz < 0) { nx = -nx; ny = -ny; nz = -nz; }
-    mesh.push({ v, n:[nx,ny,nz], part });
+  /* ---- the mesh: nose points along +x, up is +y. Round parts are lofted with smooth normals, so nothing looks faceted ---- */
+  const faces = [];
+  const addFace = (part, v, vn, e, glass) => faces.push({ part, v, vn, e: e || 0, glass: glass ? 1 : 0 });
+  function loft(part, rings, opt){                                // rings[i][j]: a grid of points; smooth normals from the surface itself
+    opt = opt || {}; const N = rings.length, M = rings[0].length;
+    const ctr = rings.map(r => { const c = [0,0,0]; r.forEach(p => { c[0] += p[0]; c[1] += p[1]; c[2] += p[2]; }); return [c[0]/M, c[1]/M, c[2]/M]; });
+    const nrm = rings.map((r, i) => r.map((p, j) => {
+      const a = rings[Math.min(N-1, i+1)][j], b = rings[Math.max(0, i-1)][j], c = r[(j+1) % M], d = r[(j+M-1) % M];
+      let n = norm(cross(sub(a, b), sub(c, d)));
+      if ((p[0]-ctr[i][0])*n[0] + (p[1]-ctr[i][1])*n[1] + (p[2]-ctr[i][2])*n[2] < 0) n = [-n[0], -n[1], -n[2]];
+      return n;
+    }));
+    for (let i = 0; i < N - 1; i++) for (let j = 0; j < M; j++) {
+      const j2 = (j+1) % M, pf = opt.part ? opt.part(i, j, N - 1, M) : part;
+      addFace(pf, [rings[i][j], rings[i][j2], rings[i+1][j2], rings[i+1][j]], [nrm[i][j], nrm[i][j2], nrm[i+1][j2], nrm[i+1][j]], opt.e, opt.glass);
+    }
   }
-  function prism(part, A, B){
-    const all = A.concat(B), c = [0,0,0]; all.forEach(p => { c[0] += p[0]; c[1] += p[1]; c[2] += p[2]; }); c[0] /= all.length; c[1] /= all.length; c[2] /= all.length;
-    face(part, A, c); face(part, B, c);
-    for (let i = 0; i < A.length; i++) { const j = (i+1) % A.length; face(part, [A[i], A[j], B[j], B[i]], c); }
+  function cap(part, ring, dir, e){                               // flat disc closing the end of a loft
+    const c = [0,0,0]; ring.forEach(p => { c[0] += p[0]/ring.length; c[1] += p[1]/ring.length; c[2] += p[2]/ring.length; });
+    const n = dir;
+    for (let j = 0; j < ring.length; j++) addFace(part, [c, ring[j], ring[(j+1) % ring.length]], [n,n,n], e);
   }
-  const box = (part, x0,x1, y0,y1, z0,z1) => prism(part, [[x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0]], [[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]]);
+  function slab(part, A, B, soft, e){                             // a flat extruded outline (wings, fins) with softly rounded shading
+    const all = A.concat(B), c = [0,0,0]; all.forEach(p => { c[0] += p[0]/all.length; c[1] += p[1]/all.length; c[2] += p[2]/all.length; });
+    const sn = (fn, p) => norm([fn[0] + soft*(p[0]-c[0])/1.6, fn[1] + soft*(p[1]-c[1])/.5, fn[2] + soft*(p[2]-c[2])/1.6]);
+    const flat = pts => { let nx = 0, ny = 0, nz = 0; for (let i = 0; i < pts.length; i++) { const a = pts[i], b = pts[(i+1) % pts.length]; nx += (a[1]-b[1])*(a[2]+b[2]); ny += (a[2]-b[2])*(a[0]+b[0]); nz += (a[0]-b[0])*(a[1]+b[1]); } let n = norm([nx,ny,nz]); const m = [0,0,0]; pts.forEach(p => { m[0] += p[0]/pts.length; m[1] += p[1]/pts.length; m[2] += p[2]/pts.length; }); if ((m[0]-c[0])*n[0] + (m[1]-c[1])*n[1] + (m[2]-c[2])*n[2] < 0) n = [-n[0],-n[1],-n[2]]; return n; };
+    const quad = pts => { const n = flat(pts); addFace(part, pts, pts.map(p => sn(n, p)), e); };
+    quad(A); quad(B.slice().reverse());
+    for (let i = 0; i < A.length; i++) { const j = (i+1) % A.length; quad([A[i], A[j], B[j], B[i]]); }
+  }
 
-  (function(){                                                    // fuselage: a smooth lofted body, flatter underneath
-    const N = 22, M = 30, X0 = -1.9, X1 = 2.3;
-    const prof = u => u < .3 ? .38 + .27*Math.sin(u/.3*Math.PI/2) : u < .56 ? .65 : .65*Math.pow(Math.cos((u-.56)/.44*Math.PI/2), .75) + .035;
+  (function(){                                                    // fuselage: a pearly capsule, flatter underneath
+    const N = 28, M = 36, X0 = -1.9, X1 = 2.3;
+    const prof = u => u < .3 ? .4 + .27*Math.sin(u/.3*Math.PI/2) : u < .56 ? .67 : .67*Math.pow(Math.cos((u-.56)/.44*Math.PI/2), .7) + .03;
     const rings = [];
     for (let i = 0; i <= N; i++) {
       const u = i/N, x = X0 + (X1-X0)*u, r = prof(u), row = [];
-      for (let j = 0; j < M; j++) { const a = j/M*TAU, s = Math.sin(a); row.push([x, r*(s > 0 ? .6 : .48)*s, r*Math.cos(a)]); }
+      for (let j = 0; j < M; j++) { const a = j/M*TAU, s = Math.sin(a); row.push([x, r*(s > 0 ? .62 : .5)*s, r*Math.cos(a)]); }
       rings.push(row);
     }
-    for (let i = 0; i < N; i++) for (let j = 0; j < M; j++) {
-      const j2 = (j+1) % M, um = (i+.5)/N, sm = Math.sin((j+.5)/M*TAU), xm = X0 + (X1-X0)*um;
-      const part = um > .9 ? 'C' : (um > .34 && um < .4) ? 'C' : sm < -.35 ? 'B' : 'A';
-      face(part, [rings[i][j], rings[i][j2], rings[i+1][j2], rings[i+1][j]], [xm,0,0]);
-    }
-    face('D', rings[0].slice(), [X0+1,0,0]);
+    loft('A', rings, { part: (i, j, n, m) => { const um = (i+.5)/n, sm = Math.sin((j+.5)/m*TAU); return um > .93 ? 'C' : (um > .335 && um < .385) ? 'C' : sm < -.4 ? 'B' : 'A'; } });
+    cap('D', rings[0], [-1,0,0]);
   })();
-  (function(){                                                    // glass canopy
-    const cx = .85, cy = .26, ex = .82, ey = .5, ez = .4, L = 9, M = 18;
-    const pt = (t,a) => [cx + ex*Math.sin(t)*Math.cos(a), cy + ey*Math.cos(t), ez*Math.sin(t)*Math.sin(a)];
-    for (let i = 0; i < L; i++) for (let j = 0; j < M; j++) {
-      const t0 = i/L*Math.PI/2, t1 = (i+1)/L*Math.PI/2, a0 = j/M*TAU, a1 = (j+1)/M*TAU;
-      face('G', [pt(t0,a0), pt(t0,a1), pt(t1,a1), pt(t1,a0)], [cx, cy-.25, 0]);
-    }
+  (function(){                                                    // dark glass visor, like the robot's face plate
+    const cx = .85, cy = .26, ex = .85, ey = .52, ez = .42, L = 12, M = 24, rings = [];
+    for (let i = 0; i <= L; i++) { const t = i/L*Math.PI/2, row = []; for (let j = 0; j < M; j++) { const a = j/M*TAU; row.push([cx + ex*Math.sin(t)*Math.cos(a), cy + ey*Math.cos(t), ez*Math.sin(t)*Math.sin(a)]); } rings.push(row); }
+    loft('G', rings, { glass: true });
   })();
-  [1,-1].forEach(s => {                                           // swept wings with tip pods, engines on pylons
-    prism('B', [[1.0,.03,.5*s],[-.75,.12,2.3*s],[-1.75,.12,2.3*s],[-1.35,.03,.5*s]], [[1.0,-.08,.5*s],[-.75,.02,2.3*s],[-1.75,.02,2.3*s],[-1.35,-.08,.5*s]]);
-    box('C', -1.8,-.7, -.05,.2, 2.3*s,2.44*s);
-    box('D', -1.9,-.8, -.2,.0, .5*s,.72*s);
-    const cz = .82*s, cy = -.1, N = 7, M = 14, X0 = -2.2, X1 = -.5, rad = u => u < .85 ? .22 : .22*(1 - ((u-.85)/.15)*.7), rings = [];
+  [1,-1].forEach(s => {                                           // soft swept wings with glowing edges, round engine pods
+    slab('B', [[1.0,.03,.5*s],[-.75,.1,2.2*s],[-1.7,.1,2.2*s],[-1.35,.03,.5*s]], [[1.0,-.07,.5*s],[-.75,.0,2.2*s],[-1.7,.0,2.2*s],[-1.35,-.07,.5*s]], .5);
+    slab('C', [[-.75,.08,2.2*s],[-1.7,.08,2.2*s],[-1.72,.11,2.3*s],[-.73,.11,2.3*s]], [[-.75,-.02,2.2*s],[-1.7,-.02,2.2*s],[-1.72,-.02,2.3*s],[-.73,-.02,2.3*s]], .2, .9);
+    const cz = .86*s, cy = -.12, N = 10, M = 20, X0 = -2.2, X1 = -.4, rad = u => u < .1 ? .13 + .09*(u/.1) : u < .85 ? .22 : .22*(1 - ((u-.85)/.15)*.45), rings = [];
     for (let i = 0; i <= N; i++) { const u = i/N, x = X0 + (X1-X0)*u, r = rad(u), row = []; for (let j = 0; j < M; j++) { const a = j/M*TAU; row.push([x, cy + r*Math.sin(a), cz + r*Math.cos(a)]); } rings.push(row); }
-    for (let i = 0; i < N; i++) for (let j = 0; j < M; j++) {
-      const um = (i+.5)/N, xm = X0 + (X1-X0)*um;
-      face(um > .12 && um < .2 ? 'C' : 'D', [rings[i][j], rings[i][(j+1)%M], rings[i+1][(j+1)%M], rings[i+1][j]], [xm, cy, cz]);
-    }
-    face('E', rings[0].slice(), [X0+1, cy, cz]);
+    loft('D', rings, { part: (i, j, n) => (i === 2 || i === 3) ? 'C' : 'D' });
+    cap('E', rings[0], [-1,0,0], 1);
   });
-  prism('C', [[-.9,.2,-.05],[-2.0,.25,-.05],[-2.05,1.4,-.05],[-1.6,1.4,-.05]], [[-.9,.2,.05],[-2.0,.25,.05],[-2.05,1.4,.05],[-1.6,1.4,.05]]);
-  box('D', .1,1.0, -.42,-.28, -.2,.2);
+  slab('B', [[-.9,.2,-.05],[-2.0,.25,-.05],[-2.05,1.35,-.05],[-1.6,1.35,-.05]], [[-.9,.2,.05],[-2.0,.25,.05],[-2.05,1.35,.05],[-1.6,1.35,.05]], .5);   // tail fin
+  slab('C', [[-1.9,1.2,-.055],[-2.05,1.35,-.055],[-1.6,1.35,-.055],[-1.7,1.2,-.055]], [[-1.9,1.2,.055],[-2.05,1.35,.055],[-1.6,1.35,.055],[-1.7,1.2,.055]], .1, .8);
 
-  /* ---- liveries ---- */
+  /* ---- liveries: all drawn from the page's own palette (pearl, lilac, violet, a warm or pink accent) ---- */
   const LIV = [
-    { A:['#fff3df','#e6d0b6','#b09783'], B:['#17808f','#5fe0e8'], C:['#ffa457','#d4502e'] },
-    { A:['#f6ecff','#d6c2f2','#9c88c4'], B:['#5a2fa8','#c58bff'], C:['#ff7ab8','#c23a86'] },
-    { A:['#f7f6dc','#cfe2b4','#8ea978'], B:['#127a58','#5ae6a8'], C:['#ffd75e','#d98a1c'] },
-    { A:['#ffffff','#e6e8f2','#a7abc2'], B:['#8f1d33','#ff7070'], C:['#ff5d4d','#a0241c'] },
-    { A:['#e8f6ff','#bfd9ee','#7f9bb8'], B:['#223d8f','#68a8ff'], C:['#ffe45e','#e0a010'] } ];
-  let livIdx = 0, col = {};
+    { A:'#efe9ff', B:'#9d8ae6', C:'#ff8fb8', D:'#3b2f7a' },
+    { A:'#f3efff', B:'#7f6fd0', C:'#8ff1ff', D:'#2f2566' },
+    { A:'#fff0f8', B:'#d489c0', C:'#ffd9a0', D:'#4a2a66' },
+    { A:'#eef8ff', B:'#8fb3e6', C:'#c9a8ff', D:'#2c2f6b' },
+    { A:'#f7f0ff', B:'#b79bff', C:'#ffb36b', D:'#3b2f7a' } ];
+  let livIdx = 0, col = {}, mesh = null, vcount = 0;
+  function build(){
+    const data = [], E = hexc('#ff9fd0');
+    for (const f of faces) {
+      const c = f.part === 'G' ? hexc('#1c1452') : f.part === 'E' ? E : col[f.part];
+      for (let i = 1; i < f.v.length - 1; i++) for (const k of [0, i, i + 1]) { const p = f.v[k], n = f.vn[k]; data.push(p[0], p[1], p[2], n[0], n[1], n[2], c[0], c[1], c[2], f.e, f.glass); }
+    }
+    mesh = new Float32Array(data); vcount = data.length / 11;
+    if (gl) { gl.bindBuffer(gl.ARRAY_BUFFER, vbuf); gl.bufferData(gl.ARRAY_BUFFER, mesh, gl.STATIC_DRAW); }
+  }
   function livery(){
     let i; do { i = (Math.random() * LIV.length) | 0; } while (i === livIdx);
     livIdx = i; const L = LIV[i];
-    col = { A:hexc(L.A[1]), B:mix(hexc(L.B[0]), hexc(L.B[1]), .35), C:hexc(L.C[0]), D:hexc('#3a4058'), G:hexc('#2f86b8') };
+    col = { A:hexc(L.A), B:hexc(L.B), C:hexc(L.C), D:hexc(L.D) };
+    build();
+  }
+
+  /* ---- renderer: WebGL, per-pixel soft lighting in the page's violet light ---- */
+  const D = 10.5, F = 214, CYOFF = 2;
+  const VS = `attribute vec3 aP; attribute vec3 aN; attribute vec3 aC; attribute vec2 aE; uniform mat3 uR; uniform vec2 uProj; uniform float uOff;
+varying vec3 vP; varying vec3 vN; varying vec3 vC; varying vec2 vE;
+void main(){ vec3 p = uR * aP; p.z += ${D.toFixed(2)}; vP = p; vN = uR * aN; vC = aC; vE = aE;
+  gl_Position = vec4(p.x * uProj.x, p.y * uProj.y - uOff * p.z, (p.z - 4.0) / 8.0 * p.z, p.z); }`;
+  const FS = `precision mediump float; varying vec3 vP; varying vec3 vN; varying vec3 vC; varying vec2 vE; uniform float uThr;
+void main(){
+  vec3 n = normalize(vN), V = normalize(-vP); if (dot(n, V) < 0.0) n = -n;
+  vec3 L = normalize(vec3(-.5, .75, -.6)), Lf = normalize(vec3(.6, -.3, .7));
+  float diff = max(0.0, dot(n, L)), fill = max(0.0, dot(n, Lf)), glass = vE.y;
+  vec3 H = normalize(L + V);
+  float spec = pow(max(0.0, dot(n, H)), mix(34.0, 22.0, glass)) * mix(.32, 1.0, glass);
+  float fr = pow(1.0 - max(0.0, dot(n, V)), 2.4);
+  vec3 lit = vC * (vec3(.24, .21, .36) + .1 * (n.y * .5 + .5) + vec3(1.0, .95, 1.0) * .9 * diff + vec3(.5, .34, .95) * .34 * fill);
+  vec3 col = lit + vec3(1.0, .95, 1.0) * spec + vec3(.62, .5, 1.0) * fr * (.16 + .5 * glass) + vec3(.5, .95, 1.0) * fr * glass * .5 + vC * vE.x * (1.0 + .7 * uThr);
+  gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0); }`;
+  const GVS = `attribute vec3 aP; uniform vec3 uPos; uniform vec2 uProj; uniform float uSize; uniform float uOff;
+void main(){ gl_Position = vec4(uPos.x * uProj.x, uPos.y * uProj.y - uOff * uPos.z, 0.0, uPos.z); gl_PointSize = uSize; }`;
+  const GFS = `precision mediump float; uniform vec4 uCol;
+void main(){ float d = length(gl_PointCoord - .5) * 2.0; float a = pow(max(0.0, 1.0 - d), 1.4) * uCol.a; gl_FragColor = vec4(uCol.rgb * a, a); }`;
+  const gl = cv.getContext('webgl', { antialias:true, alpha:true, premultipliedAlpha:true, powerPreference:'low-power' });
+  let P1 = null, P2 = null, vbuf = null, gbuf = null, U1 = {}, U2 = {};
+  if (gl) {
+    const prog = (vs, fs) => { const mk = (t, s) => { const o = gl.createShader(t); gl.shaderSource(o, s); gl.compileShader(o); return o; };
+      const p = gl.createProgram(); gl.attachShader(p, mk(gl.VERTEX_SHADER, vs)); gl.attachShader(p, mk(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(p); return gl.getProgramParameter(p, gl.LINK_STATUS) ? p : null; };
+    P1 = prog(VS, FS); P2 = prog(GVS, GFS);
+    if (P1 && P2) {
+      vbuf = gl.createBuffer(); gbuf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, gbuf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0,0,0]), gl.STATIC_DRAW);
+      const u = (p, n) => gl.getUniformLocation(p, n);
+      U1 = { R:u(P1,'uR'), proj:u(P1,'uProj'), off:u(P1,'uOff'), thr:u(P1,'uThr') };
+      U2 = { pos:u(P2,'uPos'), proj:u(P2,'uProj'), size:u(P2,'uSize'), col:u(P2,'uCol'), off:u(P2,'uOff') };
+      gl.viewport(0, 0, cv.width, cv.height);
+    } else { P1 = null; }
   }
   livery();
-
-  /* ---- renderer ---- */
-  const LS = norm([-.5,.75,-.6]), RIM = norm([.6,.1,.7]), D = 10.5, F = 214, CX = W/2, CY = H/2 + 2;
-  function glow(x, y, r, c, a){ const gr = g.createRadialGradient(x,y,0,x,y,r); gr.addColorStop(0, 'rgba(' + c + ',' + a + ')'); gr.addColorStop(1, 'rgba(' + c + ',0)'); g.fillStyle = gr; g.fillRect(x-r, y-r, r*2, r*2); }
+  const PROJ = [F / (W / 2), F / (H / 2)], OFFY = CYOFF / (H / 2);
   function render(t, yaw, pitch, roll, thrust, wave){
-    g.setTransform(DPR,0,0,DPR,0,0); g.clearRect(0,0,W,H);
+    if (!P1) return;
     const M = mmul(rx(-.3), mmul(ry(yaw), mmul(rz(pitch), rx(roll))));
-    const proj = v => { const p = ap(M, v), z = p[2] + D, s = F / z; return { x: CX + p[0]*s, y: CY - p[1]*s, s }; };
-    const out = [];
-    for (const f of mesh) {
-      const n = ap(M, f.n);
-      const vs = f.v.map(v => { const p = ap(M, v); p[2] += D; return p; });
-      let mx = 0, my = 0, mz = 0; for (const v of vs) { mx += v[0]; my += v[1]; mz += v[2]; } mx /= vs.length; my /= vs.length; mz /= vs.length;
-      if (n[0]*mx + n[1]*my + n[2]*mz >= 0) continue;
-      out.push({ f, n, vs, z: mz, c: [mx,my,mz] });
-    }
-    out.sort((a,b) => b.z - a.z);
-    g.lineJoin = 'round'; g.lineWidth = .6;
-    for (const o of out) {
-      const f = o.f, n = o.n, V = norm([-o.c[0], -o.c[1], -o.c[2]]);
-      const diff = Math.max(0, n[0]*LS[0] + n[1]*LS[1] + n[2]*LS[2]);
-      let r, gg, b;
-      if (f.part === 'E') { const e = .55 + .45*thrust; r = 60 + 140*e; gg = 10 + 235*e; b = 255; }
-      else {
-        let base = col[f.part];
-        const glass = f.part === 'G';
-        if (glass) { const fr = Math.pow(1 - Math.max(0, n[0]*V[0] + n[1]*V[1] + n[2]*V[2]), 2); base = mix(base, [170,235,255], fr * .8); }
-        const h = norm([LS[0] + V[0], LS[1] + V[1], LS[2] + V[2]]);
-        const sp = Math.pow(Math.max(0, n[0]*h[0] + n[1]*h[1] + n[2]*h[2]), glass ? 16 : 30) * (glass ? .9 : .35);
-        const rm = Math.max(0, n[0]*RIM[0] + n[1]*RIM[1] + n[2]*RIM[2]) * .25;
-        const sh = .3 + .12*(n[1]*.5 + .5) + .88*diff;
-        r = base[0]*sh + sp*255 + rm*80; gg = base[1]*sh + sp*255 + rm*110; b = base[2]*sh + sp*255 + rm*255;
-      }
-      const c = 'rgb(' + (clamp(r,0,255)|0) + ',' + (clamp(gg,0,255)|0) + ',' + (clamp(b,0,255)|0) + ')';
-      g.fillStyle = c; g.strokeStyle = c; g.beginPath();
-      o.vs.forEach((v, i) => { const s = F / v[2], X = CX + v[0]*s, Y = CY - v[1]*s; i ? g.lineTo(X,Y) : g.moveTo(X,Y); });
-      g.closePath(); g.fill(); g.stroke();
-    }
-    g.globalCompositeOperation = 'lighter';
-    [1,-1].forEach(s => {                                         // engine glow and exhaust
-      const p0 = proj([-2.25,-.1,.82*s]);
-      glow(p0.x, p0.y, .5*p0.s*(.7 + .6*thrust), '150,240,255', .55 + .4*thrust);
-      if (thrust > .05) {
-        const p1 = proj([-2.25 - (.35 + 1.0*thrust), -.1, .82*s]), lg = g.createLinearGradient(p0.x, p0.y, p1.x, p1.y);
-        lg.addColorStop(0, 'rgba(190,250,255,.85)'); lg.addColorStop(.5, 'rgba(90,190,255,.4)'); lg.addColorStop(1, 'rgba(70,120,255,0)');
-        g.strokeStyle = lg; g.lineWidth = Math.max(2, .32*p0.s*(.6 + .5*thrust)); g.lineCap = 'round'; g.beginPath(); g.moveTo(p0.x, p0.y); g.lineTo(p1.x, p1.y); g.stroke();
-      }
+    gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.enable(gl.DEPTH_TEST); gl.disable(gl.BLEND); gl.depthMask(true);
+    gl.useProgram(P1); gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
+    [['aP',3,0],['aN',3,12],['aC',3,24],['aE',2,36]].forEach(([n, c, o]) => { const l = gl.getAttribLocation(P1, n); gl.enableVertexAttribArray(l); gl.vertexAttribPointer(l, c, gl.FLOAT, false, 44, o); });
+    gl.uniformMatrix3fv(U1.R, false, colMajor(M)); gl.uniform2f(U1.proj, PROJ[0], PROJ[1]); gl.uniform1f(U1.off, OFFY); gl.uniform1f(U1.thr, thrust);
+    gl.drawArrays(gl.TRIANGLES, 0, vcount);
+    gl.disable(gl.DEPTH_TEST); gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE);
+    gl.useProgram(P2); gl.bindBuffer(gl.ARRAY_BUFFER, gbuf);
+    const al = gl.getAttribLocation(P2, 'aP'); gl.enableVertexAttribArray(al); gl.vertexAttribPointer(al, 3, gl.FLOAT, false, 0, 0);
+    gl.uniform2f(U2.proj, PROJ[0], PROJ[1]); gl.uniform1f(U2.off, OFFY);
+    const wp = v => { const p = ap(M, v); p[2] += D; return p; };
+    const spot = (v, rad, c, a) => { const p = wp(v), s = F / p[2]; gl.uniform3f(U2.pos, p[0], p[1], p[2]); gl.uniform1f(U2.size, Math.min(2 * rad * s * DPR, 256)); gl.uniform4f(U2.col, c[0], c[1], c[2], a); gl.drawArrays(gl.POINTS, 0, 1); };
+    [1,-1].forEach(s => {                                         // engine glow and a soft rose-to-violet exhaust plume, like the robot's flame
+      spot([-2.25,-.12,.86*s], .5*(.7 + .6*thrust), [1,.62,.82], .6 + .4*thrust);
+      if (thrust > .05) for (let k = 1; k <= 7; k++) { const f = k / 7; spot([-2.25 - f*(.45 + 1.15*thrust), -.12, .86*s], (.3 - .12*f) * (.7 + .5*thrust), [1 - .35*f, .72 - .22*f, .9 + .1*f], .5 * (1 - f) * (.5 + .5*thrust)); }
     });
-    const bl = Math.sin(t * (wave ? 18 : 4.2));                    // running lights
-    [[1,'255,90,90',0],[-1,'110,255,170',1.6]].forEach(([s,c,ph]) => { const p = proj([-1.3,.2,2.5*s]); glow(p.x, p.y, .3*p.s, c, Math.sin(t * (wave ? 18 : 4.2) + ph) > -.1 ? .95 : .2); });
-    const pf = proj([-1.8,1.45,0]); glow(pf.x, pf.y, .26*pf.s, '255,255,255', (t*1.1) % 1 < .1 ? 1 : .15);
-    g.globalCompositeOperation = 'source-over';
+    const rate = wave ? 18 : 4.2;                                  // running lights
+    [[1,[1,.56,.72],0],[-1,[.56,.95,1],1.6]].forEach(([s,c,ph]) => spot([-1.3,.2,2.4*s], .3, c, Math.sin(t * rate + ph) > -.1 ? .95 : .2));
+    spot([-1.8,1.45,0], .26, [1,1,1], (t*1.1) % 1 < .1 ? 1 : .15);
   }
 
   const flipRef = { v: 1 };
@@ -3861,7 +3886,7 @@ const GITHUB_URL = "https://github.com/YOUR-USERNAME";
 document.querySelectorAll("[data-github]").forEach(a => { a.href = GITHUB_URL; });
 </script>
 <script>
-/* ===== Space station: a smooth, real-time 3D model (WebGL, per-pixel lighting, anti-aliased) that tumbles slowly as it wanders the sky ===== */
+/* ===== Space station: a smooth pearl-and-violet 3D model (WebGL, soft violet lighting, anti-aliased) that tumbles slowly as it wanders the sky ===== */
 (function(){
   const field = document.querySelector('.planet-playground'), anchor = document.querySelector('.hero');
   if (!field || !anchor) return;
@@ -3913,26 +3938,44 @@ document.querySelectorAll("[data-github]").forEach(a => { a.href = GITHUB_URL; }
       add(g, [[cx+r*Math.cos(a0),cy,cz+r*Math.sin(a0)],[cx+r*Math.cos(a1),cy,cz+r*Math.sin(a1)],[cx,cy+h,cz]], nAt(m), hex(col), 0, 0, [nAt(a0), nAt(a1), nAt(m)]);
     }
   }
+  function domeY(g, cx,cy,cz, r, h, sides, rings, col){              // a smooth half-ellipsoid cap
+    const pt = (i, j) => { const t = i / rings * Math.PI / 2, a = j / sides * TAU; return [cx + r*Math.sin(t)*Math.cos(a), cy + h*Math.cos(t), cz + r*Math.sin(t)*Math.sin(a)]; };
+    const nr = (i, j) => { const t = i / rings * Math.PI / 2, a = j / sides * TAU; return nrm([Math.sin(t)*Math.cos(a)/r, Math.cos(t)/h, Math.sin(t)*Math.sin(a)/r]); };
+    for (let i = 0; i < rings; i++) for (let j = 0; j < sides; j++)
+      add(g, [pt(i,j), pt(i,j+1), pt(i+1,j+1), pt(i+1,j)], nr(i + .5, j + .5), hex(col), 0, 0, [nr(i,j), nr(i,j+1), nr(i+1,j+1), nr(i+1,j)]);
+  }
+  function panel(g, cx,cy,cz, sx,sy,thk, rad, col){                      // a rounded-corner solar panel, softly domed so it catches the light
+    const pts = [];
+    [[1,1,0],[-1,1,90],[-1,-1,180],[1,-1,270]].forEach(([qx, qy, a0]) => { for (let k = 0; k <= 5; k++) { const a = (a0 + k*18) * Math.PI / 180; pts.push([qx*(sx/2 - rad) + Math.cos(a)*rad, qy*(sy/2 - rad) + Math.sin(a)*rad]); } });
+    const c = hex(col), n = pts.length, hz = thk / 2;
+    const dn = (p, z) => nrm([p[0] / (sx * 2.2), p[1] / (sy * 2.2), z]);
+    for (let i = 1; i < n - 1; i++) {
+      for (const sg of [1, -1]) add(g, [[cx + pts[0][0], cy + pts[0][1], cz + sg*hz], [cx + pts[i][0], cy + pts[i][1], cz + sg*hz], [cx + pts[i+1][0], cy + pts[i+1][1], cz + sg*hz]], [0,0,sg], c, 0, 0, [dn(pts[0], sg), dn(pts[i], sg), dn(pts[i+1], sg)]);
+    }
+    for (let i = 0; i < n; i++) { const a = pts[i], b = pts[(i+1) % n], e = nrm([(a[0]+b[0])/2/(sx/2), (a[1]+b[1])/2/(sy/2), 0]);
+      add(g, [[cx+a[0], cy+a[1], cz-hz], [cx+b[0], cy+b[1], cz-hz], [cx+b[0], cy+b[1], cz+hz], [cx+a[0], cy+a[1], cz+hz]], e, c, 0, 0, [e, e, e, e]); }
+  }
   function bend(g, from, m){ for (let i = from; i < G[g].f.length; i++) { const f = G[g].f[i]; f.v = f.v.map(v => ap(m, v)); f.n = ap(m, f.n); if (f.vn) f.vn = f.vn.map(n => ap(m, n)); } }   // re-orient faces built along Y
 
   /* ---- the station ---- */
-  const WH = '#e8ecf7', TEAL = '#29b7c4', ORG = '#ff9a4d', DK = '#4a5068';
+  const WH = '#ece6ff', WH2 = '#d6ccf6', ACC = '#9a86ee', PINK = '#ff8fb8', DK = '#3b2f7a', NIGHT = '#1e1744', STRUT = '#a89ce0';
   const SD = 48;                                                          // sides on every round part
-  cylY('core', 0,-2.8,0, .78,.56, 1.2, SD, DK, '#2a2d3d', null);
-  cylY('core', 0,-2.86,0, .64,.64, .16, SD, ORG, null, null);
-  cylY('core', 0,-1.6,0, .55,.55, 1.2, SD, i => (i % 12 === 0) ? '#cfd6ea' : WH, null, null);
-  cylY('core', 0,-.85,0, .64,.64, .3, SD, TEAL, null, null);
-  cylY('core', 0,0,0, .55,.55, 1.4, SD, i => (i % 12 === 6) ? '#cfd6ea' : WH, null, null);
-  cylY('core', 0,.85,0, .64,.64, .3, SD, TEAL, null, null);
-  cylY('core', 0,1.7,0, .55,.55, 1.4, SD, i => (i % 12 === 0) ? '#cfd6ea' : WH, null, null);
-  cylY('core', 0,2.55,0, .3,.3, .7, 32, '#6a7190', '#6a7190', '#222638');
-  coneY('core', 0,2.9,0, .3, .5, 32, ORG);
-  cylY('core', 0,3.7,0, .035,.035, 1.2, 10, '#9aa3bd', null, null);
+  cylY('core', 0,-2.8,0, .78,.56, 1.2, SD, DK, NIGHT, null);
+  cylY('core', 0,-2.86,0, .64,.64, .16, SD, PINK, null, null);
+  cylY('core', 0,-1.6,0, .55,.55, 1.2, SD, i => (i % 12 === 0) ? WH2 : WH, null, null);
+  cylY('core', 0,-.85,0, .64,.64, .3, SD, ACC, null, null);
+  cylY('core', 0,0,0, .55,.55, 1.4, SD, i => (i % 12 === 6) ? WH2 : WH, null, null);
+  cylY('core', 0,.85,0, .64,.64, .3, SD, ACC, null, null);
+  cylY('core', 0,1.7,0, .55,.55, 1.4, SD, i => (i % 12 === 0) ? WH2 : WH, null, null);
+  cylY('core', 0,2.5,0, .42,.5, .6, 40, DK, null, null);
+  domeY('core', 0,2.8,0, .42, .5, 40, 10, WH);
+  cylY('core', 0,3.35,0, .03,.03, .5, 10, STRUT, null, null);
+  domeY('core', 0,3.6,0, .09, .09, 16, 6, PINK);
   // habitat ring (spins): a smooth torus, with spokes, modules and softly lit round-cornered windows
   (function(){
     const R = 2.65, rt = .34, segs = 160, sides = 28;
     for (let i = 0; i < segs; i++) {
-      const blk = Math.floor(i * 32 / segs), col = hex(blk % 8 === 0 ? TEAL : (blk % 2 ? '#dfe4f1' : '#c9d0e4'));
+      const blk = Math.floor(i * 32 / segs), col = hex(blk % 8 === 0 ? ACC : (blk % 2 ? WH : WH2));
       const t0 = i / segs * TAU, t1 = (i + 1) / segs * TAU;
       for (let j = 0; j < sides; j++) {
         const p0 = j / sides * TAU, p1 = (j + 1) / sides * TAU;
@@ -3946,30 +3989,28 @@ document.querySelectorAll("[data-github]").forEach(a => { a.href = GITHUB_URL; }
       const w = .15, hgt = .1, rr = .045;
       const rp = []; const cr = [[w-rr, hgt-rr, 0], [-(w-rr), hgt-rr, 90], [-(w-rr), -(hgt-rr), 180], [w-rr, -(hgt-rr), 270]];
       cr.forEach(([ox, oy, a0]) => { for (let k = 0; k <= 4; k++) { const a = (a0 + k * 22.5) * Math.PI / 180; rp.push([ox + Math.cos(a) * rr, oy + Math.sin(a) * rr]); } });
-      add('ring', rp.map(([a, b]) => [c[0] + th[0]*a, b, c[2] + th[2]*a]).reverse(), rh, hex(i % 3 ? '#7ff3ff' : '#ffd27a'), .9, i * 1.7);
+      add('ring', rp.map(([a, b]) => [c[0] + th[0]*a, b, c[2] + th[2]*a]).reverse(), rh, hex(i % 5 === 2 ? '#8ff1ff' : (i % 2 ? '#ffd9a0' : '#d8c8ff')), .9, i * 1.7);
     }
     for (let a = 0; a < 4; a++) { const an = a * Math.PI / 2, ca = Math.cos(an), sa = Math.sin(an);
       const L = 1.9, mid = 1.5, ex = Math.abs(ca) > .5 ? L : .14, ez = Math.abs(sa) > .5 ? L : .14;
-      box('ring', ca*mid, 0, sa*mid, ex, .14, ez, '#aab2c8', 0, 0, .6); }
+      box('ring', ca*mid, 0, sa*mid, ex, .14, ez, STRUT, 0, 0, .6); }
     [.4, 2.3, 4.2].forEach(an => { const ca = Math.cos(an), sa = Math.sin(an), s = 2.65 + .34 + .2; const f0 = G.ring.f.length;
-      box('ring', ca*s, 0, sa*s, .5, .5, .5, TEAL, 0, 0, .9); box('ring', ca*(s+.3), .05, sa*(s+.3), .12, .3, .3, '#7ff3ff', .8, an, .6);
+      box('ring', ca*s, 0, sa*s, .5, .5, .5, ACC, 0, 0, .95); box('ring', ca*(s+.3), .05, sa*(s+.3), .12, .3, .3, '#ffd9a0', .8, an, .6);
       const m = ry(-an); for (let i = f0; i < G.ring.f.length; i++) { const f = G.ring.f[i]; const rot = v => { const l = [v[0]-ca*s, v[1], v[2]-sa*s]; const r = ap(m, l); return [r[0]+ca*s, r[1], r[2]+sa*s]; };
         f.v = f.v.map(rot); f.n = ap(m, f.n); if (f.vn) f.vn = f.vn.map(n => ap(m, n)); } });
   })();
-  // solar wings: a boom with blue panels either side (they tilt to follow the "sun")
+  // solar wings: a boom with rounded violet panels either side (they tilt to follow the "sun")
   [['wingL',-1],['wingR',1]].forEach(([g, sg]) => {
-    box(g, sg*1.75, 0, 0, 3.5, .09, .09, '#9aa3bd', 0, 0, .8);
-    [1.15, 2.55].forEach(cxm => {
-      for (let s2 = 0; s2 < 4; s2++) box(g, sg*(cxm - .52 + s2 * .35 + .17), 0, 0, .33, 1.55, .05, s2 % 2 ? '#2a58c9' : '#3168dd', 0, 0, .25);
-    });
-    box(g, sg*3.4, .86, 0, .06, .16, .06, '#9aa3bd', 0, 0, .8);
+    box(g, sg*1.75, 0, 0, 3.5, .09, .09, STRUT, 0, 0, .9);
+    [1.3, 2.7].forEach((cxm, k) => panel(g, sg*cxm, 0, 0, 1.2, 1.55, .06, .2, k ? '#5a49bd' : '#4a3ba6'));
+    box(g, sg*3.4, .86, 0, .06, .16, .06, STRUT, 0, 0, .9);
   });
   // comms dish
-  (function(){ const f0 = G.dish.f.length; coneY('dish', 0,0,0, .55, .2, 40, '#dfe4f1'); cylY('dish', 0,.28,0, .03,.03, .5, 10, '#9aa3bd', null, '#ff9a4d'); bend('dish', f0, rz(-Math.PI/2 + .35)); })();
+  (function(){ const f0 = G.dish.f.length; coneY('dish', 0,0,0, .55, .2, 40, WH); cylY('dish', 0,.28,0, .03,.03, .5, 10, STRUT, null, PINK); bend('dish', f0, rz(-Math.PI/2 + .35)); })();
   // docked shuttle
-  (function(){ box('shuttle', 0,0,0, 1.0,.26,.42, '#f2f4fb', 0, 0, .8); box('shuttle', .2,.17,0, .34,.1,.3, '#7ff3ff', .85, 1, .8); box('shuttle', -.05,0,0, .5,.05,1.1, '#c9d0e4', 0, 0, .3); box('shuttle', -.42,.2,0, .16,.36,.05, ORG, 0, 0, .5);
-    const f0 = G.shuttle.f.length; coneY('shuttle', 0,0,0, .17, .5, 24, ORG); bend('shuttle', f0, mul(rz(-Math.PI/2), [1,0,0,0,1,0,0,0,1])); G.shuttle.f.slice(f0).forEach(f => f.v = f.v.map(v => [v[0]+.5, v[1], v[2]])); })();
-  const BEACONS = [['wingL',[-3.4,.98,0],'#ff4d4d',0], ['wingR',[3.4,.98,0],'#4dff8f',1.6], ['core',[0,4.35,0],'#ffffff',.8]];
+  (function(){ box('shuttle', 0,0,0, 1.0,.26,.42, WH, 0, 0, .9); box('shuttle', .2,.17,0, .34,.1,.3, '#8ff1ff', .85, 1, .8); box('shuttle', -.05,0,0, .5,.05,1.1, ACC, 0, 0, .4); box('shuttle', -.42,.2,0, .16,.36,.05, PINK, 0, 0, .6);
+    const f0 = G.shuttle.f.length; coneY('shuttle', 0,0,0, .17, .5, 24, PINK); bend('shuttle', f0, mul(rz(-Math.PI/2), [1,0,0,0,1,0,0,0,1])); G.shuttle.f.slice(f0).forEach(f => f.v = f.v.map(v => [v[0]+.5, v[1], v[2]])); })();
+  const BEACONS = [['wingL',[-3.4,.98,0],'#ff8fb8',0], ['wingR',[3.4,.98,0],'#8ff1ff',1.6], ['core',[0,3.72,0],'#ffffff',.8]];
 
   /* ---- upload the mesh (triangles, 11 floats per vertex: position, normal, colour, emissive, phase) ---- */
   const ranges = {}; const data = [];
@@ -3993,11 +4034,11 @@ void main(){ vec3 p = uR * aP + uOff; vP = p; vN = uR * aN; vC = aC; vE = aE;
 void main(){
   vec3 n = normalize(vN); vec3 V = normalize(-vP); if (dot(n, V) < 0.0) n = -n;
   vec3 L = normalize(vec3(-.45, .75, -.5)); vec3 rimL = normalize(vec3(.6, -.3, .7));
-  float diff = max(0.0, dot(n, L)); vec3 H = normalize(L + V); float spec = pow(max(0.0, dot(n, H)), 28.0) * .34;
-  float rim = pow(1.0 - max(0.0, dot(n, V)), 2.4) * max(0.0, dot(n, rimL) * .5 + .5) * .35;
-  float sh = .26 + .1 * (n.y * .5 + .5) + .92 * diff;
+  float diff = max(0.0, dot(n, L)), fill = max(0.0, dot(n, rimL)); vec3 H = normalize(L + V); float spec = pow(max(0.0, dot(n, H)), 30.0) * .3;
+  float rim = pow(1.0 - max(0.0, dot(n, V)), 2.4) * (.4 + .6 * max(0.0, dot(n, rimL) * .5 + .5)) * .35;
   float e = vE.x * (.62 + .38 * sin(uT * .7 + vE.y));
-  vec3 col = vC * sh + vec3(spec) + vec3(.22, .36, 1.0) * rim * .5 + vec3(e);
+  vec3 lit = vC * (vec3(.24, .21, .36) + .1 * (n.y * .5 + .5) + vec3(1.0, .95, 1.0) * .9 * diff + vec3(.5, .34, .95) * .3 * fill);
+  vec3 col = lit + vec3(1.0, .95, 1.0) * spec + vec3(.62, .5, 1.0) * rim * .6 + vC * e * 1.3;
   gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0); }`;
   const GVS = `attribute vec3 aP; uniform vec3 uPos; uniform vec2 uProj; uniform float uSize;
 void main(){ gl_Position = vec4(uPos.x * uProj.x, uPos.y * uProj.y, 0.0, uPos.z); gl_PointSize = uSize; }`;
@@ -4052,8 +4093,8 @@ void main(){ float d = length(gl_PointCoord - .5) * 2.0; float a = max(0.0, 1.0 
     gl.uniform2f(U2.proj, proj[0], proj[1]);
     const wp = (g, v) => { const R = mul(M, gm[g]), p = ap(R, v), off = ap(M, G[g].pos); return [p[0]+off[0], p[1]+off[1], p[2]+off[2]+D]; };
     const glow = (p, rad, c, a) => { const s = F / p[2]; gl.uniform3f(U2.pos, p[0], p[1], p[2]); gl.uniform1f(U2.size, Math.min(rad * s * 2 * dpr, 512)); gl.uniform4f(U2.col, c[0], c[1], c[2], a); gl.drawArrays(gl.POINTS, 0, 1); };
-    glow(wp('core',[0,-3.5,0]), .9, [120/255,230/255,1], .8);
-    for (const [g, v, col, ph] of BEACONS) { const on = reduced ? 1 : (Math.sin(t * 2.4 + ph * 3) > .2 ? 1 : .15); glow(wp(g, v), .5, hex(col), .9 * on); }
+    glow(wp('core',[0,-3.5,0]), .95, [1,.62,.85], .75);
+    for (const [g, v, col, ph] of BEACONS) { const on = reduced ? 1 : (Math.sin(t * 2.4 + ph * 3) > .2 ? 1 : .15); glow(wp(g, v), g === 'core' ? .32 : .5, hex(col), .9 * on); }
   }
 
   /* ---- wandering ---- */
