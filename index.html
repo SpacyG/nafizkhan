@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#111014">
   <meta name="description" content="Nafiz Khan — aspiring email and sales copywriter from Bangladesh.">
-  <script>try{if(localStorage.getItem('nk-calm')==='1')document.documentElement.classList.add('calm')}catch(e){}</script>
+  <script>try{if(localStorage.getItem('nk-calm')!=='0')document.documentElement.classList.add('calm')}catch(e){}</script>
   <meta name="color-scheme" content="dark">
   <meta name="author" content="Nafiz Khan">
   <meta name="robots" content="index, follow">
@@ -958,6 +958,8 @@
       pointer-events: none; animation: orbit-breathe 8s ease-in-out infinite alternate;
     }
     .hero h1 { text-wrap: balance; text-shadow: 0 0 42px rgba(137,101,223,.12); }
+    .hero .hero-name { font-size:clamp(3.5rem, 9.5vw, 7.8rem); line-height:.98; letter-spacing:-.075em; margin:0 0 24px; font-weight:800; text-shadow:0 0 44px rgba(137,101,223,.18); }
+    .hero .hero-tagline { font-size:clamp(1.8rem, 4.2vw, 3.35rem); line-height:1.13; letter-spacing:-.045em; margin:0 0 22px; text-wrap:balance; }
     .hero-copy { max-width: 58ch; }
     .eyebrow { display: flex; align-items: center; gap: 11px; letter-spacing: .19em; }
     .eyebrow::before { content: ""; width: 24px; height: 1px; background: currentColor; opacity: .85; }
@@ -1298,7 +1300,7 @@ footer .footer-inner span:first-child::before{content:"✦";margin-right:.5rem;c
 
   /* Rocket cursor: flame is off while idle and smoothly fades in only during movement. */
 @media (hover: hover) and (pointer: fine) {
-  html, body, a, button, input, textarea, select, [role="button"], .planet, .planet:active { cursor: none !important; }
+  html, body, a, button, input, textarea, select, [role="button"], .planet, .planet:active { cursor: auto !important; }
   #rocketCursor { position:fixed; left:0; top:0; width:31px; height:31px; z-index:99999; pointer-events:none; opacity:0; transform:translate3d(-100px,-100px,0) rotate(-35deg); will-change:transform; filter:drop-shadow(0 0 3px rgba(167,139,250,.25)); }
   #rocketCursor.is-visible { opacity:1; }
   #rocketCursor .rocket-flame { opacity:0; transform:scale(.35); transform-origin:13px 19px; transition:opacity .18s ease, transform .22s ease; }
@@ -1316,8 +1318,8 @@ body > *:not(#cosmicStarfield):not(.planet-playground):not(#rocketCursor):not(#o
 
 
 /* Distant home-page sun: luminous, restrained, and behind the hero copy. */
-.distant-sun { position:absolute; width:clamp(105px,15vw,205px); aspect-ratio:1; right:clamp(90px,15vw,220px); top:clamp(22px,7vh,78px); border-radius:50%; pointer-events:none; z-index:0; opacity:.92; background:radial-gradient(circle,rgba(255,246,213,.98) 0 5%,rgba(255,210,135,.9) 11%,rgba(255,168,110,.35) 25%,rgba(172,112,255,.13) 45%,transparent 70%); filter:blur(.2px); animation:sun-pulse 6s ease-in-out infinite; }
-.distant-sun::before { content:"";position:absolute;inset:17%;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff9dc 0,#ffd995 22%,#ffb875 48%,rgba(230,132,255,.5) 72%,transparent 100%);box-shadow:0 0 24px 8px rgba(255,190,128,.23),0 0 75px 24px rgba(170,120,255,.15); }
+.distant-sun { position:absolute; width:clamp(105px,15vw,205px); aspect-ratio:1; right:clamp(90px,15vw,220px); top:clamp(22px,7vh,78px); border-radius:50%; pointer-events:none; z-index:0; opacity:.78; background:radial-gradient(circle,rgba(255,246,213,.98) 0 4%,rgba(255,210,135,.82) 9%,rgba(255,168,110,.24) 21%,rgba(172,112,255,.07) 38%,transparent 62%); filter:none; animation:sun-pulse 8s ease-in-out infinite; }
+.distant-sun::before { content:"";position:absolute;inset:17%;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff9dc 0,#ffd995 22%,#ffb875 48%,rgba(230,132,255,.5) 72%,transparent 100%);box-shadow:0 0 12px 3px rgba(255,190,128,.16),0 0 34px 10px rgba(170,120,255,.09); }
 .distant-sun::after { content:"";position:absolute;inset:-18%;border-radius:50%;background:radial-gradient(circle,rgba(255,197,128,.12),transparent 66%); }
 @keyframes sun-pulse { 0%,100%{transform:scale(.98);filter:brightness(.95)}50%{transform:scale(1.04);filter:brightness(1.12)} }
 
@@ -1890,7 +1892,7 @@ footer .footer-inner span span::before, footer .calm-toggle span::before { conte
 
 /* Calm mode: the clean, quiet version of the page (no robot, ship, station, planets or custom cursor) */
 html.calm #mascot, html.calm #mascot-bubble, html.calm #mascot-live, html.calm #robot-sign, html.calm #robot-ledge, html.calm #ttt, html.calm #ttt-launch,
-html.calm #sship, html.calm #holo, html.calm html.calm #rocketCursor, html.calm .planet-playground, html.calm #orbitRings, html.calm #debrisFx { display:none !important; }
+html.calm #sship, html.calm #holo, html.calm #rocketCursor, html.calm .planet-playground, html.calm #orbitRings, html.calm #debrisFx { display:none !important; }
 html.calm, html.calm body, html.calm * { cursor:auto !important; }
 html.calm a, html.calm button, html.calm [role="button"], html.calm summary { cursor:pointer !important; }
 
@@ -1984,6 +1986,24 @@ body > header { z-index:4 !important; }      /* planets drift behind the header,
 .gw[style*="--lit"] { color:color-mix(in srgb, currentColor, #fff calc(var(--lit) * 38%)); text-shadow:0 0 calc(var(--lit) * 14px) rgba(196,172,255,calc(var(--lit) * .55)), 0 0 calc(var(--lit) * 2px) rgba(255,255,255,calc(var(--lit) * .28)); }
 @media (hover:hover) { .gw:hover { transform:none; text-shadow:inherit; } }
 html.calm .gw { color:inherit !important; text-shadow:none !important; }
+
+/* Scroll reveal: content gently rises out of the page rather than popping in. */
+.js-reveal { opacity:0; transform:translate3d(0,22px,0); filter:blur(2px);
+  transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1), filter .7s ease; }
+.js-reveal.revealed { opacity:1; transform:translate3d(0,0,0); filter:blur(0); }
+@media (prefers-reduced-motion:reduce) { .js-reveal { opacity:1; transform:none; filter:none; transition:none; } }
+
+/* Single cursor: keep the site's original rocket pointer; remove the added crosshair. */
+@media (hover:hover) and (pointer:fine) {
+  html, html *, body, body * { cursor: none !important; }
+  #rocketCursor { display:block !important; opacity:0; }
+  #rocketCursor.is-visible { opacity:1; }
+}
+@media (hover:none), (pointer:coarse) { html, html *, body, body * { cursor:auto !important; } #rocketCursor { display:none !important; } }
+
+/* HERO NAME SCALE: the personal brand is the primary visual anchor. */
+.hero .hero-name { font-size: clamp(4.4rem, 13vw, 10.5rem) !important; line-height: .9 !important; letter-spacing: -.085em !important; max-width: 100%; }
+@media (max-width: 520px) { .hero .hero-name { font-size: clamp(3.5rem, 15vw, 5.5rem) !important; letter-spacing: -.07em !important; } }
 </style>
 
 </head>
@@ -2058,7 +2078,7 @@ html.calm .gw { color:inherit !important; text-shadow:none !important; }
   <header>
     <a class="skip-link" href="#main">Skip to content</a>
     <div class="container nav">
-      <a class="logo" href="#home">Be the change that you wish to see in the world<span>!</span></a>
+      <a class="logo" href="#home">Nafiz Khan<span>.</span></a>
 
       <nav aria-label="Main navigation">
         <a href="#services">Services</a>
@@ -2066,9 +2086,9 @@ html.calm .gw { color:inherit !important; text-shadow:none !important; }
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
         <div class="nav-tools">
-          <a class="gh-link" data-github href="https://github.com/" target="_blank" rel="noopener" aria-label="GitHub (opens in a new tab)" title="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.921.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+          <a class="gh-link" data-github href="https://github.com/spacyg" target="_blank" rel="noopener" aria-label="GitHub (opens in a new tab)" title="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.921.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
           <a class="gh-link ig-link" href="https://www.instagram.com/spacy_gambiot/" target="_blank" rel="noopener" aria-label="Instagram (opens in a new tab)" title="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5"/><circle cx="12" cy="12" r="4.1"/><circle cx="17.4" cy="6.6" r="1.05" class="ig-dot"/></svg></a>
-          <button type="button" class="calm-toggle calm-top" data-calm-toggle aria-pressed="false" title="Calm mode: switches off the animations, the robot and the cursor effects"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.6 8.6 0 0 1 9.8 3.5a8.6 8.6 0 1 0 10.7 10.7z"/></svg><span class="ct-label">Calm mode</span><span class="ct-switch" aria-hidden="true"></span><span class="ct-state sr-only">off</span></button>
+          <button type="button" class="calm-toggle calm-top" data-calm-toggle aria-pressed="true" title="Calm mode: switches off the animations, the robot and the cursor effects"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.6 8.6 0 0 1 9.8 3.5a8.6 8.6 0 1 0 10.7 10.7z"/></svg><span class="ct-label">Calm mode</span><span class="ct-switch" aria-hidden="true"></span><span class="ct-state sr-only">off</span></button>
         </div>
       </nav>
     </div>
@@ -2078,11 +2098,12 @@ html.calm .gw { color:inherit !important; text-shadow:none !important; }
     <section class="container hero" id="home">
       <div class="distant-sun" data-star-id="home" aria-hidden="true"><i class="sd sd-rays"></i><i class="sd sd-b"></i><i class="sd sd-c"></i><i class="sd sd-d"></i><span></span></div>
       <div>
-        <p class="eyebrow">Email · Sales · Landing Page Copy</p>
+        <p class="eyebrow">Independent copywriter</p>
 
-        <h1>Words that connect.<br>
+        <h1 class="hero-name">Nafiz Khan<span class="purple">.</span></h1>
+        <h2 class="hero-tagline">Words that connect.<br>
           <span class="purple">Copy that cares.</span>
-        </h1>
+        </h2>
 
         <p class="hero-copy">
           I write clear, thoughtful copy to help businesses communicate
@@ -2371,7 +2392,7 @@ html.calm .gw { color:inherit !important; text-shadow:none !important; }
       <span>&copy; <span id="year"></span> Nafiz Khan</span>
       <span>Built with care, one step at a time.</span>
       <a class="footer-link" href="#home">Back to top &uarr;</a>
-      <a class="gh-foot" data-github href="https://github.com/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.921.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub</a>
+      <a class="gh-foot" data-github href="https://github.com/SpacyG" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.921.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub</a>
       <a class="gh-foot ig-foot" href="https://www.instagram.com/spacy_gambiot/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5"/><circle cx="12" cy="12" r="4.1"/><circle cx="17.4" cy="6.6" r="1.05" class="ig-dot"/></svg>Instagram</a>
     </div>
   </footer>
@@ -3865,6 +3886,7 @@ html.calm .gw { color:inherit !important; text-shadow:none !important; }
 <script>
 /* ===== Tiny 3D spaceship: a smooth pearl-and-violet mesh (WebGL) that banks, pitches and turns in 3D as it roams; hover or click it for a hologram ===== */
 (function(){
+  const homeArea = document.getElementById('home'); if (!homeArea) return;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
   const rnd = (a,b) => a + Math.random() * (b - a);
@@ -4073,7 +4095,7 @@ void main(){ float d = length(gl_PointCoord - .5) * 2.0; float a = pow(max(0.0, 
     if (state === 'holo') { state = 'roam'; pick(); }
   }
   const soonClose = ms => { clearTimeout(closeT); closeT = setTimeout(closeHolo, ms); };
-  btn.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') { clearTimeout(closeT); hoverT = setTimeout(openHolo, 180); } });
+  btn.addEventListener('pointerenter', () => { clearTimeout(closeT); });
   btn.addEventListener('pointerleave', () => { clearTimeout(hoverT); if (open) soonClose(1800); });
   holo.addEventListener('pointerenter', () => { clearTimeout(closeT); clearTimeout(autoT); });
   holo.addEventListener('pointerleave', () => { if (open) soonClose(1500); });
@@ -4095,6 +4117,10 @@ void main(){ float d = length(gl_PointCoord - .5) * 2.0; float a = pow(max(0.0, 
 
   function frame(now){
     const dt = Math.min(.05, (now - last) / 1000); last = now;
+    const hr = homeArea.getBoundingClientRect();
+    const homeVisible = hr.bottom > 0 && hr.top < innerHeight;
+    if (!homeVisible) { btn.classList.remove('on'); if (open) closeHolo(); requestAnimationFrame(frame); return; }
+    if (state !== 'away') btn.classList.add('on');
     let k = 2.2, dmp = 2.9, vmax = 120;
     if (state === 'in') { if (!btn.classList.contains('on')) btn.classList.add('on'); tx = x < 0 ? 90 : innerWidth - 90; ty = y; if (Math.abs(tx - x) < 40) { state = 'roam'; pick(); } }
     else if (state === 'flee') { k = 6; dmp = 5; vmax = 520; tx = x + fleeDir.x * 600; ty = y + fleeDir.y * 600; if (x < -180 || x > innerWidth + 180 || y < -180 || y > innerHeight + 180) { state = 'away'; btn.classList.remove('on'); } }
@@ -4111,6 +4137,8 @@ void main(){ float d = length(gl_PointCoord - .5) * 2.0; float a = pow(max(0.0, 
     vx += ((tx - x) * k - vx * dmp) * dt; vy += ((ty - y) * k - vy * dmp) * dt;
     const sp = Math.hypot(vx, vy); if (sp > vmax) { vx *= vmax / sp; vy *= vmax / sp; }
     x += vx * dt; y += vy * dt;
+    x = clamp(x, 48, innerWidth - 48);
+    y = clamp(y, Math.max(48, hr.top + 28), Math.min(innerHeight - 48, hr.bottom - 28));
     z += (tz - z) * Math.min(1, dt * 1.6);
     if (Math.abs(vx) > 14) flip = vx >= 0 ? 1 : -1;
     const wave = btn.classList.contains('is-waving');
@@ -4131,7 +4159,7 @@ void main(){ float d = length(gl_PointCoord - .5) * 2.0; float a = pow(max(0.0, 
 </script>
 <script>
 // Put your GitHub profile address here: every GitHub link on the page uses it.
-const GITHUB_URL = "https://github.com/YOUR-USERNAME";
+const GITHUB_URL = "https://github.com/SpacyG";
 document.querySelectorAll("[data-github]").forEach(a => { a.href = GITHUB_URL; });
 </script>
 <script>
@@ -4412,7 +4440,7 @@ void main(){
 </script>
 <script>
 (function(){
-  const root = document.documentElement; let on = root.classList.contains('calm');
+  const root = document.documentElement; let on = true; try { on = localStorage.getItem('nk-calm') !== '0'; } catch(_e) {} root.classList.toggle('calm', on);
   function apply(v){
     on = v; root.classList.toggle('calm', v);
     try { localStorage.setItem('nk-calm', v ? '1' : '0'); } catch(_e) {}
@@ -4453,5 +4481,20 @@ void main(){
   addEventListener('blur', () => { px = py = -9999; kick(); });
 })();
 </script>
+
+<script>
+/* Progressive reveal for sections, headings, and portfolio cards. */
+(function(){
+  const selectors = 'main > section, .content-section, .review-section, .card, .approach-card, .portfolio-page-header h1, .portfolio-page-grid > *';
+  const nodes = [...document.querySelectorAll(selectors)];
+  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  nodes.forEach((el,i)=>{ if (el.closest('#home') && el.matches('main > section')) return; el.classList.add('js-reveal'); el.style.transitionDelay=(Math.min(i%5,4)*65)+'ms'; });
+  const io = new IntersectionObserver(entries=>entries.forEach(entry=>{
+    if(entry.isIntersecting){entry.target.classList.add('revealed');io.unobserve(entry.target);}
+  }),{threshold:.08,rootMargin:'0px 0px -35px 0px'});
+  nodes.filter(el=>el.classList.contains('js-reveal')).forEach(el=>io.observe(el));
+})();
+</script>
+
 </body>
 </html>
