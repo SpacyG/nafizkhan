@@ -1879,8 +1879,8 @@ body::before { display:none !important; }
 :root { color-scheme:dark; }
 html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 body { font-family:system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:optimizeLegibility; font-kerning:normal; }
-.skip-link { position:absolute; left:12px; top:-70px; z-index:100000; padding:10px 16px; border-radius:8px; background:#fff; color:#17121f; font-weight:700; font-size:.9rem; text-decoration:none; transition:top .18s ease; }
-.skip-link:focus { top:12px; outline:3px solid #b49aff; outline-offset:2px; }
+.skip-link { position:absolute !important; left:12px !important; top:-120px !important; opacity:0 !important; visibility:hidden !important; pointer-events:none !important; z-index:100000; padding:10px 16px; border-radius:8px; background:#fff; color:#17121f; font-weight:700; font-size:.9rem; text-decoration:none; transition:top .18s ease; }
+.skip-link:focus-visible { top:12px !important; opacity:1 !important; visibility:visible !important; pointer-events:auto !important; outline:3px solid #b49aff; outline-offset:2px; }
 main:focus { outline:none; }
 a, button, [role="button"], input, select, textarea { -webkit-tap-highlight-color:rgba(180,154,255,.25); }
 .footer-inner { align-items:center; }
@@ -1993,22 +1993,71 @@ html.calm .gw { color:inherit !important; text-shadow:none !important; }
 .js-reveal.revealed { opacity:1; transform:translate3d(0,0,0); filter:blur(0); }
 @media (prefers-reduced-motion:reduce) { .js-reveal { opacity:1; transform:none; filter:none; transition:none; } }
 
-/* Single cursor: keep the site's original rocket pointer; remove the added crosshair. */
-@media (hover:hover) and (pointer:fine) {
-  html, html *, body, body * { cursor: none !important; }
-  #rocketCursor { display:block !important; opacity:0; }
-  #rocketCursor.is-visible { opacity:1; }
-}
-@media (hover:none), (pointer:coarse) { html, html *, body, body * { cursor:auto !important; } #rocketCursor { display:none !important; } }
 
 /* HERO NAME SCALE: the personal brand is the primary visual anchor. */
 .hero .hero-name { font-size: clamp(4.4rem, 13vw, 10.5rem) !important; line-height: .9 !important; letter-spacing: -.085em !important; max-width: 100%; }
 @media (max-width: 520px) { .hero .hero-name { font-size: clamp(3.5rem, 15vw, 5.5rem) !important; letter-spacing: -.07em !important; } }
 </style>
 
+<style id="nafiz-crisp-home-star">
+/* Keep the homepage sun crisp instead of smearing its detail into a large blur. */
+.distant-sun {
+  background: radial-gradient(circle, rgba(255,250,225,.20) 0 35%, rgba(255,184,111,.12) 48%, transparent 72%) !important;
+  filter: none !important;
+  animation: none !important;
+}
+.distant-sun::before {
+  inset: 22% !important;
+  background: radial-gradient(circle at 34% 30%, #fffdf0 0 8%, #ffe7a8 28%, #ffb86b 58%, #f18c74 82%, #bd8cff 100%) !important;
+  box-shadow: 0 0 8px 2px rgba(255,205,135,.22), 0 0 18px 4px rgba(170,120,255,.08) !important;
+}
+.distant-sun::after { display: none !important; }
+.distant-sun .sd-rays, .distant-sun .sd-b, .distant-sun .sd-d { display: none !important; }
+.distant-sun .sd-c {
+  inset: 22% !important;
+  overflow: hidden !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle at 34% 30%, #fffdf0 0 8%, #ffe6a4 29%, #ffb76b 61%, #ef8c79 84%, #b984ff 100%) !important;
+  box-shadow: inset -5px -6px 12px rgba(78,34,60,.18), inset 3px 3px 7px rgba(255,255,255,.48), 0 0 10px rgba(255,192,120,.14) !important;
+}
+.distant-sun .sd-c::before { content: none !important; animation: none !important; filter: none !important; }
+.distant-sun .sd-c::after {
+  background: radial-gradient(circle at 32% 28%, rgba(255,255,255,.20), transparent 44%), radial-gradient(circle, transparent 60%, rgba(56,24,54,.13) 100%) !important;
+}
+
+/* Cursor interaction inspired by Rifat's portfolio: native pointer + a restrained moving spotlight.
+   No replacement cursor is drawn, so there can never be two pointers on screen. */
+#pointer-spotlight { position:fixed; inset:0; z-index:1; pointer-events:none; opacity:0;
+  background:radial-gradient(230px circle at var(--px,50vw) var(--py,50vh), rgba(173,139,255,.105), transparent 72%);
+  transition:opacity .22s ease; mix-blend-mode:screen; }
+@media (hover:hover) and (pointer:fine) { #pointer-spotlight.is-active { opacity:1; }
+  html, html *, body, body * { cursor:auto !important; }
+  a, button, [role="button"], summary, .planet, .star { cursor:pointer !important; }
+  a, button, [role="button"] { transition-property: color, background-color, border-color, box-shadow, transform; }
+  a:hover, button:hover, [role="button"]:hover { text-shadow:0 0 18px rgba(190,160,255,.16); }
+}
+@media (hover:none), (pointer:coarse), (prefers-reduced-motion:reduce) { #pointer-spotlight { display:none !important; } }
+</style>
+
+<style id="nafiz-interaction-pass">
+/* Keep the original site's native cursor and interactions. No added cursor or scroll blur. */
+#pointer-spotlight { display:none !important; }
+.gw { display:inline-block; transform-origin:center; transition:color .14s ease, text-shadow .14s ease, transform .14s ease !important; }
+.gw:hover { color:#fff !important; transform:scale(1.025) translateY(-.5px) !important; text-shadow:0 0 7px rgba(203,180,255,.32) !important; }
+/* Ordered entrance: label, name, then remaining hero content. */
+#home .eyebrow { animation:hero-enter .7s cubic-bezier(.2,.7,.2,1) both; animation-delay:.12s; }
+#home .hero-name { animation:hero-enter .82s cubic-bezier(.2,.7,.2,1) both; animation-delay:.48s; }
+#home .hero-tagline, #home .hero-copy, #home .buttons { animation:hero-enter .82s cubic-bezier(.2,.7,.2,1) both; }
+#home .hero-tagline { animation-delay:.85s; } #home .hero-copy { animation-delay:1.08s; } #home .buttons { animation-delay:1.28s; }
+#home .eyebrow { font-size:clamp(1rem,1.55vw,1.22rem) !important; letter-spacing:.16em !important; font-weight:800 !important; }
+@keyframes hero-enter { from { opacity:0; filter:blur(11px); transform:translateY(12px); } to { opacity:1; filter:blur(0); transform:translateY(0); } }
+@media (prefers-reduced-motion:reduce) { #home .eyebrow,#home .hero-name,#home .hero-tagline,#home .hero-copy,#home .buttons { animation:none !important; } }
+</style>
+
 </head>
 
 <body>
+
 <canvas id="cosmicStarfield" aria-hidden="true"></canvas>
 <canvas id="orbitRings" aria-hidden="true"></canvas>
 <canvas id="debrisFx" aria-hidden="true"></canvas>
@@ -2047,34 +2096,24 @@ html.calm .gw { color:inherit !important; text-shadow:none !important; }
 </div>
 
 
-<div id="rocketCursor" aria-hidden="true"><svg viewBox="0 0 36 36" width="31" height="31" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="rocketBody" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fffaff"/><stop offset=".55" stop-color="#c4b5fd"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient><radialGradient id="rocketFire"><stop offset="0" stop-color="#fff4b0"/><stop offset=".48" stop-color="#ffad55"/><stop offset="1" stop-color="#fb7185" stop-opacity="0"/></radialGradient></defs><path class="rocket-flame" d="M16 23 C12 27 13 31 16 34 C20 31 20 27 18 23Z" fill="url(#rocketFire)"/><path d="M17.5 2.5 C11 7.4 9 14.2 10.2 21.5 L17.5 27 L24.8 21.5 C26 14.2 24 7.4 17.5 2.5Z" fill="url(#rocketBody)" stroke="#ede9fe" stroke-width=".8"/><circle cx="17.5" cy="13" r="3" fill="#28203c" stroke="#fff" stroke-width="1.1"/><path d="M10.8 18.5 L5.7 23.4 L11.7 23.2 M24.2 18.5 L29.3 23.4 L23.3 23.2" fill="#8b5cf6" stroke="#c4b5fd" stroke-width="1" stroke-linejoin="round"/><path d="M15.1 25.2 L17.5 29 L19.9 25.2" fill="#fb923c"/></svg></div>
+
+
+
+
 <script>
 (() => {
-  const rocket = document.getElementById('rocketCursor');
-  if (!rocket || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-  let targetX=-100, targetY=-100, drawX=-100, drawY=-100, angle=-90, targetAngle=-90, lastX=null, lastY=null, raf=0, stopTimer=0;
-  const shortest=(a,b)=>((b-a+540)%360)-180;
-  function frame(){
-    drawX += (targetX-drawX)*0.24; drawY += (targetY-drawY)*0.24;
-    angle += shortest(angle,targetAngle)*0.18;
-    rocket.style.transform=`translate3d(${drawX-15.5}px,${drawY-15.5}px,0) rotate(${angle+90}deg)`;
-    if(Math.abs(targetX-drawX)>.15 || Math.abs(targetY-drawY)>.15 || Math.abs(shortest(angle,targetAngle))>.2) raf=requestAnimationFrame(frame); else raf=0;
-  }
-  function move(e){
-    targetX=e.clientX; targetY=e.clientY;
-    if(!rocket.classList.contains('is-visible')) rocket.classList.add('is-visible');
-    if(lastX!==null){ const dx=targetX-lastX, dy=targetY-lastY; if(Math.hypot(dx,dy)>2){ targetAngle=Math.atan2(dy,dx)*180/Math.PI; rocket.classList.add('is-moving'); clearTimeout(stopTimer); stopTimer=setTimeout(()=>rocket.classList.remove('is-moving'),180); } }
-    lastX=targetX; lastY=targetY;
-    rocket.classList.toggle('is-hovering',!!e.target.closest('a,button,input,textarea,select,[role="button"]'));
-    if(!raf) raf=requestAnimationFrame(frame);
-  }
-  window.addEventListener('pointermove',move,{passive:true});
-  document.addEventListener('visibilitychange',()=>{if(document.hidden){rocket.classList.remove('is-moving');}});
-  window.addEventListener('blur',()=>rocket.classList.remove('is-visible','is-moving','is-hovering'));
-  window.addEventListener('focus',()=>{lastX=lastY=null;});
+  const light = document.getElementById('pointer-spotlight');
+  if (!light || !matchMedia('(hover:hover) and (pointer:fine)').matches || matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  let frame = 0, x = innerWidth / 2, y = innerHeight / 2;
+  addEventListener('pointermove', e => { x = e.clientX; y = e.clientY; light.classList.add('is-active');
+    if (frame) return; frame = requestAnimationFrame(() => {
+      light.style.setProperty('--px', x + 'px'); light.style.setProperty('--py', y + 'px'); frame = 0;
+    });
+  }, {passive:true});
+  addEventListener('pointerleave', () => light.classList.remove('is-active'));
+  addEventListener('blur', () => light.classList.remove('is-active'));
 })();
 </script>
-
   <header>
     <a class="skip-link" href="#main">Skip to content</a>
     <div class="container nav">
@@ -4495,6 +4534,9 @@ void main(){
   nodes.filter(el=>el.classList.contains('js-reveal')).forEach(el=>io.observe(el));
 })();
 </script>
+
+
+
 
 </body>
 </html>
