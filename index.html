@@ -2036,12 +2036,12 @@ html.calm .gw { color:inherit !important; text-shadow:none !important; }
   a, button, [role="button"] { transition-property: color, background-color, border-color, box-shadow, transform; }
   a:hover, button:hover, [role="button"]:hover { text-shadow:0 0 18px rgba(190,160,255,.16); }
 }
-@media (hover:none), (pointer:coarse), (prefers-reduced-motion:reduce) { #pointer-spotlight { display:none !important; } }
+@media (hover:none), (pointer:coarse), (prefers-reduced-motion:reduce) {  }
 </style>
 
 <style id="nafiz-interaction-pass">
 /* Keep the original site's native cursor and interactions. No added cursor or scroll blur. */
-#pointer-spotlight { display:none !important; }
+
 .gw { display:inline-block; transform-origin:center; transition:color .14s ease, text-shadow .14s ease, transform .14s ease !important; }
 .gw:hover { color:#fff !important; transform:scale(1.025) translateY(-.5px) !important; text-shadow:0 0 7px rgba(203,180,255,.32) !important; }
 /* Ordered entrance: label, name, then remaining hero content. */
@@ -2054,9 +2054,51 @@ html.calm .gw { color:inherit !important; text-shadow:none !important; }
 @media (prefers-reduced-motion:reduce) { #home .eyebrow,#home .hero-name,#home .hero-tagline,#home .hero-copy,#home .buttons { animation:none !important; } }
 </style>
 
+
+<style id="nk-scroll-out-and-cursor-type">
+/* Reversible scroll transition: visible on entry; blurred and dissolved on exit. */
+.js-reveal {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0) scale(.99);
+  filter: blur(11px);
+  transition: opacity .68s ease, transform .78s cubic-bezier(.16,.84,.24,1), filter .68s ease;
+  will-change: opacity, transform, filter;
+}
+.js-reveal.revealed {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  filter: blur(0);
+}
+/* A moving pool of cosmic light follows the real pointer without blocking clicks. */
+#pointer-spotlight {
+  display: block !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147482997 !important;
+  pointer-events: none !important;
+  opacity: 0;
+  background: radial-gradient(260px circle at var(--px, 50vw) var(--py, 50vh), rgba(190,157,255,.19) 0%, rgba(139,92,246,.075) 36%, rgba(139,92,246,.025) 56%, transparent 74%) !important;
+  mix-blend-mode: screen;
+  transition: opacity .2s ease;
+}
+#pointer-spotlight.is-active { opacity: 1 !important; }
+/* Words brighten and gently lift as the pointer approaches, not just when clicked. */
+.gw { transform-origin: center; transition: color .14s ease, text-shadow .14s ease, transform .14s ease !important; }
+.gw[style*="--lit"] { transform: translateY(var(--float-y, 0px)) scale(var(--float-scale, 1)) !important; }
+@media (hover: none), (pointer: coarse) {
+  #pointer-spotlight { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal, .js-reveal.revealed { opacity: 1; transform: none; filter: none; transition: none; }
+  #pointer-spotlight { display: none !important; }
+  .gw[style*="--lit"] { transform: none !important; }
+}
+</style>
+
 </head>
 
 <body>
+<div id="pointer-spotlight" aria-hidden="true"></div>
 
 <canvas id="cosmicStarfield" aria-hidden="true"></canvas>
 <canvas id="orbitRings" aria-hidden="true"></canvas>
@@ -4509,7 +4551,7 @@ void main(){
       }
       w.lit += (target - w.lit) * .2;
       if (Math.abs(target - w.lit) < .004) w.lit = target; else busy = true;
-      if (w.lit !== w.shown) { w.shown = w.lit; if (w.lit === 0) w.el.style.removeProperty('--lit'); else w.el.style.setProperty('--lit', w.lit.toFixed(3)); }
+      if (w.lit !== w.shown) { w.shown = w.lit; if (w.lit === 0) { w.el.style.removeProperty('--lit'); w.el.style.removeProperty('--float-y'); w.el.style.removeProperty('--float-scale'); } else { w.el.style.setProperty('--lit', w.lit.toFixed(3)); w.el.style.setProperty('--float-y', (-3 * w.lit).toFixed(2) + 'px'); w.el.style.setProperty('--float-scale', (1 + .025 * w.lit).toFixed(3)); } }
     }
     if (busy) raf = requestAnimationFrame(tick);
   }
@@ -4535,8 +4577,6 @@ void main(){
 @media (hover:hover) and (pointer:fine) {
   #rocketCursor { display:none !important; }
   html, html *, body, body *, a, button, [role="button"], summary, .planet, .star, .distant-sun, #mascot, #mascot * { cursor:none !important; }
-  html.calm, html.calm body, html.calm * { cursor:auto !important; }
-  html.calm a, html.calm button, html.calm [role="button"], html.calm summary { cursor:pointer !important; }
 }
 #nk-dot, #nk-ring { position:fixed !important; left:0 !important; top:0 !important; z-index:2147483000 !important; pointer-events:none !important; border-radius:50%; opacity:0; will-change:transform; }
 #nk-dot { width:7px; height:7px; margin:-3.5px 0 0 -3.5px; background:#f4f0f8; box-shadow:0 0 10px rgba(196,172,255,.9); transition:opacity .2s ease, width .2s ease, height .2s ease, margin .2s ease; }
@@ -4546,7 +4586,6 @@ void main(){
 #nk-ring.grab { width:28px; height:28px; margin:-14px 0 0 -14px; background:rgba(255,236,200,.16); border-color:rgba(255,226,170,.95); }
 #nk-ring.down { width:24px; height:24px; margin:-12px 0 0 -12px; }
 #nk-dot.hot { width:4px; height:4px; margin:-2px 0 0 -2px; }
-html.calm #nk-dot, html.calm #nk-ring { display:none !important; }
 
 /* hero name: letters rise out of the dark one by one */
 .nk-ch { display:inline-block; opacity:0; transform:translate3d(0,.55em,0) rotate(4deg); filter:blur(10px);
@@ -4609,6 +4648,21 @@ html.calm #nk-dot, html.calm #nk-ring { display:none !important; }
     sun.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); window.open(GITHUB, '_blank', 'noopener'); } });
   }
 
+  /* Cursor-following spotlight. */
+  if (fine) {
+    var spotlight = document.getElementById('pointer-spotlight');
+    if (spotlight) {
+      addEventListener('pointermove', function (e) {
+        if (e.pointerType !== 'mouse') return;
+        spotlight.style.setProperty('--px', e.clientX + 'px');
+        spotlight.style.setProperty('--py', e.clientY + 'px');
+        spotlight.classList.add('is-active');
+      }, { passive: true });
+      document.documentElement.addEventListener('mouseleave', function () { spotlight.classList.remove('is-active'); });
+      addEventListener('blur', function () { spotlight.classList.remove('is-active'); });
+    }
+  }
+
   if (still) return;
 
   /* hero name: split into letters (inside the existing word spans so word lighting and the black hole keep working) */
@@ -4626,25 +4680,24 @@ html.calm #nk-dot, html.calm #nk-ring { display:none !important; }
     });
   }
 
-  /* scroll reveal: pieces emerge from the background, staggered, then the classes are removed again (hover effects keep working) */
+  /* Scroll reveal: elements enter clearly, then blur/fade away again as they leave the viewport. */
   if ('IntersectionObserver' in window) {
-    var sel = '.content-section .eyebrow, .review-section .eyebrow, .section-title, .section-intro, .card, .principle, .initial, .about-copy p, .review-panel, .contact-panel .button, .contact-panel > p, .work-more-wrap, .future-work-note, .portfolio-page-header .container > a, .portfolio-page-header .container > p, .portfolio-page-header h1';
+    var sel = '#home .eyebrow, #home .hero-name, #home .hero-tagline, #home .hero-copy, #home .buttons, .content-section .eyebrow, .review-section .eyebrow, .section-title, .section-intro, .card, .principle, .initial, .about-copy p, .review-panel, .contact-panel .button, .contact-panel > p, .work-more-wrap, .future-work-note, .portfolio-page-header .container > a, .portfolio-page-header .container > p, .portfolio-page-header h1';
     var seen = new Set();
     var items = [].slice.call(document.querySelectorAll(sel)).filter(function (el) {
-      if (seen.has(el) || el.closest('#home')) return false; seen.add(el); return true;
+      if (seen.has(el) || el.closest('#mascot, .planet-playground')) return false;
+      seen.add(el); return true;
     });
     var io = new IntersectionObserver(function (entries) {
-      var batch = entries.filter(function (e) { return e.isIntersecting; }).sort(function (a, b) {
-        var ra = a.boundingClientRect, rb = b.boundingClientRect; return (ra.top - rb.top) || (ra.left - rb.left);
+      entries.forEach(function (entry) {
+        var el = entry.target;
+        if (entry.isIntersecting) {
+          el.classList.add('revealed');
+        } else {
+          el.classList.remove('revealed');
+        }
       });
-      batch.forEach(function (en, i) {
-        var el = en.target; io.unobserve(el);
-        var d = Math.min(i, 6) * 90;
-        el.style.transitionDelay = d + 'ms';
-        requestAnimationFrame(function () { requestAnimationFrame(function () { el.classList.add('revealed'); }); });
-        setTimeout(function () { el.classList.remove('js-reveal', 'revealed'); el.style.transitionDelay = ''; }, 1300 + d);
-      });
-    }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+    }, { threshold: 0.08, rootMargin: '-8% 0px -10% 0px' });
     items.forEach(function (el) { el.classList.add('js-reveal'); io.observe(el); });
   }
 })();
