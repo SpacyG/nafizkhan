@@ -1295,6 +1295,78 @@ summary { cursor:pointer !important; }
 }
 </style>
 
+<style id="nk-polish">
+/* ===== Polish: section identity, clearer hierarchy, obvious contact ===== */
+#work   { --sec:#b9a2ff; --sec2:#7a4fe0; }
+#services { --sec:#ff8fa3; --sec2:#d2284f; }
+#approach { --sec:#92b6ff; --sec2:#4a74e8; }
+#about  { --sec:#6fe3ea; --sec2:#2f8fd0; }
+#contact { --sec:#e0a8ff; --sec2:#ec5aa6; }
+#reviews { --sec:#ffb08a; --sec2:#d2284f; }
+.portfolio-page-grid { --sec:#b9a2ff; --sec2:#7a4fe0; }
+#work .eyebrow, #services .eyebrow, #approach .eyebrow, #about .eyebrow, #contact .eyebrow, #reviews .eyebrow { color:var(--sec); }
+#work .eyebrow::before, #services .eyebrow::before, #approach .eyebrow::before, #about .eyebrow::before, #contact .eyebrow::before, #reviews .eyebrow::before { color:var(--sec); border-color:color-mix(in srgb, var(--sec) 45%, transparent); box-shadow:0 0 18px color-mix(in srgb, var(--sec2) 30%, transparent); }
+#work .section-title::before, #services .section-title::before, #approach .section-title::before, #about .section-title::before, #contact .section-title::before, #reviews .section-title::before { background:linear-gradient(180deg, var(--sec), var(--sec2)); box-shadow:0 0 12px color-mix(in srgb, var(--sec2) 50%, transparent); }
+#work .section-title::after, #services .section-title::after, #approach .section-title::after { background:linear-gradient(90deg, var(--sec), transparent); }
+#work .card .number, #work .card .number::before, #services .card .number, #services .card .number::before, .portfolio-page-grid .card .number, .portfolio-page-grid .card .number::before { color:var(--sec); }
+#work .label, #services .label, .portfolio-page-grid .label { color:var(--sec); border-color:color-mix(in srgb, var(--sec) 32%, transparent); }
+#work .card:hover, #services .card:hover, #approach .style-chip:hover, .portfolio-page-grid .card:hover { border-color:color-mix(in srgb, var(--sec) 55%, transparent); }
+#work .sample-subject, .portfolio-page-grid .sample-subject { border-left-color:var(--sec); }
+#approach .principle, #about .principle { border-image:linear-gradient(var(--sec), transparent) 1; }
+
+/* samples: the stars */
+#work .card, .portfolio-page-grid .card { padding:clamp(22px, 2.6vw, 32px); }
+#work .card h3, .portfolio-page-grid .card h3 { font-size:clamp(1.4rem, 2.2vw, 1.8rem); letter-spacing:-.03em; line-height:1.15; }
+.sample-goal { margin:14px 0 0; font-size:.88rem; color:var(--muted); }
+.sample-goal b { display:inline-block; margin-right:.6em; font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; color:var(--sec); }
+#work .sample-body, .portfolio-page-grid .sample-body { font-size:1rem; line-height:1.85; color:#e4deee; }
+.sample-foot { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px 18px; margin-top:auto; padding-top:20px; }
+.sample-foot .label { margin-top:0 !important; }
+.sample-cta { font-size:.9rem; font-weight:700; color:#fff; padding:7px 0; border-bottom:1px solid color-mix(in srgb, var(--sec) 60%, transparent); }
+.sample-cta span { display:inline-block; color:var(--sec); }
+.sample-cta:hover, .sample-cta:focus-visible { color:var(--sec); }
+
+/* hero: who, what, what next */
+.hero-meta { margin-top:4px; max-width:640px; }
+.hero-writes { display:flex; flex-wrap:wrap; align-items:center; gap:8px 10px; margin:0 0 14px; font-size:.82rem; color:var(--muted); }
+.hero-writes > span { letter-spacing:.16em; text-transform:uppercase; font-size:.7rem; margin-right:4px; }
+.hero-writes a { padding:6px 13px; border:1px solid rgba(183,160,255,.25); border-radius:999px; background:rgba(183,160,255,.06); color:#efe9fb; font-weight:600; }
+.hero-writes a:hover, .hero-writes a:focus-visible { border-color:rgba(220,205,255,.7); background:rgba(150,110,255,.18); color:#fff; }
+.hero-open { display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; margin:0; font-size:.9rem; color:var(--muted); }
+.hero-open::before { content:""; width:8px; height:8px; border-radius:50%; background:#6fe39b; box-shadow:0 0 10px rgba(111,227,155,.7); flex:none; }
+.hero-open a { color:#fff; font-weight:700; border-bottom:1px solid rgba(183,160,255,.5); }
+.hero-open a:hover, .hero-open a:focus-visible { color:var(--purple); }
+html .hero-meta { animation:nk-enter 1.1s 3.5s both !important; }
+@media (prefers-reduced-motion:reduce) { html .hero-meta { animation:none !important; } }
+
+/* contact: always one tap away */
+nav a.nav-cta, .nav-cta { padding:8px 17px !important; border:1px solid rgba(205,185,255,.6); border-radius:999px; background:rgba(150,110,255,.2); color:#fff !important; font-weight:700; white-space:nowrap; }
+nav a.nav-cta::after { display:none !important; }
+nav a.nav-cta:hover, nav a.nav-cta:focus-visible, .nav-cta:hover, .nav-cta:focus-visible { background:rgba(150,110,255,.4); border-color:#e4d6ff; color:#fff !important; }
+.contact-hint { font-size:.92rem; margin-top:-8px !important; }
+.contact-actions { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin:0 0 18px; }
+.contact-actions .button { margin:0; cursor:pointer; font:inherit; font-weight:700; color:#fff; background:transparent; }
+.contact-actions .button.primary { background:var(--accent); }
+.contact-panel .email { font-size:1.15rem; font-weight:700; }
+
+/* feedback: out of the way, one click to open */
+.review-panel:not(:has(details[open])) { background:none; border:0; padding:0; box-shadow:none; }
+.review-details > summary { list-style:none; display:inline-flex; align-items:center; gap:10px; cursor:pointer; padding:12px 22px; border:1px solid rgba(255,176,138,.5); border-radius:999px; background:rgba(210,40,79,.12); color:#fff; font-weight:700; }
+.review-details > summary::-webkit-details-marker { display:none; }
+.review-details > summary::after { content:"+"; color:var(--sec); font-size:1.2em; line-height:1; }
+.review-details[open] > summary { margin-bottom:20px; }
+.review-details[open] > summary::after { content:"\2212"; }
+.review-details > summary:hover, .review-details > summary:focus-visible { background:rgba(210,40,79,.26); }
+
+@media (max-width:520px) { nav a.nav-cta { padding:6px 12px !important; font-size:.9rem; } header nav { gap:14px !important; } }
+@media (max-width:400px) { header nav { gap:10px !important; } header nav a { font-size:.86rem; } nav a.nav-cta { padding:5px 10px !important; } }
+/* orientation + consistent focus */
+nav a.is-current:not(.nav-cta) { color:#fff; }
+nav a.is-current:not(.nav-cta)::after { transform:scaleX(1); transform-origin:left; }
+#work, #services, #approach, #about, #contact, #reviews { scroll-margin-top:70px; }
+#sample-email, #sample-sales, #sample-landing { scroll-margin-top:110px; }
+a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid var(--sec, var(--purple)); outline-offset:4px; border-radius:6px; }
+</style>
 </head>
 <body>
 <div id="pointer-spotlight" aria-hidden="true"></div>
@@ -1306,6 +1378,7 @@ summary { cursor:pointer !important; }
       <div class="container">
         <a class="back-link" href="index.html">← Back to main portfolio</a>
         <div class="nav-tools header-tools">
+          <a class="nav-cta" href="mailto:n.tonmoy.khan@gmail.com?subject=Copywriting%20Inquiry&body=Hi%20Nafiz%2C%0A%0AProject%3A%20%0AWho%20it%27s%20for%3A%20%0AWhen%20I%20need%20it%3A%20%0A%0AThanks%2C">Email me</a>
           <a class="gh-link" data-github href="https://github.com/SpacyG" target="_blank" rel="noopener" aria-label="GitHub (opens in a new tab)" title="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.921.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
           <a class="gh-link ig-link" href="https://www.instagram.com/spacy_gambiot/" target="_blank" rel="noopener" aria-label="Instagram (opens in a new tab)" title="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5"/><circle cx="12" cy="12" r="4.1"/><circle cx="17.4" cy="6.6" r="1.05" class="ig-dot"/></svg></a>
         </div>
@@ -1352,7 +1425,7 @@ summary { cursor:pointer !important; }
             <br>
               Explore our collection and find your next favourite.
             </p>
-            <span class="label">Fictional concept</span>
+            <div class="sample-foot"><span class="label">Fictional concept</span><a class="sample-cta" href="mailto:n.tonmoy.khan@gmail.com?subject=A%20project%20like%20Morning%20Ritual&body=Hi%20Nafiz%2C%0A%0AProject%3A%20%0AWho%20it%27s%20for%3A%20%0AWhen%20I%20need%20it%3A%20%0A%0AThanks%2C">Need copy like this? Email me <span aria-hidden="true">&rarr;</span></a></div>
           </article>
 
           <article class="card">
@@ -1377,11 +1450,11 @@ summary { cursor:pointer !important; }
            <br>
               Say goodbye to:
            <br>
-              Messy task lists
+              • Messy task lists
            <br>
-              Unclear priorities
+              • Unclear priorities
            <br>
-              Losing track of your progress
+              • Losing track of your progress
            <br>
               Make a plan, focus on what matters, and give each day a clearer direction.
            <br>
@@ -1390,7 +1463,7 @@ summary { cursor:pointer !important; }
               Get Yours Today!
             </p>
 
-            <span class="label">Fictional concept</span>
+            <div class="sample-foot"><span class="label">Fictional concept</span><a class="sample-cta" href="mailto:n.tonmoy.khan@gmail.com?subject=A%20project%20like%20The%20Daily%20Planner&body=Hi%20Nafiz%2C%0A%0AProject%3A%20%0AWho%20it%27s%20for%3A%20%0AWhen%20I%20need%20it%3A%20%0A%0AThanks%2C">Need copy like this? Email me <span aria-hidden="true">&rarr;</span></a></div>
           </article>
 
           <article class="card">
@@ -1428,7 +1501,7 @@ summary { cursor:pointer !important; }
               <br><br>
               Book a free session with us and see if we're a fit.
             </p>
-            <span class="label">Fictional concept</span>
+            <div class="sample-foot"><span class="label">Fictional concept</span><a class="sample-cta" href="mailto:n.tonmoy.khan@gmail.com?subject=A%20project%20like%20Local%20Gym&body=Hi%20Nafiz%2C%0A%0AProject%3A%20%0AWho%20it%27s%20for%3A%20%0AWhen%20I%20need%20it%3A%20%0A%0AThanks%2C">Need copy like this? Email me <span aria-hidden="true">&rarr;</span></a></div>
           </article>
 
           <article class="card">
@@ -1455,7 +1528,7 @@ summary { cursor:pointer !important; }
               <br><br>
               Browse our latest collection.
             </p>
-            <span class="label">Fictional concept · Limited brief</span>
+            <div class="sample-foot"><span class="label">Fictional concept · Limited brief</span><a class="sample-cta" href="mailto:n.tonmoy.khan@gmail.com?subject=A%20project%20like%20Bookstore%20Welcome-Back%20Email&body=Hi%20Nafiz%2C%0A%0AProject%3A%20%0AWho%20it%27s%20for%3A%20%0AWhen%20I%20need%20it%3A%20%0A%0AThanks%2C">Need copy like this? Email me <span aria-hidden="true">&rarr;</span></a></div>
           </article>
 
           <article class="card">
@@ -1465,10 +1538,25 @@ summary { cursor:pointer !important; }
             <div class="sample-email-part"><p class="sample-subject"><strong>Email 1 · Subject:</strong> Your skin should not miss the care it deserves.</p><p class="sample-subject"><strong>Preview:</strong> Your skin deserves attention</p><p class="sample-body">Skin is the one part of our body that is exposed to everything.<br>Busy schedules and complicated routines make it hard to care for our skin.<br>So we at LumaSkin present to you our latest product!<br>Our Daily Balance Moisturizer, designed to keep your delicate skin hydrated and smooth.<br>For more information, visit our product page.</p></div>
             <div class="sample-email-part"><p class="sample-subject"><strong>Email 2 · Subject:</strong> Make hydration a part of your daily life.</p><p class="sample-subject"><strong>Preview:</strong> Skincare is not supposed to be hard.</p><p class="sample-body">Leaving your skin unattended for a long time can result in rough texture, dehydrated skin, and irritation.<br>This can make your skin more vulnerable to damage.<br>With our product, you can avoid all that!<br>Our Daily Balance Moisturizer is lightweight, non-greasy, and designed to be easy to use and fast-acting.<br>Just apply it once in the morning or evening, and it will keep your skin hydrated and smooth.<br>To order, click the link below.</p></div>
             <div class="sample-email-part"><p class="sample-subject"><strong>Email 3 · Subject:</strong> Give your skin a gift.</p><p class="sample-subject"><strong>Preview:</strong> No more dehydrated skin!</p><p class="sample-body">We at LumaSkin care about you, and our Daily Balance Moisturizer is designed to do just that.<br>In a 50 mL container, you can have the gift your skin deserves.<br>It's lightweight and non-greasy, giving your skin a smooth, clear finish.<br>Orders over $10 qualify for free delivery.<br>Let us be a part of your daily skincare routine.</p></div>
-            <span class="label">Fictional concept · Practice project</span>
+            <div class="sample-foot"><span class="label">Fictional concept · Practice project</span><a class="sample-cta" href="mailto:n.tonmoy.khan@gmail.com?subject=A%20project%20like%20LumaSkin%20%E2%80%94%20Abandoned-Cart%20Email%20Sequence&body=Hi%20Nafiz%2C%0A%0AProject%3A%20%0AWho%20it%27s%20for%3A%20%0AWhen%20I%20need%20it%3A%20%0A%0AThanks%2C">Need copy like this? Email me <span aria-hidden="true">&rarr;</span></a></div>
           </article>
         </div>
         <div class="future-work-note"><strong>This page is dedicated to show my work</strong><br>Work can be fictional or real</div>
+    </section>
+    <section class="content-section" id="contact">
+      <div class="container">
+        <div class="contact-panel">
+          <p class="eyebrow">Get in touch</p>
+          <h2 class="section-title">Like what you see?</h2>
+          <p>If you have an email or sales-copy project in mind, I'd be glad to hear about it.</p>
+          <p class="contact-hint">Helpful to include: what the project is, who it&rsquo;s for, and when you need it.</p>
+          <div class="contact-actions">
+            <a class="button primary" href="mailto:n.tonmoy.khan@gmail.com?subject=Copywriting%20Inquiry&body=Hi%20Nafiz%2C%0A%0AProject%3A%20%0AWho%20it%27s%20for%3A%20%0AWhen%20I%20need%20it%3A%20%0A%0AThanks%2C">Email me</a>
+            <a class="button" href="index.html#work">Back to my samples</a>
+          </div>
+          <p><a class="email" href="mailto:n.tonmoy.khan@gmail.com">n.tonmoy.khan@gmail.com</a></p>
+        </div>
+      </div>
     </section>
   </main>
 

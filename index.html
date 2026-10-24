@@ -1336,6 +1336,78 @@ html.nk-intro body > #nk-loader { display:flex !important; position:fixed !impor
 html.nk-intro #home, html.nk-intro #home *, html.nk-intro #home *::before, html.nk-intro #home *::after, html.nk-intro .nk-ch { animation-play-state:paused !important; }
 html.nk-intro #home .js-reveal, html.nk-intro #home .js-reveal.revealed { opacity:0 !important; transform:translate3d(0,20px,0) !important; transition:none !important; }
 </style>
+<style id="nk-polish">
+/* ===== Polish: section identity, clearer hierarchy, obvious contact ===== */
+#work   { --sec:#b9a2ff; --sec2:#7a4fe0; }
+#services { --sec:#ff8fa3; --sec2:#d2284f; }
+#approach { --sec:#92b6ff; --sec2:#4a74e8; }
+#about  { --sec:#6fe3ea; --sec2:#2f8fd0; }
+#contact { --sec:#e0a8ff; --sec2:#ec5aa6; }
+#reviews { --sec:#ffb08a; --sec2:#d2284f; }
+.portfolio-page-grid { --sec:#b9a2ff; --sec2:#7a4fe0; }
+#work .eyebrow, #services .eyebrow, #approach .eyebrow, #about .eyebrow, #contact .eyebrow, #reviews .eyebrow { color:var(--sec); }
+#work .eyebrow::before, #services .eyebrow::before, #approach .eyebrow::before, #about .eyebrow::before, #contact .eyebrow::before, #reviews .eyebrow::before { color:var(--sec); border-color:color-mix(in srgb, var(--sec) 45%, transparent); box-shadow:0 0 18px color-mix(in srgb, var(--sec2) 30%, transparent); }
+#work .section-title::before, #services .section-title::before, #approach .section-title::before, #about .section-title::before, #contact .section-title::before, #reviews .section-title::before { background:linear-gradient(180deg, var(--sec), var(--sec2)); box-shadow:0 0 12px color-mix(in srgb, var(--sec2) 50%, transparent); }
+#work .section-title::after, #services .section-title::after, #approach .section-title::after { background:linear-gradient(90deg, var(--sec), transparent); }
+#work .card .number, #work .card .number::before, #services .card .number, #services .card .number::before, .portfolio-page-grid .card .number, .portfolio-page-grid .card .number::before { color:var(--sec); }
+#work .label, #services .label, .portfolio-page-grid .label { color:var(--sec); border-color:color-mix(in srgb, var(--sec) 32%, transparent); }
+#work .card:hover, #services .card:hover, #approach .style-chip:hover, .portfolio-page-grid .card:hover { border-color:color-mix(in srgb, var(--sec) 55%, transparent); }
+#work .sample-subject, .portfolio-page-grid .sample-subject { border-left-color:var(--sec); }
+#approach .principle, #about .principle { border-image:linear-gradient(var(--sec), transparent) 1; }
+
+/* samples: the stars */
+#work .card, .portfolio-page-grid .card { padding:clamp(22px, 2.6vw, 32px); }
+#work .card h3, .portfolio-page-grid .card h3 { font-size:clamp(1.4rem, 2.2vw, 1.8rem); letter-spacing:-.03em; line-height:1.15; }
+.sample-goal { margin:14px 0 0; font-size:.88rem; color:var(--muted); }
+.sample-goal b { display:inline-block; margin-right:.6em; font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; color:var(--sec); }
+#work .sample-body, .portfolio-page-grid .sample-body { font-size:1rem; line-height:1.85; color:#e4deee; }
+.sample-foot { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px 18px; margin-top:auto; padding-top:20px; }
+.sample-foot .label { margin-top:0 !important; }
+.sample-cta { font-size:.9rem; font-weight:700; color:#fff; padding:7px 0; border-bottom:1px solid color-mix(in srgb, var(--sec) 60%, transparent); }
+.sample-cta span { display:inline-block; color:var(--sec); }
+.sample-cta:hover, .sample-cta:focus-visible { color:var(--sec); }
+
+/* hero: who, what, what next */
+.hero-meta { margin-top:4px; max-width:640px; }
+.hero-writes { display:flex; flex-wrap:wrap; align-items:center; gap:8px 10px; margin:0 0 14px; font-size:.82rem; color:var(--muted); }
+.hero-writes > span { letter-spacing:.16em; text-transform:uppercase; font-size:.7rem; margin-right:4px; }
+.hero-writes a { padding:6px 13px; border:1px solid rgba(183,160,255,.25); border-radius:999px; background:rgba(183,160,255,.06); color:#efe9fb; font-weight:600; }
+.hero-writes a:hover, .hero-writes a:focus-visible { border-color:rgba(220,205,255,.7); background:rgba(150,110,255,.18); color:#fff; }
+.hero-open { display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; margin:0; font-size:.9rem; color:var(--muted); }
+.hero-open::before { content:""; width:8px; height:8px; border-radius:50%; background:#6fe39b; box-shadow:0 0 10px rgba(111,227,155,.7); flex:none; }
+.hero-open a { color:#fff; font-weight:700; border-bottom:1px solid rgba(183,160,255,.5); }
+.hero-open a:hover, .hero-open a:focus-visible { color:var(--purple); }
+html .hero-meta { animation:nk-enter 1.1s 3.5s both !important; }
+@media (prefers-reduced-motion:reduce) { html .hero-meta { animation:none !important; } }
+
+/* contact: always one tap away */
+nav a.nav-cta, .nav-cta { padding:8px 17px !important; border:1px solid rgba(205,185,255,.6); border-radius:999px; background:rgba(150,110,255,.2); color:#fff !important; font-weight:700; white-space:nowrap; }
+nav a.nav-cta::after { display:none !important; }
+nav a.nav-cta:hover, nav a.nav-cta:focus-visible, .nav-cta:hover, .nav-cta:focus-visible { background:rgba(150,110,255,.4); border-color:#e4d6ff; color:#fff !important; }
+.contact-hint { font-size:.92rem; margin-top:-8px !important; }
+.contact-actions { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin:0 0 18px; }
+.contact-actions .button { margin:0; cursor:pointer; font:inherit; font-weight:700; color:#fff; background:transparent; }
+.contact-actions .button.primary { background:var(--accent); }
+.contact-panel .email { font-size:1.15rem; font-weight:700; }
+
+/* feedback: out of the way, one click to open */
+.review-panel:not(:has(details[open])) { background:none; border:0; padding:0; box-shadow:none; }
+.review-details > summary { list-style:none; display:inline-flex; align-items:center; gap:10px; cursor:pointer; padding:12px 22px; border:1px solid rgba(255,176,138,.5); border-radius:999px; background:rgba(210,40,79,.12); color:#fff; font-weight:700; }
+.review-details > summary::-webkit-details-marker { display:none; }
+.review-details > summary::after { content:"+"; color:var(--sec); font-size:1.2em; line-height:1; }
+.review-details[open] > summary { margin-bottom:20px; }
+.review-details[open] > summary::after { content:"\2212"; }
+.review-details > summary:hover, .review-details > summary:focus-visible { background:rgba(210,40,79,.26); }
+
+@media (max-width:520px) { nav a.nav-cta { padding:6px 12px !important; font-size:.9rem; } header nav { gap:14px !important; } }
+@media (max-width:400px) { header nav { gap:10px !important; } header nav a { font-size:.86rem; } nav a.nav-cta { padding:5px 10px !important; } }
+/* orientation + consistent focus */
+nav a.is-current:not(.nav-cta) { color:#fff; }
+nav a.is-current:not(.nav-cta)::after { transform:scaleX(1); transform-origin:left; }
+#work, #services, #approach, #about, #contact, #reviews { scroll-margin-top:70px; }
+#sample-email, #sample-sales, #sample-landing { scroll-margin-top:110px; }
+a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid var(--sec, var(--purple)); outline-offset:4px; border-radius:6px; }
+</style>
 </head>
 
 <body>
@@ -1376,13 +1448,13 @@ html.nk-intro #home .js-reveal, html.nk-intro #home .js-reveal.revealed { opacit
   <header>
     <a class="skip-link" href="#main">Skip to content</a>
     <div class="container nav">
-      <a class="logo" href="#home">Be The Change You Wish To See In The World.<span>.</span></a>
+      <a class="logo" href="#home">Be The Change You Wish To See In The World<span>.</span></a>
 
       <nav aria-label="Main navigation">
-        <a href="#services">Services</a>
         <a href="#work">Sample work</a>
+        <a href="#services">Services</a>
         <a href="#about">About</a>
-        <a href="#contact">Contact</a>
+        <a class="nav-cta" href="#contact">Contact</a>
         <div class="nav-tools">
           <a class="gh-link" data-github href="https://github.com/spacyg" target="_blank" rel="noopener" aria-label="GitHub (opens in a new tab)" title="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.921.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
           <a class="gh-link ig-link" href="https://www.instagram.com/spacy_gambiot/" target="_blank" rel="noopener" aria-label="Instagram (opens in a new tab)" title="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5"/><circle cx="12" cy="12" r="4.1"/><circle cx="17.4" cy="6.6" r="1.05" class="ig-dot"/></svg></a>
@@ -1411,12 +1483,110 @@ html.nk-intro #home .js-reveal, html.nk-intro #home .js-reveal.revealed { opacit
           <a class="button primary" href="#work">Explore my work</a>
           <a class="button" href="#contact">Let's talk</a>
         </div>
+        <div class="hero-meta">
+          <p class="hero-writes"><span>I write</span><a href="#sample-email">Emails</a><a href="#sample-sales">Sales pages</a><a href="work.html#sample-landing">Landing pages</a><a href="#services">Website copy</a></p>
+          <p class="hero-open">Open to new projects &middot; <a href="mailto:n.tonmoy.khan@gmail.com">n.tonmoy.khan@gmail.com</a></p>
+        </div>
       </div>
     </section>
+    <section class="content-section" id="work">
+      <div class="container">
+        <p class="eyebrow">01 / Sample work</p>
+        <h2 class="section-title">Ideas put into words.</h2>
+        <p class="section-intro">
+          These are fictional concept projects that demonstrate my
+          writing approach. They are not paid client work.
+        </p>
 
+        <div class="grid">
+          <article class="card">
+            <p class="number">PROJECT 01 / EMAIL</p>
+            <h3 id="sample-email">Morning Ritual</h3>
+            <p>
+              A welcome-email concept for a fictional coffee brand,
+              built around the comfort of a good morning cup.
+            </p>
+            <p class="sample-goal"><b>Goal</b>Get the reader to explore the collection.</p>
+
+            <p class="sample-subject">
+              <strong>Subject:</strong> Make your morning as smooth as our coffee
+            </p>
+
+   <p class="sample-body">
+              From farm to your morning ritual.
+            <br>
+              If we have anything in common, we'll agree that there's nothing like a fresh cup of coffee each morning. 
+            <br>
+              Unfortunately…
+            <br>
+              Busy schedules.
+            <br>
+              Tight calendars.
+            <br>
+              Heavy workloads.
+            <br>
+              Leave little time to find good roasted beans!
+            <br>
+              So, we at Morning Ritual decided to take care of that, so you don't have to.
+            <br>
+              We bring you fresh, high-quality coffee beans for everyday mornings or special occasions, suited to your unique taste preferences.
+            <br>
+              Whether you prefer bold or light roasts, we've got options for you.
+            <br>
+              Explore our collection and find your next favourite.
+            </p>
+            <div class="sample-foot"><span class="label">Fictional concept</span><a class="sample-cta" href="mailto:n.tonmoy.khan@gmail.com?subject=A%20project%20like%20Morning%20Ritual&body=Hi%20Nafiz%2C%0A%0AProject%3A%20%0AWho%20it%27s%20for%3A%20%0AWhen%20I%20need%20it%3A%20%0A%0AThanks%2C">Need copy like this? Email me <span aria-hidden="true">&rarr;</span></a></div>
+          </article>
+
+          <article class="card">
+            <p class="number">PROJECT 02 / SALES COPY</p>
+            <h3 id="sample-sales">The Daily Planner</h3>           
+            <p>
+              A sales-page concept for a fictional stationery product
+            </p>
+            <p class="sample-goal"><b>Goal</b>Turn a messy to-do list into a purchase.</p>
+
+            <p class="sample-subject">
+              <strong>Headline:</strong> Your day deserves a little more direction.
+            </p>
+
+            <p class="sample-body">
+              Waking up to a long to-do list isn't ideal. When that list is disorganized, it's even harder to know where to start.
+           <br>
+              You spend time switching between tasks, struggle to prioritize, and end the day wondering where your time went.
+           <br>
+              With our Daily Planner, you can bring more structure to your day.
+           <br>
+              Set your three daily priorities, organize your tasks, and take a moment to reflect at the end of the day.
+           <br>
+              Say goodbye to:
+           <br>
+              • Messy task lists
+           <br>
+              • Unclear priorities
+           <br>
+              • Losing track of your progress
+           <br>
+              Make a plan, focus on what matters, and give each day a clearer direction.
+           <br>
+              Designed to be comfortable to carry and available in three stylish colors.
+           <br>
+              Get Yours Today!
+            </p>
+
+            <div class="sample-foot"><span class="label">Fictional concept</span><a class="sample-cta" href="mailto:n.tonmoy.khan@gmail.com?subject=A%20project%20like%20The%20Daily%20Planner&body=Hi%20Nafiz%2C%0A%0AProject%3A%20%0AWho%20it%27s%20for%3A%20%0AWhen%20I%20need%20it%3A%20%0A%0AThanks%2C">Need copy like this? Email me <span aria-hidden="true">&rarr;</span></a></div>
+          </article>
+
+        </div>
+        <div class="work-more-wrap">
+          <a class="btn work-more-btn" href="work.html">See more of my work <span aria-hidden="true">↗</span></a>
+          <p class="work-more-note">More samples, experiments, and future projects in one place.</p>
+        </div>
+      </div>
+    </section>
     <section class="content-section" id="services">
       <div class="container">
-        <p class="eyebrow">What I do</p>
+        <p class="eyebrow">02 / What I do</p>
         <h2 class="section-title">Good copy starts with understanding.</h2>
         <p class="section-intro">
           My focus is on writing that sounds human, respects the reader,
@@ -1446,7 +1616,7 @@ html.nk-intro #home .js-reveal, html.nk-intro #home .js-reveal.revealed { opacit
           </a>
 
           <article class="card service-card">
-            <p class="number">04 / WEBSITE</p>
+            <p class="number">04 / WEBSITE &middot; SAMPLE COMING SOON</p>
             <h3>Website Copy</h3>
             <p>Clear, reader-focused copy for key website sections, including headlines, service descriptions, and calls to action.</p>
             <span class="label">Headlines · Service sections · CTAs</span>
@@ -1454,10 +1624,9 @@ html.nk-intro #home .js-reveal, html.nk-intro #home .js-reveal.revealed { opacit
         </div>
       </div>
     </section>
-
     <section class="content-section" id="approach">
       <div class="container">
-        <p class="eyebrow">My working style</p>
+        <p class="eyebrow">03 / Working style</p>
         <h2 class="section-title">Listen. Dig. Write. Polish.</h2>
         <p class="section-intro">
           No secret formula. I find out who's reading, dig up the real
@@ -1475,104 +1644,9 @@ html.nk-intro #home .js-reveal, html.nk-intro #home .js-reveal.revealed { opacit
         <div class="principle approach-principle">Clear first. Clever only if it helps.</div>
       </div>
     </section>
-
-    <section class="content-section" id="work">
-      <div class="container">
-        <p class="eyebrow">Practice projects</p>
-        <h2 class="section-title">Ideas put into words.</h2>
-        <p class="section-intro">
-          These are fictional concept projects that demonstrate my
-          writing approach. They are not paid client work.
-        </p>
-
-        <div class="grid">
-          <article class="card">
-            <p class="number">PROJECT 01 / EMAIL</p>
-            <h3 id="sample-email">Morning Ritual</h3>
-            <p>
-              A welcome-email concept for a fictional coffee brand,
-              built around the comfort of a good morning cup.
-            </p>
-
-            <p class="sample-subject">
-              <strong>Subject:</strong> Make your morning as smooth as our coffee
-            </p>
-
-   <p class="sample-body">
-              From farm to your morning ritual.
-            <br>
-              If we have anything in common, we'll agree that there's nothing like a fresh cup of coffee each morning. 
-            <br>
-              Unfortunately…
-            <br>
-              Busy schedules.
-            <br>
-              Tight calendars.
-            <br>
-              Heavy workloads.
-            <br>
-              Leave little time to find good roasted beans!
-            <br>
-              So, we at Morning Ritual decided to take care of that, so you don't have to.
-            <br>
-              We bring you fresh, high-quality coffee beans for everyday mornings or special occasions, suited to your unique taste preferences.
-            <br>
-              Whether you prefer bold or light roasts, we've got options for you.
-            <br>
-              Explore our collection and find your next favourite.
-            </p>
-            <span class="label">Fictional concept</span>
-          </article>
-
-          <article class="card">
-            <p class="number">PROJECT 02 / SALES COPY</p>
-            <h3 id="sample-sales">The Daily Planner</h3>           
-            <p>
-              A sales-page concept for a fictional stationery product
-            </p>
-
-            <p class="sample-subject">
-              <strong>Headline:</strong> Your day deserves a little more direction.
-            </p>
-
-            <p class="sample-body">
-              Waking up to a long to-do list isn't ideal. When that list is disorganized, it's even harder to know where to start.
-           <br>
-              You spend time switching between tasks, struggle to prioritize, and end the day wondering where your time went.
-           <br>
-              With our Daily Planner, you can bring more structure to your day.
-           <br>
-              Set your three daily priorities, organize your tasks, and take a moment to reflect at the end of the day.
-           <br>
-              Say goodbye to:
-           <br>
-              Messy task lists
-           <br>
-              Unclear priorities
-           <br>
-              Losing track of your progress
-           <br>
-              Make a plan, focus on what matters, and give each day a clearer direction.
-           <br>
-              Designed to be comfortable to carry and available in three stylish colors.
-           <br>
-              Get Yours Today!
-            </p>
-
-            <span class="label">Fictional concept</span>
-          </article>
-
-        </div>
-        <div class="work-more-wrap">
-          <a class="btn work-more-btn" href="work.html">See more of my work <span aria-hidden="true">↗</span></a>
-          <p class="work-more-note">More samples, experiments, and future projects in one place.</p>
-        </div>
-      </div>
-    </section>
-
     <section class="content-section" id="about">
       <div class="container">
-        <p class="eyebrow">About me</p>
+        <p class="eyebrow">04 / About me</p>
         <h2 class="section-title">Still learning. Serious about improving.</h2>
 
         <div class="about-layout">
@@ -1604,7 +1678,33 @@ html.nk-intro #home .js-reveal, html.nk-intro #home .js-reveal.revealed { opacit
         </div>
       </div>
     </section>
+    <section class="content-section" id="contact">
+      <div class="container">
+        <div class="contact-panel">
+          <p class="eyebrow">05 / Get in touch</p>
+          <h2 class="section-title">Have something in mind?</h2>
 
+          <p>
+            If you need help with an email or sales-copy project,
+            I'd be glad to hear about it. Tell me what you're working
+            on, and we can start a conversation.
+          </p>
+
+          <p class="contact-hint">Helpful to include: what the project is, who it&rsquo;s for, and when you need it.</p>
+          <div class="contact-actions">
+            <a class="button primary" href="mailto:n.tonmoy.khan@gmail.com?subject=Copywriting%20Inquiry&body=Hi%20Nafiz%2C%0A%0AProject%3A%20%0AWho%20it%27s%20for%3A%20%0AWhen%20I%20need%20it%3A%20%0A%0AThanks%2C">Email me</a>
+            <button type="button" class="button" id="copy-email" data-email="n.tonmoy.khan@gmail.com">Copy email</button>
+            <span class="sr-only" id="copy-status" role="status" aria-live="polite"></span>
+          </div>
+
+          <p>
+            <a class="email" href="mailto:n.tonmoy.khan@gmail.com">
+              n.tonmoy.khan@gmail.com
+            </a>
+          </p>
+        </div>
+      </div>
+    </section>
 <section class="review-section" id="reviews">
   <div class="container">
     <p class="eyebrow">Feedback</p>
@@ -1617,41 +1717,19 @@ html.nk-intro #home .js-reveal, html.nk-intro #home .js-reveal.revealed { opacit
     </p>
 
     <div class="review-panel">
+      <details class="review-details">
+      <summary>Open the feedback form</summary>
       <iframe
         class="review-frame"
         src="https://docs.google.com/forms/d/e/1FAIpQLSdGmBm0bhCCjnUQl1epHR3BdfOpEMEvg8LJhcXTGJ3K2I1fmA/viewform?embedded=true" 
         title="Leave feedback for Nafiz Khan"
         loading="lazy">
       </iframe>
+      </details>
     </div>
   </div>
 </section>
 
-    <section class="content-section" id="contact">
-      <div class="container">
-        <div class="contact-panel">
-          <p class="eyebrow">Get in touch</p>
-          <h2 class="section-title">Have something in mind?</h2>
-
-          <p>
-            If you need help with an email or sales-copy project,
-            I'd be glad to hear about it. Tell me what you're working
-            on, and we can start a conversation.
-          </p>
-
-          <a class="button primary"
-             href="mailto:n.tonmoy.khan@gmail.com?subject=Copywriting%20Inquiry">
-            Email me
-          </a>
-
-          <p>
-            <a class="email" href="mailto:n.tonmoy.khan@gmail.com">
-              n.tonmoy.khan@gmail.com
-            </a>
-          </p>
-        </div>
-      </div>
-    </section>
   </main>
 
   <footer>
@@ -1878,6 +1956,29 @@ html.nk-intro #home .js-reveal, html.nk-intro #home .js-reveal.revealed { opacit
   });
   skip.addEventListener('click', finish);
   addEventListener('keydown', function (e) { if (!done && (e.key === 'Escape' || e.key === 'Enter')) finish(); });
+})();
+</script>
+<script>
+/* small interactions: current-section highlight in the nav, copy-email button */
+(function () {
+  var links = [].slice.call(document.querySelectorAll('nav a[href^="#"]'));
+  var map = links.map(function (a) { return { a: a, el: document.getElementById(a.getAttribute('href').slice(1)) }; }).filter(function (m) { return m.el; });
+  var raf = 0;
+  function spy() {
+    raf = 0; var line = innerHeight * 0.35, cur = null;
+    map.forEach(function (m) { var r = m.el.getBoundingClientRect(); if (r.top <= line && r.bottom > line) cur = m.a; });
+    var rv = document.getElementById('reviews');
+    if (rv) { var rr = rv.getBoundingClientRect(); if (rr.top <= line && rr.bottom > line) cur = (map.filter(function (m) { return m.el.id === 'contact'; })[0] || {}).a || cur; }
+    map.forEach(function (m) { if (m.a === cur) m.a.setAttribute('aria-current', 'true'), m.a.classList.add('is-current'); else m.a.removeAttribute('aria-current'), m.a.classList.remove('is-current'); });
+  }
+  addEventListener('scroll', function () { if (!raf) raf = requestAnimationFrame(spy); }, { passive: true });
+  addEventListener('resize', spy); spy();
+  var btn = document.getElementById('copy-email'), st = document.getElementById('copy-status');
+  if (btn) btn.addEventListener('click', function () {
+    var email = btn.getAttribute('data-email'), done = function () { btn.textContent = 'Copied \u2713'; if (st) st.textContent = 'Email address copied'; setTimeout(function () { btn.textContent = 'Copy email'; }, 2200); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(email).then(done, function () { location.href = 'mailto:' + email; });
+    else { var t = document.createElement('textarea'); t.value = email; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); done(); } catch (e) { location.href = 'mailto:' + email; } t.remove(); }
+  });
 })();
 </script>
 <script src="nk-upgrades.js"></script>

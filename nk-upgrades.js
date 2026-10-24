@@ -105,7 +105,7 @@ html .gw[style*="--lit"], html .gw:hover { color:inherit !important; text-shadow
     neb(document.getElementById('work'), 'nk-violet', 31, 1);
     neb(document.getElementById('about'), 'nk-teal', 41, 1);
     neb(document.getElementById('reviews'), 'nk-red', 51, .9);
-    neb(document.getElementById('contact'), 'nk-blue', 61, 1);
+    neb(document.getElementById('contact'), 'nk-violet', 61, 1);
   } else {
     var main = document.getElementById('main') || document.querySelector('main');
     var a = neb(main, 'nk-blue', 71, 1); if (a) { a.style.top = '0'; a.style.bottom = 'auto'; a.style.height = '55%'; }
