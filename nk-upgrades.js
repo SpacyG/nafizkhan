@@ -1,5 +1,5 @@
 /* nk-upgrades.js — add before </body> in index.html and work.html, after the existing scripts.
-   1) Only the custom cursor, in normal AND calm mode
+   1) Only the custom cursor
    2) Nebula backgrounds per section with soft transitions
    3) Slower, more spaced intro on the home hero
    4) Per-letter float + gradient highlight on hover
@@ -18,11 +18,9 @@
   }
 
   var css = `
-/* ---------- 1. one cursor only (custom), normal + calm ---------- */
-#rocketCursor { display:none !important; }
+/* ---------- 1. one cursor only (custom) ---------- */
 @media (hover:hover) and (pointer:fine) {
   html:not(#nk), html:not(#nk) *, html:not(#nk) *::before, html:not(#nk) *::after { cursor:none !important; }
-  html.calm #nk-dot, html.calm #nk-ring { display:block !important; }
 }
 
 /* ---------- 2. nebula section backgrounds ---------- */
