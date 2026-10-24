@@ -1401,6 +1401,8 @@ nav a.nav-cta:hover, nav a.nav-cta:focus-visible, .nav-cta:hover, .nav-cta:focus
 
 @media (max-width:520px) { nav a.nav-cta { padding:6px 12px !important; font-size:.9rem; } header nav { gap:14px !important; } }
 @media (max-width:400px) { header nav { gap:10px !important; } header nav a { font-size:.86rem; } nav a.nav-cta { padding:5px 10px !important; } }
+/* let each section's nebula fade into its neighbours instead of being cut off */
+#reviews, .review-section { overflow:visible !important; }
 /* orientation + consistent focus */
 nav a.is-current:not(.nav-cta) { color:#fff; }
 nav a.is-current:not(.nav-cta)::after { transform:scaleX(1); transform-origin:left; }
