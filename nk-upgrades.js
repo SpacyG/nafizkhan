@@ -178,7 +178,7 @@ html .gw[style*="--lit"], html .gw:hover { color:inherit !important; text-shadow
 (function () {
   'use strict';
   if (!document.getElementById('home')) return;
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  console.log('[nk] centaur intro starting');
   var root = document.documentElement; root.classList.add('nk-intro-on');
   var clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
   var eo = function (t) { return 1 - Math.pow(1 - t, 3); };
@@ -191,9 +191,9 @@ html.nk-intro-on { overflow:hidden; }
 html.nk-intro-on:not(.nk-intro-go) #home .eyebrow, html.nk-intro-on:not(.nk-intro-go) #home .hero-tagline,
 html.nk-intro-on:not(.nk-intro-go) #home .hero-copy, html.nk-intro-on:not(.nk-intro-go) #home .buttons,
 html.nk-intro-on:not(.nk-intro-go) .nk-ch { animation-play-state:paused !important; }
-#nk-intro { position:fixed; inset:0; z-index:2147483500; background:#000; cursor:none; }
+#nk-intro { position:fixed !important; inset:0 !important; top:0 !important; left:0 !important; width:100vw !important; height:100vh !important; z-index:2147483500 !important; background:#000; cursor:none; }
 #nk-intro canvas { position:absolute; inset:0; width:100%; height:100%; }
-#nk-fx { position:fixed; inset:0; width:100%; height:100%; z-index:2147483600; pointer-events:none; }
+#nk-fx { position:fixed !important; inset:0 !important; top:0 !important; left:0 !important; width:100vw !important; height:100vh !important; z-index:2147483600 !important; pointer-events:none; }
 #nk-cs { position:absolute; left:3vw; top:50%; width:min(90vw,135vh); height:auto; transform:translateY(-50%); overflow:visible; filter:drop-shadow(0 0 7px rgba(167,139,250,.85)); }
 #nk-lines path, #nk-str { fill:none; stroke:#cdb8ff; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:1; stroke-dashoffset:1; }
 .nk-st { fill:#fff; opacity:0; }
