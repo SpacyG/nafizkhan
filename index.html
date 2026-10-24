@@ -1911,21 +1911,19 @@ html.calm a, html.calm button, html.calm [role="button"], html.calm summary { cu
 /* ===== v10: ship and station share the page's palette: pearl, lilac and violet with a soft violet glow ===== */
 .ship-cv { filter:drop-shadow(0 4px 8px rgba(8,3,26,.5)) drop-shadow(0 0 10px rgba(160,125,255,.28)); }
 
-/* ===== v10: "How I approach my work" section ===== */
-#approach .section-title::after { content:""; display:block; width:66px; height:3px; margin-top:20px; border-radius:3px; background:linear-gradient(90deg, var(--purple), transparent); }
+/* ===== My working style (short version) ===== */
 #approach .container { position:relative; }
-#approach .container::before { content:attr(id); position:absolute; right:0; top:0; color:rgba(180,154,255,.07); font-size:clamp(3rem,8vw,7rem); font-weight:800; letter-spacing:-.07em; line-height:.9; text-transform:uppercase; pointer-events:none; }
-#approach .approach-grid { margin-top:42px; gap:22px; }
-.approach-card { display:flex; flex-direction:column; min-height:100%; }
-.approach-card:nth-child(2) { background:linear-gradient(145deg, rgba(39,31,51,.96), rgba(24,21,31,.96)); }
-.approach-card:nth-child(3) { background:linear-gradient(145deg, rgba(31,28,43,.96), rgba(24,21,31,.96)); }
-.approach-card:nth-child(4) { background:linear-gradient(145deg, rgba(35,29,45,.96), rgba(24,21,31,.96)); }
-.approach-card h3 { margin-bottom:13px; }
-.approach-card > p:not(.number) { line-height:1.8; margin-bottom:20px; }
-.approach-card .label { margin-top:auto; align-self:flex-start; }
-.approach-card .step-num { position:absolute; right:22px; top:12px; font-size:clamp(3.2rem,5vw,4.4rem); font-weight:800; letter-spacing:-.06em; line-height:1; color:rgba(183,160,255,.1); pointer-events:none; transition:color .3s ease; }
-.approach-card:hover .step-num { color:rgba(183,160,255,.2); }
-.approach-principle { margin-top:34px; }
+#approach .section-title { max-width:16ch; }
+#approach .section-title::after { content:""; display:block; width:66px; height:3px; margin-top:20px; border-radius:3px; background:linear-gradient(90deg, var(--purple), transparent); }
+.style-row { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:14px; margin-top:34px; }
+.style-chip { position:relative; padding:20px 20px 22px; border-radius:16px; border:1px solid rgba(183,160,255,.16); background:linear-gradient(145deg, rgba(35,29,45,.9), rgba(24,21,31,.9)); transition:transform .3s ease, border-color .3s ease; }
+.style-chip:hover { transform:translateY(-4px); border-color:rgba(183,160,255,.4); }
+.style-chip b { display:block; font-size:1.25rem; letter-spacing:-.02em; color:#fff; margin-bottom:6px; }
+.style-chip span { display:block; line-height:1.55; font-size:.95rem; opacity:.78; }
+.style-chip i { position:absolute; right:16px; top:12px; font-style:normal; font-weight:800; font-size:1.6rem; color:rgba(183,160,255,.14); }
+.approach-principle { margin-top:30px; }
+@media (max-width:900px) { .style-row { grid-template-columns:repeat(2, minmax(0,1fr)); } }
+@media (max-width:480px) { .style-row { grid-template-columns:1fr; } }
 
 /* ===== v11: calmer, sharper, more professional ===== */
 /* header tools: GitHub, Instagram and the calm switch, grouped at the top where new visitors see them */
@@ -2242,46 +2240,19 @@ html.calm .gw { color:inherit !important; text-shadow:none !important; }
 
     <section class="content-section" id="approach">
       <div class="container">
-        <p class="eyebrow">How I work</p>
-        <h2 class="section-title">How I approach my work.</h2>
+        <p class="eyebrow">My working style</p>
+        <h2 class="section-title">Listen. Dig. Write. Polish.</h2>
         <p class="section-intro">
-          I don't rely on a secret formula. I follow the same simple
-          process on every project, so the writing stays clear and the
-          reader stays at the center.
+          No secret formula. I find out who's reading, dig up the real
+          details, say one thing in plain words, then cut anything that
+          doesn't earn its place.
         </p>
 
-        <div class="grid approach-grid">
-          <article class="card approach-card">
-            <span class="step-num" aria-hidden="true">01</span>
-            <p class="number">STEP · LISTEN</p>
-            <h3>Understand the reader</h3>
-            <p>Before I write a word, I learn who is reading, what they need to know, and what the page has to help them do. A clear goal makes every later choice easier.</p>
-            <span class="label">Reader · Goal · Offer</span>
-          </article>
-
-          <article class="card approach-card">
-            <span class="step-num" aria-hidden="true">02</span>
-            <p class="number">STEP · RESEARCH</p>
-            <h3>Find the details that matter</h3>
-            <p>I study the product, the audience, and how similar brands speak. Then I pull out the real details worth saying, and I never invent claims to fill space.</p>
-            <span class="label">Product · Audience · Voice</span>
-          </article>
-
-          <article class="card approach-card">
-            <span class="step-num" aria-hidden="true">03</span>
-            <p class="number">STEP · WRITE</p>
-            <h3>Say one thing clearly</h3>
-            <p>My first draft focuses on one main message in plain words, with one clear next step. Clever lines come later, and only if they help the reader.</p>
-            <span class="label">One message · Plain words · One next step</span>
-          </article>
-
-          <article class="card approach-card">
-            <span class="step-num" aria-hidden="true">04</span>
-            <p class="number">STEP · REFINE</p>
-            <h3>Read it, cut it, improve it</h3>
-            <p>I read the copy out loud, cut whatever does not earn its place, and check every line against the goal. Then I revise until it sounds like a person talking to a person.</p>
-            <span class="label">Read aloud · Trim · Revise</span>
-          </article>
+        <div class="style-row">
+          <div class="style-chip"><i aria-hidden="true">1</i><b>Listen</b><span>Know who's reading and what they need.</span></div>
+          <div class="style-chip"><i aria-hidden="true">2</i><b>Dig</b><span>Real details only. No made-up claims.</span></div>
+          <div class="style-chip"><i aria-hidden="true">3</i><b>Write</b><span>One message. Plain words. One next step.</span></div>
+          <div class="style-chip"><i aria-hidden="true">4</i><b>Polish</b><span>Read it aloud. Cut the fluff.</span></div>
         </div>
 
         <div class="principle approach-principle">Clear first. Clever only if it helps.</div>
@@ -3483,7 +3454,7 @@ html.calm .gw { color:inherit !important; text-shadow:none !important; }
     const GRAB = ["Got it! Hold still…", "Ooh, this one looks good.", "I've got the frame. Nice and steady.", "Reading this one with you."];
     const SECT = [
       ['#services', ["These are the kinds of copy Nafiz writes. Hover a card and I might grab it!", "Emails, sales pages, landing pages. The good stuff."]],
-      ['#approach', ["Four steps, every time. Listen, research, write, refine. I approve.", "This is how Nafiz works. Slow down, then say it clearly."]],
+      ['#approach', ["Four moves, every time. Listen, dig, write, polish. I approve.", "This is how Nafiz works. Slow down, then say it clearly."]],
       ['#work', [{ t:"Sample work! Real writing, ready to read.", replies: sampleHref && !document.querySelector('.portfolio-page-grid') ? [ { l:'See all samples', href:'work.html' } ] : [] }]],
       ['#about', ["Curious who's behind the words? That's this part."]],
       ['#reviews', ["People say nice things here. Worth a read."]],
@@ -3504,7 +3475,7 @@ html.calm .gw { color:inherit !important; text-shadow:none !important; }
 
     /* ---- Signboard + section menu: he tells you where you are, and takes you anywhere ---- */
     const NAV = (hasWork
-      ? [['#home', 'Home'], ['#services', 'Services'], ['#approach', 'My approach'], ['#work', 'Sample work'], ['#about', 'About'], ['#reviews', 'Reviews'], ['#contact', 'Contact']]
+      ? [['#home', 'Home'], ['#services', 'Services'], ['#approach', 'My style'], ['#work', 'Sample work'], ['#about', 'About'], ['#reviews', 'Reviews'], ['#contact', 'Contact']]
       : [['.portfolio-page-header', 'Archive'], ['.portfolio-page-grid', 'Projects']])
       .map(([sel, name]) => ({ sel, name, el: document.querySelector(sel) })).filter(i => i.el);
     const sign = document.createElement('button');
