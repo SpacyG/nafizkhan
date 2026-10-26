@@ -1370,6 +1370,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
 </style>
 <script id="nk-pt-guard">try{if(sessionStorage.getItem('nkpt')){var r=document.documentElement;r.classList.add('nk-pt');r.classList.remove('nk-intro')}}catch(e){}</script>
 <style id="nk-pt-guard-css">html.nk-pt:not(.nk-armed) body{visibility:hidden}html.nk-pt{background:#09060f}</style>
+<style id="nk-backlink-fix">.portfolio-page-header .back-link{opacity:1!important;filter:none!important;visibility:visible!important;position:relative;z-index:6}</style>
 </head>
 <body>
 <div id="pointer-spotlight" aria-hidden="true"></div>
@@ -1735,7 +1736,7 @@ document.getElementById("year").textContent = new Date().getFullYear();
 
   /* Scroll reveal: elements enter clearly, then blur/fade away again as they leave the viewport. */
   if ('IntersectionObserver' in window) {
-    var sel = '#home .eyebrow, #home .hero-name, #home .hero-tagline, #home .hero-copy, #home .buttons, .content-section .eyebrow, .review-section .eyebrow, .section-title, .section-intro, .card, .principle, .initial, .about-copy p, .review-panel, .contact-panel .button, .contact-panel > p, .work-more-wrap, .future-work-note, .portfolio-page-header .container > a, .portfolio-page-header .container > p, .portfolio-page-header h1';
+    var sel = '#home .eyebrow, #home .hero-name, #home .hero-tagline, #home .hero-copy, #home .buttons, .content-section .eyebrow, .review-section .eyebrow, .section-title, .section-intro, .card, .principle, .initial, .about-copy p, .review-panel, .contact-panel .button, .contact-panel > p, .work-more-wrap, .future-work-note, .portfolio-page-header .container > p, .portfolio-page-header h1';
     var seen = new Set();
     var items = [].slice.call(document.querySelectorAll(sel)).filter(function (el) {
       if (seen.has(el)) return false;
@@ -3071,7 +3072,7 @@ header.portfolio-page-header::before { content:"" !important; display:block !imp
 @keyframes wk-float{from{translate:0 -4px}to{translate:0 6px}}
 .wk-mon::before{content:"";position:absolute;left:-2%;right:-2%;top:100%;height:calc(var(--H)*.86);transform-origin:50% 0;transform:rotateX(90deg) translateZ(-16px);background:radial-gradient(ellipse at 50% 36%,rgba(0,0,0,.62),rgba(60,70,150,.22) 46%,transparent 68%);filter:blur(16px);pointer-events:none}
 .wk-hinge{position:absolute;inset:0;transform-origin:50% 100%;transform-style:preserve-3d;transform:rotateX(0deg);transition:transform 1s cubic-bezier(.22,1.12,.36,1)}
-.wk-mon.dn .wk-hinge{transform:rotateX(-87deg);transition:transform .62s cubic-bezier(.55,0,.8,.4)}
+.wk-mon.dn .wk-hinge{transform:rotateX(-89deg);transition:transform .62s cubic-bezier(.55,0,.8,.4)}
 .wk-hinge::after{content:"";position:absolute;left:2%;right:2%;bottom:-6px;height:11px;border-radius:6px;background:linear-gradient(#6b6e79,#24262d);transform:translateZ(1px);box-shadow:0 2px 4px rgba(0,0,0,.4)}
 .wk-lid{position:absolute;inset:0;display:grid;grid-template-rows:auto auto minmax(0,1fr);overflow:hidden;backface-visibility:hidden;border:11px solid #0b0b0f;border-top-width:16px;border-bottom-width:13px;border-radius:18px 18px 4px 4px;background:#f1f3f6;box-shadow:0 0 0 1.5px #3a3d46,0 0 0 3px #b9bcc5,0 0 0 4px #60636d}
 .wk-lid > *{transition:opacity .7s ease .35s}
@@ -3151,6 +3152,32 @@ html body #about .nk-ab-top .initial{font-size:clamp(1rem,2vw,1.25rem)!important
 .nk-ab-who.jb .jw{transform:translate(var(--x),var(--y)) rotate(var(--r)) scale(var(--s,1));opacity:.4;filter:blur(2px);color:var(--sec,#92b6ff);animation:jwf 3.6s ease-in-out var(--f,0s) infinite alternate}
 @keyframes jwf{from{translate:0 -6px}to{translate:4px 7px}}
 @media (prefers-reduced-motion:reduce){.nk-ab-who .jw{transition:none}.nk-ab-who.jb .jw{transform:none;opacity:1;filter:none;animation:none;color:inherit}}
+</style>
+<style id="nk-laptop">
+.wk-scr{container-type:inline-size;perspective-origin:50% 30%;padding-bottom:calc(min(56vh,600px)*.22)}
+.wk-mon{--H:min(56vh,600px,calc(92cqw/1.4));width:calc(var(--H)*1.4);margin:0 auto}
+@media (max-width:860px){.wk-mon{--H:min(40vh,calc(92cqw/1.4))}.wk-scr{padding-bottom:calc(40vh*.22)}}
+.wk-scr{perspective:1700px}.wk-tilt{transform:rotateX(8deg) rotateY(-18deg)}
+.wk-lid{border:0;padding:13px 13px 15px;border-radius:16px 16px 3px 3px;background:#08080b;box-shadow:0 0 0 2px #a3a7b3,0 0 0 3.5px #5a5d68,inset 0 0 0 1px #2b2d35}
+.wk-bar{border-radius:6px 6px 0 0}.wk-pg{border-radius:0 0 4px 4px}
+.wk-back{transform:translateZ(-8.5px) rotateY(180deg)}
+.wk-sl,.wk-sr{position:absolute;top:0;bottom:0;width:16px;background:linear-gradient(90deg,#8b8f9b,#d2d5dd 50%,#8b8f9b)}
+.wk-sl{left:0;transform-origin:0 50%;transform:rotateY(90deg)}.wk-sr{right:0;transform-origin:100% 50%;transform:rotateY(-90deg)}
+.wk-sl,.wk-sr,.wk-dl,.wk-dr,.wk-lip{display:none}
+.wk-lx{position:absolute;inset:-3px;border-radius:19px 19px 6px 6px;background:#aeb2bd;transform:translateZ(calc(var(--k)*-.5px))}
+.wk-dx{position:absolute;inset:0;border-radius:3px 3px 12px 12px;background:#a3a6b2;transform:translateZ(calc(var(--k)*-.5px))}
+.wk-lid::before{top:4px;margin-left:-3px;width:6px;height:6px;box-shadow:0 0 0 2px #15171d,0 0 6px rgba(80,140,255,.35)}
+.wk-back{background:linear-gradient(160deg,#eceef3,#c9ccd6 50%,#aeb2be);border-radius:16px 16px 3px 3px}
+.wk-deck{left:-.6%;right:-.6%;height:var(--H);border-radius:3px 3px 12px 12px;background:linear-gradient(180deg,#8d909b 0,#cdd0d8 3%,#e6e8ee 38%,#d3d6de 100%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.7),inset 0 -3px 8px rgba(0,0,0,.14)}
+.wk-kb{position:absolute;left:7%;right:7%;top:6%;height:52%;display:flex;flex-direction:column;gap:2.6%;padding:1.6% 1.5%;border-radius:6px;background:#15161b;box-shadow:inset 0 2px 7px #000,0 0 0 1px rgba(0,0,0,.4),0 1px 0 rgba(255,255,255,.75)}
+.wk-kr{display:flex;gap:.9%;flex:1}.wk-kr.f{flex:.6}
+.wk-kr b{border-radius:3px;background:linear-gradient(#41434d,#2b2d35);box-shadow:inset 0 1px 0 rgba(255,255,255,.13),0 1px 0 #000}
+.wk-pad{left:32%;right:32%;bottom:7%;height:26%;border-radius:9px;background:linear-gradient(#dcdfe7,#c7cbd5);box-shadow:inset 0 0 0 1px rgba(0,0,0,.16),inset 0 1px 0 #fff}
+.wk-lip{height:14px;background:linear-gradient(#a9acb7,#8a8e9a 55%,#666a75)}
+.wk-dl,.wk-dr{position:absolute;top:0;bottom:0;width:14px;background:linear-gradient(90deg,#7d808c,#bfc2cb 50%,#7d808c)}
+.wk-dl{left:0;transform-origin:0 50%;transform:rotateY(90deg)}.wk-dr{right:0;transform-origin:100% 50%;transform:rotateY(-90deg)}
+.wk-lip{border-radius:0 0 12px 12px/0 0 12px 12px}
+.wk-lip::after{content:"";position:absolute;left:41%;right:41%;top:0;height:6px;border-radius:0 0 9px 9px;background:#5b5f6a}
 </style>
 <script id="nk-v4-js">
 (function () {
@@ -3262,17 +3289,19 @@ html body #about .nk-ab-top .initial{font-size:clamp(1rem,2vw,1.25rem)!important
       var f = $('.label', c), a = $('.sample-cta', c), h3 = $('h3[id]', c);
       return { n: txt($('.number', c).innerHTML), t: txt($('h3', c).innerHTML), d: d ? txt(d.innerHTML) : '', L: L, tag: f ? txt(f.innerHTML) : '', href: a ? a.getAttribute('href') : '', id: h3 ? h3.id : '' };
     });
+    var LX = '', DX = ''; for (var kk = 1; kk <= 20; kk++) { if (kk <= 16) LX += '<i class="wk-lx" style="--k:' + kk + '"></i>'; DX += '<i class="wk-dx" style="--k:' + kk + '"></i>'; }
+    var KB = [[1,1,1,1,1,1,1,1,1,1,1,1,1,1.4],[1,1,1,1,1,1,1,1,1,1,1,1,1,1.7],[1.6,1,1,1,1,1,1,1,1,1,1,1,1,1.2],[1.9,1,1,1,1,1,1,1,1,1,1,1,2.2],[2.4,1,1,1,1,1,1,1,1,1,1,2.6],[1,1,1,1.3,5.4,1.3,1,1,1]].map(function (r, i) { return '<div class="wk-kr' + (i ? '' : ' f') + '">' + r.map(function (k) { return '<b style="flex:' + k + '"></b>'; }).join('') + '</div>'; }).join('');
     var N = P.length, sec = document.createElement('section');
     sec.className = 'wk'; sec.id = 'wk'; sec.setAttribute('aria-label', 'Projects'); sec.style.setProperty('--n', N);
     sec.innerHTML = '<div class="wk-pin"><div class="wk-top"><span class="wk-ct" aria-live="polite"></span><div class="wk-dots"></div></div>' +
       '<div class="wk-main"><div class="wk-scr"><div class="wk-tilt"><div class="wk-mon dn"><div class="wk-hinge"><div class="wk-lid"><div class="wk-bar"><i></i><i></i><i></i><span class="wk-ic"></span><span class="wk-fn"></span><span class="wk-sv"></span></div>' +
-      '<div class="wk-mn"><span>File</span><span>Edit</span><span>View</span><span>Insert</span><span>Format</span></div><div class="wk-pg"><div class="wk-sheet"></div></div></div><div class="wk-back"><i></i></div></div><div class="wk-deck"><i class="wk-keys"></i><i class="wk-pad"></i><i class="wk-lip"></i></div></div></div></div>' +
+      '<div class="wk-mn"><span>File</span><span>Edit</span><span>View</span><span>Insert</span><span>Format</span></div><div class="wk-pg"><div class="wk-sheet"></div></div></div><div class="wk-back"><i></i></div>'+LX+'</div><div class="wk-deck"><div class="wk-kb">'+KB+'</div><i class="wk-pad"></i>'+DX+'</div></div></div></div>' +
       '<aside class="wk-info"><p class="wk-eb"></p><h2 class="wk-h"></h2><p class="wk-d"></p><div class="wk-ft"></div></aside></div>' +
       '<div class="wk-nav"><button type="button" data-d="-1" aria-label="Previous project">&larr;</button><button type="button" data-d="1" aria-label="Next project">&rarr;</button></div></div>';
     var gs = G.closest('section'); gs.parentNode.insertBefore(sec, gs); G.classList.add('wk-src');
     if (!still) (function () {
       var tilt = $('.wk-tilt', sec), tx = 0, ty = 0, cx = 0, cy = 0, tr = 0;
-      function tl() { tr = 0; cx += (tx - cx) * .07; cy += (ty - cy) * .07; tilt.style.transform = 'rotateX(' + (6 - cy * 6).toFixed(2) + 'deg) rotateY(' + (-15 + cx * 12).toFixed(2) + 'deg)'; if (Math.abs(tx - cx) > .002 || Math.abs(ty - cy) > .002) tr = requestAnimationFrame(tl); }
+      function tl() { tr = 0; cx += (tx - cx) * .07; cy += (ty - cy) * .07; tilt.style.transform = 'rotateX(' + (8 - cy * 4).toFixed(2) + 'deg) rotateY(' + (-18 + cx * 12).toFixed(2) + 'deg)'; if (Math.abs(tx - cx) > .002 || Math.abs(ty - cy) > .002) tr = requestAnimationFrame(tl); }
       sec.addEventListener('pointermove', function (e) { if (e.pointerType && e.pointerType !== 'mouse') return; tx = e.clientX / innerWidth - .5; ty = e.clientY / innerHeight - .5; if (!tr) tr = requestAnimationFrame(tl); }, { passive: true });
     })();
     var mon = $('.wk-mon', sec), pg = $('.wk-pg', sec), sheet = $('.wk-sheet', sec), fn = $('.wk-fn', sec), sv = $('.wk-sv', sec), ct = $('.wk-ct', sec),
@@ -3297,7 +3326,7 @@ html body #about .nk-ab-top .initial{font-size:clamp(1rem,2vw,1.25rem)!important
       var k = ++tok, p = P[i]; cur = i;
       ct.textContent = ('0' + (i + 1)).slice(-2) + ' / ' + ('0' + N).slice(-2);
       $$('button', dots).forEach(function (b, j) { b.classList.toggle('on', j === i); });
-      mon.classList.add('dn'); await sleep(still ? 0 : 640); if (k !== tok) return;
+      mon.classList.add('dn'); await sleep(still ? 0 : 1100); if (k !== tok) return;
       fn.textContent = p.t + ' (draft)'; sv.textContent = 'Saving…'; sheet.innerHTML = ''; eb.textContent = hh.textContent = dd.textContent = ''; ft.classList.remove('on'); ft.innerHTML = '';
       mon.classList.remove('dn'); await sleep(still ? 0 : 1000); if (k !== tok) return;
       var total = p.L.reduce(function (a, l) { return a + (l.t ? l.t.length : 0); }, 0), cps = Math.max(70, total / 11);
@@ -3320,9 +3349,9 @@ html body #about .nk-ab-top .initial{font-size:clamp(1rem,2vw,1.25rem)!important
     function goTo(i) { var m = metrics(); i = clamp(i, 0, N - 1); scrollTo({ top: scrollY + m.r.top + m.D * (i + .5) / N, behavior: still ? 'auto' : 'smooth' }); }
     var busy = false;
     function upd() {
-      busy = false; var m = metrics(), act = m.r.top < m.vh * .4 && m.r.bottom > m.vh * .6;
-      if (!act) { if (cur !== -1) { tok++; cur = -1; mon.classList.add('dn'); } return; }
-      var i = clamp(Math.floor(-m.r.top / m.D * N), 0, N - 1); if (i !== cur) show(i);
+      busy = false; var m = metrics(), act = m.r.top < m.vh * .85 && m.r.bottom > m.vh * .3;
+      if (!act) { clearTimeout(upd.t); return; }
+      var i = clamp(Math.floor(-m.r.top / m.D * N), 0, N - 1); clearTimeout(upd.t); if (i !== cur) upd.t = setTimeout(function () { if (i !== cur) show(i); }, still ? 0 : 180);
     }
     addEventListener('scroll', function () { if (!busy) { busy = true; requestAnimationFrame(upd); } }, { passive: true });
     addEventListener('resize', upd);
