@@ -1682,7 +1682,7 @@ document.getElementById("year").textContent = new Date().getFullYear();
     var mx = -100, my = -100, rx = -100, ry = -100, shown = false, raf = 0;
     var show = function (v) { dot.style.opacity = ring.style.opacity = v ? '1' : '0'; };
     function loop() {
-      rx += (mx - rx) * 0.17; ry += (my - ry) * 0.17;
+      rx += (mx - rx) * 0.24; ry += (my - ry) * 0.24;
       ring.style.transform = 'translate3d(' + rx.toFixed(1) + 'px,' + ry.toFixed(1) + 'px,0)';
       raf = (Math.abs(mx - rx) > 0.1 || Math.abs(my - ry) > 0.1) ? requestAnimationFrame(loop) : 0;
     }
@@ -1693,7 +1693,7 @@ document.getElementById("year").textContent = new Date().getFullYear();
       var t = e.target && e.target.closest ? e.target : null;
       if (t && t.tagName === 'IFRAME') { show(false); shown = false; return; }
       if (!shown) { shown = true; rx = mx; ry = my; show(true); }
-      var hot = t && t.closest('a,button,input,textarea,select,[role="button"],summary,.card');
+      var hot = t && t.closest('a,button,input,textarea,select,[role="button"],summary');
       ring.classList.toggle('hot', !!hot); dot.classList.toggle('hot', !!hot);
       if (!raf) raf = requestAnimationFrame(loop);
     }, { passive: true });
@@ -2327,17 +2327,17 @@ html.nk-quill-on #nk-dot, html.nk-quill-on #nk-ring { display:none !important; }
   try { stored = sessionStorage.getItem('nkpt'); sessionStorage.removeItem('nkpt'); } catch (e) {}
   if (stored && !still) {
     root.classList.add('nk-pt', 'nk-armed');
-    pt = buildPT(stored); pt.classList.add('on', 'cover'); warp.force(5);
+    pt = buildPT(stored); pt.classList.add('on', 'cover'); warp.force(2);
     var t0 = performance.now(), lifted = false;
     var lift = function () {
       if (lifted || !pt) return; lifted = true;
       root.style.setProperty('--nk-oy', ((window.scrollY || 0) + innerHeight * .45) + 'px');
       root.classList.add('nk-go'); root.classList.remove('nk-pt');
       pt.classList.remove('cover'); void pt.offsetWidth; pt.classList.add('out');
-      setTimeout(function () { if (pt) { pt.remove(); pt = null; } }, 1300);
+      setTimeout(function () { if (pt) { pt.remove(); pt = null; } }, 1100);
       setTimeout(function () { root.classList.remove('nk-go', 'nk-armed'); }, 1600);
     };
-    var ready = function () { setTimeout(lift, Math.max(0, 750 - (performance.now() - t0))); };
+    var ready = function () { setTimeout(lift, Math.max(0, 480 - (performance.now() - t0))); };
     if (document.readyState === 'complete') ready(); else addEventListener('load', ready, { once: true });
     setTimeout(lift, 4000);
   } else { root.classList.remove('nk-pt'); }
@@ -2354,10 +2354,10 @@ html.nk-quill-on #nk-dot, html.nk-quill-on #nk-ring { display:none !important; }
     if (going) return; going = true;
     try { sessionStorage.setItem('nkpt', label); } catch (e) {}
     root.style.setProperty('--nk-oy', ((window.scrollY || 0) + innerHeight * .5) + 'px');
-    root.classList.add('nk-leave'); warp.force(5.5);
+    root.classList.add('nk-leave'); warp.force(2.5);
     pt = buildPT(label); void pt.offsetWidth; pt.classList.add('on');
-    setTimeout(function () { if (pt) scramble(pt.querySelector('b'), label, 700); }, 520);
-    setTimeout(function () { location.href = href; }, 1080);
+    setTimeout(function () { if (pt) scramble(pt.querySelector('b'), label, 450); }, 220);
+    setTimeout(function () { location.href = href; }, 680);
     setTimeout(function () { /* navigation blocked: never trap the visitor */
       if (pt) { pt.remove(); pt = null; } going = false; root.classList.remove('nk-leave'); try { sessionStorage.removeItem('nkpt'); } catch (e) {} }, 6000);
   }
@@ -3311,7 +3311,7 @@ html body #about .nk-ab-top .initial{font-size:clamp(1rem,2vw,1.25rem)!important
     var gs = G.closest('section'); gs.parentNode.insertBefore(sec, gs); G.classList.add('wk-src');
     if (!still) (function () {
       var tilt = $('.wk-tilt', sec), tx = 0, ty = 0, cx = 0, cy = 0, tr = 0;
-      function tl() { tr = 0; cx += (tx - cx) * .07; cy += (ty - cy) * .07; tilt.style.transform = 'rotateX(' + (8 - cy * 4).toFixed(2) + 'deg) rotateY(' + (-18 + cx * 12).toFixed(2) + 'deg)'; if (Math.abs(tx - cx) > .002 || Math.abs(ty - cy) > .002) tr = requestAnimationFrame(tl); }
+      function tl() { tr = 0; cx += (tx - cx) * .07; cy += (ty - cy) * .07; tilt.style.transform = 'rotateX(' + (3 - cy * 3).toFixed(2) + 'deg) rotateY(' + (-7 + cx * 9).toFixed(2) + 'deg)'; if (Math.abs(tx - cx) > .002 || Math.abs(ty - cy) > .002) tr = requestAnimationFrame(tl); }
       sec.addEventListener('pointermove', function (e) { if (e.pointerType && e.pointerType !== 'mouse') return; tx = e.clientX / innerWidth - .5; ty = e.clientY / innerHeight - .5; if (!tr) tr = requestAnimationFrame(tl); }, { passive: true });
     })();
     var mon = $('.wk-mon', sec), pg = $('.wk-pg', sec), sheet = $('.wk-sheet', sec), fn = $('.wk-fn', sec), sv = $('.wk-sv', sec), ct = $('.wk-ct', sec),
@@ -3397,6 +3397,66 @@ html body #about .nk-ab-who { text-shadow:0 2px 16px rgba(120,150,255,.2); }
 /* laptop: neat base plate, no pointed corners */
 .wk-deck { left:-1.2% !important; right:-1.2% !important; border-radius:5px 5px 15px 15px / 5px 5px 15px 15px !important; }
 .wk-hinge::after { left:1% !important; right:1% !important; bottom:-5px !important; height:9px !important; border-radius:5px !important; }
+
+/* ===== laptop: space-themed finish, smoother edges ===== */
+.wk-lid { border-color:#0a0914 !important; border-radius:16px 16px 10px 10px !important; background:#100e1d !important;
+  box-shadow:0 0 0 1px rgba(176,156,255,.5), 0 0 0 3px #17142a, 0 0 0 4px rgba(120,100,230,.3), 0 30px 70px -18px rgba(110,80,230,.5) !important; }
+.wk-back { border-radius:16px 16px 10px 10px !important; background:linear-gradient(160deg,#2c2848 0%,#181632 55%,#0f0d22 100%) !important;
+  box-shadow:inset 0 0 0 1px rgba(176,156,255,.28), inset 0 -16px 34px rgba(0,0,0,.35) !important; }
+.wk-back i { background:radial-gradient(circle at 35% 30%,#e0d5ff,#8f77e8 55%,#4a3a9c) !important; box-shadow:0 0 18px rgba(150,120,255,.55) !important; }
+.wk-deck { border-radius:6px 6px 16px 16px / 6px 6px 16px 16px !important; background:linear-gradient(180deg,#3a3660 0%,#2b2849 10%,#201d3b 52%,#171530 100%) !important;
+  box-shadow:inset 0 0 0 1px rgba(176,156,255,.3), inset 0 2px 8px rgba(196,176,255,.25) !important; }
+.wk-keys { border-radius:10px !important; box-shadow:inset 0 0 0 5px #0a0914, 0 0 0 1px rgba(176,156,255,.2) !important; }
+.wk-pad { border-radius:12px !important; background:linear-gradient(#302c54,#221f40) !important; box-shadow:inset 0 0 0 1px rgba(176,156,255,.24), inset 0 1px 0 rgba(205,190,255,.3) !important; }
+.wk-hinge::after { background:linear-gradient(#4b4772,#1a1830) !important; }
+.wk-lip { background:linear-gradient(#3a3660,#1f1c3a 55%,#14122a) !important; }
+.wk-bar { background:#1a1730 !important; color:#d8d1f2 !important; border-bottom-color:#2b2748 !important; }
+.wk-bar i { background:#3a3560 !important; }
+.wk-mn { background:#1a1730 !important; color:#a09abf !important; border-bottom-color:#2b2748 !important; }
+.wk-sv { color:#908ab2 !important; }
+.wk-pg { background:#0e0c1b !important; }
+.wk-sheet { background:#1d1a33 !important; color:#e8e2f8 !important; box-shadow:0 1px 6px rgba(0,0,0,.5) !important; }
+.wk-sheet .ln-h { color:#bba6ff !important; }
+
+/* ===== laptop v3: clean single panels (no stacked slices), soft anti-aliased edges ===== */
+.wk-lx, .wk-dx, .wk-sl, .wk-sr, .wk-dl, .wk-dr, .wk-lip, .wk-hinge::after { display:none !important; }
+.wk-back { transform:translateZ(-3px) rotateY(180deg) !important; }
+.wk-lid { box-shadow:0 0 0 1px rgba(186,168,255,.6), 0 0 0 2.5px #181530, 0 0 0 3.5px rgba(120,100,230,.35), 0 30px 64px -22px rgba(110,80,230,.55) !important; }
+.wk-deck { left:-.3% !important; right:-.3% !important; border-radius:3px 3px 8px 8px / 3px 3px 8px 8px !important;
+  background:linear-gradient(180deg,#2d2a4d 0%,#26233f 35%,#1b1933 100%) !important;
+  box-shadow:inset 0 0 0 1px rgba(186,168,255,.34), 0 0 0 .75px rgba(186,168,255,.3), 0 14px 34px -14px rgba(110,80,230,.5) !important; }
+.wk-lid, .wk-back { outline:1px solid transparent; }
+.wk-kb { background:#0b0a16 !important; box-shadow:inset 0 2px 7px #000, 0 0 0 1px rgba(176,156,255,.22) !important; }
+.wk-kr b { background:linear-gradient(#34305a,#22203f) !important; box-shadow:inset 0 1px 0 rgba(200,186,255,.14), 0 1px 0 #05040c !important; }
+
+/* ===== pointer: clean dot + ring ===== */
+#nk-dot { width:6px !important; height:6px !important; margin:-3px 0 0 -3px !important; border-radius:50% !important; background:#fff !important;
+  box-shadow:0 0 0 1px rgba(10,6,24,.55), 0 0 10px rgba(190,165,255,.7) !important; }
+#nk-ring { width:32px !important; height:32px !important; margin:-16px 0 0 -16px !important; border:1.5px solid rgba(235,225,255,.78) !important; background:transparent !important;
+  box-shadow:0 0 0 1px rgba(10,6,24,.35), inset 0 0 0 1px rgba(10,6,24,.2) !important;
+  transition:width .28s cubic-bezier(.2,.8,.2,1), height .28s cubic-bezier(.2,.8,.2,1), margin .28s cubic-bezier(.2,.8,.2,1), background .25s, border-color .25s, opacity .25s !important; }
+#nk-ring::before { display:none !important; }
+#nk-ring.hot { width:50px !important; height:50px !important; margin:-25px 0 0 -25px !important; background:rgba(167,139,250,.16) !important; border-color:rgba(205,185,255,.95) !important; }
+#nk-ring.down { width:24px !important; height:24px !important; margin:-12px 0 0 -12px !important; }
+#nk-dot.hot { width:4px !important; height:4px !important; margin:-2px 0 0 -2px !important; }
+
+/* ===== screen only: no base, bigger, facing the viewer ===== */
+.wk-deck, .wk-mon::before { display:none !important; }
+.wk-scr { padding-bottom:0 !important; }
+.wk-mon { --H:max(280px, min(calc(100svh - 420px), 720px, calc(100cqw/1.4))); }
+.wk-tilt { transform:rotateX(3deg) rotateY(-7deg); }
+@media (max-width:860px) { .wk-mon { --H:min(36svh,calc(100cqw/1.4)); } .wk-scr { padding-bottom:0 !important; } }
+
+/* ===== page change: light curtain wipe (transform only) instead of scaling the whole page ===== */
+html.nk-leave main, html.nk-leave body > header, html.nk-leave footer, html.nk-pt main, html.nk-pt body > header, html.nk-pt footer, html.nk-go main, html.nk-go body > header, html.nk-go footer { transform:none !important; opacity:1 !important; transition:none !important; }
+#nk-pt { opacity:1 !important; transform:translate3d(0,101%,0); transition:transform .62s cubic-bezier(.76,0,.24,1) !important; will-change:transform;
+  background:radial-gradient(ellipse 70% 55% at 50% 42%, rgba(120,80,230,.34), transparent 70%), #09060f !important; }
+#nk-pt::before { display:block !important; content:""; position:absolute !important; left:0 !important; right:0 !important; top:auto !important; bottom:-3px !important; width:auto !important; height:3px !important; margin:0 !important; border-radius:0 !important;
+  opacity:1 !important; transform:none !important; transition:none !important; background:linear-gradient(90deg,transparent,rgba(200,180,255,.9),transparent) !important; box-shadow:0 0 40px 9px rgba(140,100,255,.5); }
+#nk-pt.on { transform:none !important; }
+#nk-pt.cover { transform:none !important; transition:none !important; }
+#nk-pt.out { transform:translate3d(0,-101%,0) !important; transition:transform .95s cubic-bezier(.76,0,.24,1) !important; pointer-events:none; }
+#nk-pt.on .nk-pt-label { transition-delay:.2s; }
 </style>
 </body>
 </html>
