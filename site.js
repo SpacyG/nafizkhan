@@ -2,6 +2,7 @@ const filters = document.querySelector('.filters');
 const samples = document.querySelector('.samples');
 const viewer = document.querySelector('#photo-viewer');
 const workList = document.querySelector('.work-list');
+const sampleSelector = document.querySelector('.sample-selector');
 
 function element(tag, text, className) {
   const node = document.createElement(tag);
@@ -30,20 +31,47 @@ function renderWorkCard(entry) {
 
   const preview = element('div', '', 'work-preview');
   const type = element('span', entry.category, 'work-type');
-  const firstLine = entry.body.split('\n').find(line => line.trim());
-  const excerpt = firstLine?.trim().replace(/^(?:Subject|Headline):\s*/i, '') || entry.title;
+  const [firstLine, ...bodyLines] = entry.body.split('\n').map(line => line.trim()).filter(Boolean);
+  const excerpt = firstLine?.replace(/^(?:Subject|Headline):\s*/i, '') || entry.title;
   const excerptText = excerpt.length > 140 ? excerpt.slice(0, 137).trimEnd() + '…' : excerpt;
   preview.append(type, element('p', excerptText, 'work-excerpt'));
+  const opening = bodyLines.slice(0, 2).join(' ');
+  if (opening) {
+    preview.append(element('p', opening.length > 220 ? opening.slice(0, 217).trimEnd() + '…' : opening, 'work-opening'));
+  }
 
   const meta = element('div', '', 'work-meta');
   const description = element('div');
   description.append(element('strong', entry.title));
   if (entry.description) description.append(element('p', entry.description));
-  const arrow = element('span', '↗');
-  arrow.setAttribute('aria-hidden', 'true');
-  meta.append(description, arrow);
+  meta.append(description, element('span', 'Read full sample ↗'));
   card.append(preview, meta);
   return card;
+}
+
+function setupFeaturedSamples() {
+  if (!sampleSelector) return;
+  const cards = [...workList.querySelectorAll('.work-card')];
+  const activeId = sampleSelector.querySelector('[aria-pressed="true"]')?.getAttribute('aria-controls');
+  const buttons = cards.map((card, index) => {
+    card.id = 'featured-' + card.hash.slice(1);
+    const button = element('button', card.querySelector('strong').textContent);
+    button.type = 'button';
+    button.setAttribute('aria-controls', card.id);
+    button.addEventListener('click', () => select(index));
+    return button;
+  });
+
+  function select(activeIndex) {
+    cards.forEach((card, index) => {
+      card.hidden = index !== activeIndex;
+      buttons[index].setAttribute('aria-pressed', String(!card.hidden));
+    });
+  }
+
+  sampleSelector.replaceChildren(...buttons);
+  sampleSelector.hidden = cards.length < 2;
+  select(Math.max(0, cards.findIndex(card => card.id === activeId)));
 }
 
 function renderMedia(entry) {
@@ -111,6 +139,7 @@ viewer?.querySelector('[data-close]').addEventListener('click', () => viewer.clo
 addEventListener('hashchange', openHash);
 openHash();
 if (filters) filters.hidden = false;
+setupFeaturedSamples();
 
 async function loadContent() {
   try {
@@ -121,6 +150,7 @@ async function loadContent() {
       if (workList) {
         const featured = entries.filter(entry => entry.kind === 'sample').slice(0, 3);
         workList.replaceChildren(...featured.map(renderWorkCard));
+        setupFeaturedSamples();
         if (!featured.length) workList.append(element('p', 'New samples will appear here as they are published.'));
         const note = workList.closest('section').querySelector('.section-note');
         note.hidden = !featured.length || !featured.every(entry => entry.credit === 'Concept project');
