@@ -4,6 +4,12 @@
 
 Home, Work and About use the marked-up proof design. The homepage leads straight from the first-person hero to Work. Five concept samples include case notes and playable edits. The section menu and project-type email controls work with keyboard and touch. Privacy and Terms are static. The owner studio uses the Node server for publishing.
 
+## 2026-11-24 - Distinct homepage examples
+
+- Gave the hero paper its own headline and practice draft.
+- Kept original featured samples and added distinct practice rewrites for their homepage comparisons.
+- Used each service’s existing example in the preview note and separated the alternate hero headlines from sample titles.
+
 ## 2026-11-24 - Reading path and responsive hero
 
 - Preserved the supplied once-per-session splash and linked its completion to the hero entrance.

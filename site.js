@@ -229,16 +229,35 @@ const revisionNotes = {
   'sample-lumaskin': 'The subject opens with the reader’s skincare need before introducing the product.'
 };
 
-function revisionControl(id, title, finalLine) {
-  const draft = practiceDrafts[id];
-  if (!draft || !finalLine) return null;
+const featuredEdits = {
+  'sample-email': {
+    draft: 'We sell fresh coffee beans.',
+    rewrite: 'Bold or light, find a roast you’ll look forward to tomorrow.',
+    note: 'The edit gives readers a choice they can picture before they browse.'
+  },
+  'sample-sales': {
+    draft: 'This planner has room for your tasks.',
+    rewrite: 'Pick three priorities before your to-do list picks them for you.',
+    note: 'The edit turns a product feature into a specific way to start the day.'
+  },
+  'sample-landing': {
+    draft: 'We offer personal training.',
+    rewrite: 'Start in a small group, with a trainer showing you what to do first.',
+    note: 'The edit answers a beginner’s question about what happens when they arrive.'
+  }
+};
+
+function revisionControl(id, title, finalLine, example) {
+  const draft = example?.draft ?? practiceDrafts[id];
+  const rewrite = example?.rewrite ?? finalLine;
+  if (!draft || !rewrite) return null;
   const panel = element('fieldset', '', 'revision');
   const legend = element('legend', 'Compare the edit · ' + title);
   const output = element('p', '', 'revision-lines');
   const oldLine = element('del', draft);
-  const newLine = element('ins', finalLine);
+  const newLine = element('ins', rewrite);
   const hint = element('p', 'Drag the pen, pick a stage or step through the edit.', 'revision-hint');
-  const note = element('p', revisionNotes[id], 'revision-note');
+  const note = element('p', example?.note ?? revisionNotes[id], 'revision-note');
   const slider = element('input');
   slider.type = 'range';
   slider.min = '0';
@@ -322,7 +341,10 @@ function attachWorkComparisons() {
 function updateHomeComparison(card) {
   const slot = document.querySelector('.featured-comparison');
   if (!slot) return;
-  const panel = card && revisionControl(card.hash.slice(1), card.querySelector('strong').textContent, card.querySelector('.work-excerpt').textContent);
+  const id = card?.hash.slice(1);
+  const panel = card && revisionControl(
+    id, card.querySelector('strong').textContent, card.querySelector('.work-excerpt').textContent, featuredEdits[id]
+  );
   slot.replaceChildren(...(panel ? [panel] : []));
 }
 
@@ -330,7 +352,7 @@ function setupHeadline() {
   const headline = document.querySelector('.hero-copy h2');
   if (headline) {
     const original = [...headline.childNodes].map(node => node.cloneNode(true));
-    const choices = [null, 'Your day deserves a little more direction.', 'We lay the path, you take the steps.'];
+    const choices = [null, 'Give your launch a line worth remembering.', 'Make the next step feel obvious.'];
     let index = 0;
     const cycle = element('button', '', 'headline-cycle');
     cycle.type = 'button';
@@ -372,14 +394,8 @@ function setupServices() {
     function showPreview() {
       if (!preview) return;
       const label = example.querySelector('strong');
-      const lines = [
-        document.querySelector('[data-hero-rewrite]')?.firstChild?.textContent,
-        document.querySelector('.work-card[href$="#sample-sales"] .work-excerpt')?.textContent,
-        document.querySelector('.work-card[href$="#sample-landing"] .work-excerpt')?.textContent
-      ];
-      const line = lines[index]?.trim();
       preview.querySelector('[data-service-kind]').textContent = label.textContent;
-      preview.querySelector('[data-service-line]').textContent = line ? '“' + line + '”' : example.textContent.slice(label.textContent.length).trim();
+      preview.querySelector('[data-service-line]').textContent = example.textContent.slice(label.textContent.length).trim();
       preview.dataset.service = String(index);
     }
     button.addEventListener('focus', showPreview);
@@ -611,7 +627,6 @@ function setupHeroProof() {
   const rewrite = paper?.querySelector('[data-hero-rewrite]');
   if (!toggle || !firstDraft || !rewrite) return;
   let swapAnimation;
-  firstDraft.querySelector('del').textContent = practiceDrafts['sample-email'];
   toggle.hidden = false;
   toggle.addEventListener('click', () => {
     const showDraft = firstDraft.hidden;
