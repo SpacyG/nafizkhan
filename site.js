@@ -72,6 +72,7 @@ function setupFeaturedSamples() {
   });
 
   function select(activeIndex) {
+    updateHomeComparison(cards[activeIndex]);
     cards.forEach((card, index) => {
       card.hidden = index !== activeIndex;
       buttons[index].setAttribute('aria-pressed', String(!card.hidden));
@@ -210,6 +211,256 @@ function openHash() {
   article.scrollIntoView();
 }
 
+const practiceDrafts = {
+  'sample-email': 'Our coffee is a good choice for the morning.',
+  'sample-sales': 'This planner helps you organize your day.',
+  'sample-landing': 'Join our gym to start exercising.',
+  'sample-bookstore': 'Come back and browse our books.',
+  'sample-lumaskin': 'Check out our new skin care product.'
+};
+
+function revisionControl(id, title, finalLine) {
+  const draft = practiceDrafts[id];
+  if (!draft || !finalLine) return null;
+  const panel = element('fieldset', '', 'revision');
+  const legend = element('legend', 'Compare the edit · ' + title);
+  const output = element('p', '', 'revision-lines');
+  const oldLine = element('del', draft);
+  const newLine = element('ins', finalLine);
+  const slider = element('input');
+  slider.type = 'range';
+  slider.min = '0';
+  slider.max = '2';
+  slider.step = '1';
+  slider.value = '1';
+  slider.setAttribute('aria-label', 'Revision stage for ' + title);
+  const controls = element('div', '', 'revision-controls');
+  const labels = ['Practice draft', 'Pen marks', 'Nafiz’s rewrite'];
+  const buttons = labels.map((label, index) => {
+    const button = element('button', label);
+    button.type = 'button';
+    button.addEventListener('click', () => { slider.value = String(index); update(); });
+    controls.append(button);
+    return button;
+  });
+  function update() {
+    const stage = Number(slider.value);
+    panel.dataset.stage = slider.value;
+    oldLine.hidden = stage === 2;
+    newLine.hidden = stage === 0;
+    slider.setAttribute('aria-valuetext', labels[stage]);
+    buttons.forEach((button, index) => button.setAttribute('aria-pressed', String(index === stage)));
+  }
+  slider.addEventListener('input', update);
+  output.append(oldLine, newLine);
+  panel.append(legend, output, slider, controls);
+  update();
+  return panel;
+}
+
+function attachWorkComparisons() {
+  for (const article of samples?.children || []) {
+    const subject = article.querySelector('.sample-subject');
+    const firstBreak = subject?.querySelector('br');
+    const parts = [...(subject?.childNodes || [])];
+    const firstLine = parts.slice(0, firstBreak ? parts.indexOf(firstBreak) : parts.length).map(node => node.textContent).join('');
+    const text = article.querySelector('.plain-copy')?.textContent || firstLine;
+    const line = text.trim().split('\n').filter(s => s.trim())[0]?.trim().replace(/^(?:Email 1 · )?(?:Subject|Headline):\s*/i, '');
+    const panel = revisionControl(article.id, article.querySelector('h2').textContent, line);
+    if (panel) article.append(panel);
+  }
+}
+
+function updateHomeComparison(card) {
+  const slot = document.querySelector('.featured-comparison');
+  if (!slot) return;
+  const panel = card && revisionControl(card.hash.slice(1), card.querySelector('strong').textContent, card.querySelector('.work-excerpt').textContent);
+  slot.replaceChildren(...(panel ? [panel] : []));
+}
+
+function setupDeskControls() {
+  const headline = document.querySelector('.hero-copy h2');
+  if (headline) {
+    const original = [...headline.childNodes].map(node => node.cloneNode(true));
+    const choices = [null, 'Your day deserves a little more direction.', 'We lay the path, you take the steps.'];
+    let index = 0;
+    const cycle = element('button', '', 'headline-cycle');
+    cycle.type = 'button';
+    cycle.title = 'Try another headline';
+    const hint = element('span', '↻ Try another headline', 'cycle-hint');
+    function draw() {
+      const nodes = index ? [document.createTextNode(choices[index])] : original;
+      cycle.replaceChildren();
+      for (const node of nodes) {
+        if (node.nodeType !== Node.TEXT_NODE) { cycle.append(node.cloneNode(true)); continue; }
+        for (const part of node.textContent.split(/(\s+)/)) {
+          cycle.append(part.trim() ? element('span', part, 'markup-word') : document.createTextNode(part));
+        }
+      }
+      cycle.append(hint);
+    }
+    cycle.addEventListener('click', () => { index = (index + 1) % choices.length; draw(); });
+    draw();
+    headline.replaceChildren(cycle);
+  }
+  const examples = ['Morning Ritual — welcome email', 'The Daily Planner — sales page', 'Local Gym — landing page', 'Homepage headline — Find the words for your next launch.'];
+  document.querySelectorAll('.services dt').forEach((term, index) => {
+    const button = element('button', term.textContent + ' ＋');
+    const example = element('p', examples[index], 'service-example');
+    example.id = 'service-example-' + index;
+    let pinned = false;
+    let hovering = false;
+    function show() {
+      example.hidden = !(pinned || hovering);
+      button.setAttribute('aria-expanded', String(!example.hidden));
+    }
+    button.type = 'button';
+    button.setAttribute('aria-controls', example.id);
+    button.addEventListener('click', () => { pinned = !pinned; hovering = false; show(); });
+    const row = term.parentElement;
+    row.addEventListener('pointerenter', e => { hovering = e.pointerType === 'mouse'; show(); });
+    row.addEventListener('pointerleave', () => { hovering = false; show(); });
+    term.replaceChildren(button);
+    row.querySelector('dd').append(example);
+    show();
+  });
+  const copy = document.querySelector('.copy-email');
+  if (copy) {
+    copy.hidden = false;
+    copy.addEventListener('click', async () => {
+      const link = copy.parentElement.querySelector('.email');
+      const status = copy.parentElement.querySelector('.copy-status');
+      try {
+        await navigator.clipboard.writeText(link.textContent.trim());
+        copy.textContent = 'Copied ✓';
+        status.textContent = 'Email address copied.';
+      } catch {
+        const selection = getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(link);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        status.textContent = 'Email selected. Use your device’s Copy command.';
+      }
+    });
+  }
+  const pen = document.querySelector('.pen-flourish');
+  pen.hidden = false;
+  function scribble() {
+    document.querySelector('.ink-scribble')?.remove();
+    const mark = element('span', '〰', 'ink-scribble');
+    mark.setAttribute('aria-hidden', 'true');
+    pen.after(mark);
+  }
+  pen.addEventListener('click', scribble);
+  const sequence = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+  let history = [];
+  document.addEventListener('keydown', e => {
+    if (e.target.closest('input,textarea,select,[contenteditable]')) return;
+    history = [...history.slice(1 - sequence.length), e.key];
+    if (history.join('|') === sequence.join('|')) scribble();
+  });
+}
+
+function setupInkPointer() {
+  const fine = matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
+  const dot = element('span', '', 'ink-dot');
+  const ring = element('span', '', 'ink-ring');
+  for (const item of [dot, ring]) item.setAttribute('aria-hidden','true');
+  document.body.append(dot, ring);
+  const style = getComputedStyle(document.documentElement);
+  const number = name => parseFloat(style.getPropertyValue(name));
+  const follow = number('--ring-follow');
+  const tilt = number('--tilt-strength');
+  const pull = number('--magnet-strength');
+  let x = 0, y = 0, rx = 0, ry = 0, target, card, magnet, frame = 0;
+  function reset() {
+    cancelAnimationFrame(frame);
+    frame = 0;
+    document.body.classList.remove('ink-pointer-on');
+    for (const item of [card,magnet]) item?.removeAttribute('data-reactive');
+    card = magnet = target = null;
+  }
+  function paint() {
+    frame = 0;
+    const nextCard = target?.closest('.work-card,.sample');
+    const nextMagnet = target?.closest('.button,.header nav a,.header-contact');
+    if (card !== nextCard) card?.removeAttribute('data-reactive');
+    if (magnet !== nextMagnet) magnet?.removeAttribute('data-reactive');
+    card = nextCard;
+    magnet = nextMagnet;
+    for (const item of [card,magnet]) {
+      if (!item) continue;
+      const box = item.getBoundingClientRect();
+      const px = Math.max(0,Math.min(1,(x-box.left)/box.width));
+      const py = Math.max(0,Math.min(1,(y-box.top)/box.height));
+      item.dataset.reactive = '';
+      if (item === card) {
+        item.style.setProperty('--pitch', ((.5-py)*tilt)+'deg');
+        item.style.setProperty('--yaw', ((px-.5)*tilt)+'deg');
+        item.style.setProperty('--spot-x', px*100+'%');
+        item.style.setProperty('--spot-y', py*100+'%');
+      } else {
+        item.style.setProperty('--pull-x', ((px-.5)*pull)+'px');
+        item.style.setProperty('--pull-y', ((py-.5)*pull)+'px');
+      }
+    }
+    const control = target?.closest('a,button,summary,input');
+    const read = card && (!control || control.matches('.work-card,summary'));
+    ring.dataset.mode = read ? 'read' : control ? 'link' : target?.closest('p,h1,h2,dt,dd') ? 'text' : 'idle';
+    ring.textContent = read ? 'Read ↗' : '';
+    rx += (x-rx)*follow; ry += (y-ry)*follow;
+    dot.style.translate = x+'px '+y+'px';
+    ring.style.translate = rx+'px '+ry+'px';
+    if (Math.abs(x-rx)+Math.abs(y-ry) > .35) frame = requestAnimationFrame(paint);
+  }
+  document.addEventListener('pointermove', e => {
+    if (!fine.matches || e.pointerType !== 'mouse' || document.querySelector('dialog[open]')) { reset(); return; }
+    target = e.target; x = e.clientX; y = e.clientY;
+    if (!document.body.classList.contains('ink-pointer-on')) { rx=x; ry=y; document.body.classList.add('ink-pointer-on'); }
+    if (!frame) frame = requestAnimationFrame(paint);
+  }, {passive:true});
+  document.documentElement.addEventListener('pointerleave',reset);
+  window.addEventListener('blur',reset);
+  window.addEventListener('scroll',reset,{passive:true});
+  document.addEventListener('keydown',reset);
+  document.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse') reset();});
+  fine.addEventListener('change',reset);
+}
+
+function setupInkProgress() {
+  const bar = document.querySelector('.ink-progress');
+  const nav = [...siteHeader.querySelectorAll('nav a,.header-contact')];
+  const sections = [...document.querySelectorAll('.home-page main section[id]')];
+  const targets = {home:'Home',work:'Work',services:'Services',approach:'Services',about:'About',contact:'Get in touch'};
+  let frame = 0;
+  function update() {
+    frame = 0;
+    const max = document.documentElement.scrollHeight-innerHeight;
+    bar.style.transform = 'scaleX('+Math.max(0,Math.min(1,max ? scrollY/max : 0))+')';
+    if (!sections.length) return;
+    const current = sections.filter(section=>section.getBoundingClientRect().top <= siteHeader.offsetHeight+innerHeight*.25).at(-1) || sections[0];
+    const label = max > 0 && scrollY >= max-2 ? targets.contact : targets[current.id];
+    nav.forEach(link=>link.classList.toggle('current-section',link.textContent.trim().startsWith(label)));
+  }
+  function queue(){ if (!frame) frame=requestAnimationFrame(update); }
+  addEventListener('scroll',queue,{passive:true});
+  addEventListener('resize',queue);
+  if ('ResizeObserver' in window) new ResizeObserver(queue).observe(document.body);
+  update();
+}
+if (siteHeader) {
+  setupDeskControls();
+  setupInkPointer();
+  setupInkProgress();
+  attachWorkComparisons();
+  samples?.addEventListener('click', event => {
+    if (event.target.closest('a,button,input,details,.revision') || getSelection()?.toString()) return;
+    const details = event.target.closest('.sample')?.querySelector('details');
+    if (details) details.open = !details.open;
+  });
+}
+
 filters?.addEventListener('click', event => {
   const category = event.target.closest('button')?.dataset.filter;
   if (category) showCategory(category);
@@ -239,6 +490,7 @@ async function loadContent() {
       if (samples) {
         const sampleEntries = entries.filter(entry => entry.kind === 'sample');
         samples.replaceChildren(...sampleEntries.map(renderSample));
+        attachWorkComparisons();
         observeBelowFold(samples.children);
         for (const button of filters.querySelectorAll('button')) {
           button.hidden = button.dataset.filter !== 'all' && !sampleEntries.some(entry => entry.category === button.dataset.filter);
