@@ -4,6 +4,10 @@
 
 Home, Work and About use the marked-up proof design. The homepage leads straight from the first-person hero to Work. Five concept samples include case notes and playable edits. The section menu and project-type email controls work with keyboard and touch. Privacy and Terms are static. The owner studio uses the Node server for publishing.
 
+## 2026-11-24 - Margin marks across the portfolio
+
+- Spread 19 background marks across Home, Work, and About, up from 12. Added bracket, diamond, and dot motifs.
+
 ## 2026-11-24 - Google Form feedback and margin symbols
 
 - Restored the Google Form link and replaced the native publishing form with a public feedback display.

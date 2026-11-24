@@ -791,3 +791,29 @@ html.no-splash .splash { display: none; }
       linear-gradient(var(--accent), var(--accent)) center / 1px 60% no-repeat;
   }
 }
+
+/* Margin marks sit behind content and away from primary reading paths. */
+:is(.home-page, .portfolio-page, .about-page) :is(section, .page-intro, .sample-index):has(> .margin-symbols) {
+  position: relative;
+  isolation: isolate;
+}
+.home-page .contact-band > .contact { background: transparent; }
+.home-page .contact-band .margin-symbols { color: var(--paper); }
+.symbol-brackets, .symbol-diamond, .symbol-dots { width: clamp(1.9rem, 4vw, 3.6rem); }
+.symbol-brackets { inset-inline-end: 4%; top: 10%; transform: rotate(8deg); }
+.symbol-diamond { inset-inline-end: 2%; bottom: 10%; transform: rotate(12deg); }
+.symbol-dots { inset-inline-end: 8%; top: 12%; }
+.margin-symbols--featured .symbol-ticks { inset-inline-start: 58%; top: 3%; }
+.margin-symbols--services .symbol-star { inset-inline-start: 41%; bottom: 15%; }
+.margin-symbols--approach .symbol-wave { inset-inline-end: 48%; bottom: 13%; }
+.margin-symbols--contact .symbol { inset-inline-end: 3%; inset-inline-start: auto; top: auto; bottom: 7%; }
+.margin-symbols--sample-index .symbol-star { inset-inline-start: auto; inset-inline-end: 2%; top: .3rem; bottom: auto; }
+.margin-symbols--about-intro .symbol-star { inset-inline-start: 60%; top: 13%; bottom: auto; }
+.margin-symbols--feedback .symbol-diamond { inset-inline-end: 3%; bottom: 12%; }
+@media (max-width: 43rem) {
+  .margin-symbols--services .symbol-star { inset-inline-start: auto; inset-inline-end: 8%; bottom: 9%; }
+  .margin-symbols--approach .symbol-wave { inset-inline-end: 9%; bottom: 6%; }
+  .margin-symbols--sample-index .symbol-star { top: 0; }
+  .margin-symbols--about-intro .symbol-star { inset-inline-start: 81%; }
+}
+
