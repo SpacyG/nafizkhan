@@ -1,0 +1,52 @@
+[
+  {
+    "id": "sample-email",
+    "kind": "sample",
+    "category": "Email copy",
+    "credit": "Concept project",
+    "title": "Morning Ritual",
+    "description": "A welcome-email concept for a fictional coffee brand, built around the comfort of a good morning cup.",
+    "body": "Subject: Make your morning as smooth as our coffee \n\n From farm to your morning ritual.\nIf we have anything in common, we'll agree that there's nothing like a fresh cup of coffee each morning.\nUnfortunately…\nBusy schedules.\nTight calendars.\nHeavy workloads.\nLeave little time to find good roasted beans!\nSo, we at Morning Ritual decided to take care of that, so you don't have to.\nWe bring you fresh, high-quality coffee beans for everyday mornings or special occasions, suited to your unique taste preferences.\nWhether you prefer bold or light roasts, we've got options for you.\nExplore our collection and find your next favourite.",
+    "published": true
+  },
+  {
+    "id": "sample-sales",
+    "kind": "sample",
+    "category": "Sales page",
+    "credit": "Concept project",
+    "title": "The Daily Planner",
+    "description": "A sales-page concept for a fictional stationery product",
+    "body": "Headline: Your day deserves a little more direction. \n\n Waking up to a long to-do list isn't ideal. When that list is disorganized, it's even harder to know where to start.\nYou spend time switching between tasks, struggle to prioritize, and end the day wondering where your time went.\nWith our Daily Planner, you can bring more structure to your day.\nSet your three daily priorities, organize your tasks, and take a moment to reflect at the end of the day.\nSay goodbye to:\n• Messy task lists\n• Unclear priorities\n• Losing track of your progress\nMake a plan, focus on what matters, and give each day a clearer direction.\nDesigned to be comfortable to carry and available in three stylish colors.\nGet Yours Today!",
+    "published": true
+  },
+  {
+    "id": "sample-landing",
+    "kind": "sample",
+    "category": "Landing page",
+    "credit": "Concept project",
+    "title": "Local Gym",
+    "description": "A landing-page concept for a fictional local gym, focused on making strength training feel more approachable.",
+    "body": "We lay the path, you take the steps.\nEasy steps that build your strength. \n\n Building strength is more of a psychological thing than you may think.\nOpen spaces, large crowds, and randomized routines can put pressure on you.\nIncreasing difficulty does not automatically increase results.\nResetting your progress and changing your routine is no solution.\nResults come from efficient training, not just hard work.\n\nWe developed our gym with your health in mind.\nSmaller groups, guided by our personal trainers.\nTrack your progress alongside others on a similar path.\nFollow an easy-to-understand routine that helps you build strength.\n\nBook a free session with us and see if we're a fit.",
+    "published": true
+  },
+  {
+    "id": "sample-bookstore",
+    "kind": "sample",
+    "category": "Email copy",
+    "credit": "Concept project",
+    "title": "Bookstore Welcome-Back Email",
+    "description": "A short re-engagement email for a fictional bookstore. The brief provided limited information about the store and its former customer, so the concept avoids unsupported claims about products or offers.",
+    "body": "Subject: Your preferences matter to us. \n\n Books bring out the different you.\nReading can provide different perspectives and help you discover something new about yourself.\nJust 10 minutes with a book can be a small way to make room for reading in your day.\nWhenever you're ready to explore again, we'd love to welcome you back.\n\nBrowse our latest collection.",
+    "published": true
+  },
+  {
+    "id": "sample-lumaskin",
+    "kind": "sample",
+    "category": "Email copy",
+    "credit": "Concept project",
+    "title": "LumaSkin: Abandoned-Cart Email Sequence",
+    "description": "A three-email concept for a fictional skincare brand, introducing its Daily Balance Moisturizer and encouraging shoppers to return to their carts. This is a practice project, not paid client work.",
+    "body": "Email 1 · Subject: Your skin should not miss the care it deserves.\n\nPreview: Your skin deserves attention\n\nSkin is the one part of our body that is exposed to everything.\nBusy schedules and complicated routines make it hard to care for our skin.\nSo we at LumaSkin present to you our latest product!\nOur Daily Balance Moisturizer, designed to keep your delicate skin hydrated and smooth.\nFor more information, visit our product page.\n\nEmail 2 · Subject: Make hydration a part of your daily life.\n\nPreview: Skincare is not supposed to be hard.\n\nLeaving your skin unattended for a long time can result in rough texture, dehydrated skin, and irritation.\nThis can make your skin more vulnerable to damage.\nWith our product, you can avoid all that!\nOur Daily Balance Moisturizer is lightweight, non-greasy, and designed to be easy to use and fast-acting.\nJust apply it once in the morning or evening, and it will keep your skin hydrated and smooth.\nTo order, click the link below.\n\nEmail 3 · Subject: Give your skin a gift.\n\nPreview: No more dehydrated skin!\n\nWe at LumaSkin care about you, and our Daily Balance Moisturizer is designed to do just that.\nIn a 50 mL container, you can have the gift your skin deserves.\nIt's lightweight and non-greasy, giving your skin a smooth, clear finish.\nOrders over $10 qualify for free delivery.\nLet us be a part of your daily skincare routine.",
+    "published": true
+  }
+]
