@@ -545,6 +545,25 @@ function setupProofMotion() {
   document.querySelectorAll('[data-proof-motion]').forEach(mark => observer.observe(mark));
 }
 
+function setupIntroReplay() {
+  const hero = document.getElementById('home');
+  const replay = hero?.querySelector('.hero-replay');
+  if (!replay) return;
+  const motion = matchMedia('(prefers-reduced-motion: no-preference)');
+  function update() {
+    replay.hidden = !motion.matches;
+  }
+  replay.addEventListener('click', () => {
+    if (!motion.matches) return;
+    hero.classList.remove('intro-playing');
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      hero.classList.add('intro-playing');
+    }));
+  });
+  motion.addEventListener('change', update);
+  update();
+}
+
 function setupHeroProof() {
   const paper = document.getElementById('hero-proof');
   const toggle = document.querySelector('.hero-proof-toggle');
@@ -589,7 +608,7 @@ function setupInquiry() {
 }
 
 if (siteHeader) {
-  for (const setup of [setupHeadline, setupServices, setupCopyEmail, setupFlourish, setupInkPointer, setupInkProgress, setupProofMotion, setupHeroProof, setupInquiry, attachWorkComparisons]) {
+  for (const setup of [setupHeadline, setupServices, setupCopyEmail, setupFlourish, setupInkPointer, setupInkProgress, setupProofMotion, setupIntroReplay, setupHeroProof, setupInquiry, attachWorkComparisons]) {
     try {
       setup();
     } catch (error) {

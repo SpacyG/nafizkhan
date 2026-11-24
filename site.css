@@ -452,7 +452,7 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
   --proof-paper: color-mix(in srgb, var(--ink) 5%, var(--paper));
   --proof-ink-muted: color-mix(in srgb, var(--paper) 77%, var(--ink));
   --proof-mark-time: 650ms;
-  --proof-arrive: 820ms;
+  --proof-arrive: 1100ms;
   --proof-swap-ms: 320;
   --proof-revision-ms: 860;
 }
@@ -529,13 +529,13 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
 
 
 /* Opening, edit controls, and project inquiries */
-.hero-proof-toggle {
+:is(.hero-proof-toggle, .hero-replay) {
   display: inline-block; margin-top: var(--space-4); margin-left: var(--space-3); padding: var(--space-2);
   min-height: var(--button-height); border: 1px solid var(--proof-ink-muted); background: transparent;
   color: var(--paper); font-size: var(--small); font-weight: 700;
 }
-.hero-proof-toggle:is(:hover, :focus-visible) { background: color-mix(in srgb, var(--paper) 13%, var(--ink)); }
-.hero-proof-toggle:focus-visible { outline-color: var(--paper); }
+:is(.hero-proof-toggle, .hero-replay):is(:hover, :focus-visible) { background: color-mix(in srgb, var(--paper) 13%, var(--ink)); }
+:is(.hero-proof-toggle, .hero-replay):focus-visible { outline-color: var(--paper); }
 .hero-art [data-hero-draft] del { text-decoration-color: var(--accent); }
 @media (width < 55rem) {
   .home-page .hero-art.is-explored {
@@ -543,7 +543,7 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
   }
   .home-page .hero-art blockquote { margin: 0; font: italic var(--service-type)/1.25 var(--display); }
   .home-page .hero-art blockquote p { margin-top: var(--space-3); font: var(--small)/1.5 var(--sans); }
-  .hero-proof-toggle { margin-left: 0; }
+  :is(.hero-proof-toggle, .hero-replay) { margin-left: 0; margin-right: var(--space-2); }
 }
 .home-page .footer { padding-bottom: calc(var(--space-9) + var(--space-4)); }
 .section-marker summary { padding: var(--space-2) var(--space-3); min-height: var(--button-height); }
@@ -575,18 +575,18 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
 .revision-controls .revision-play:is(:hover, :focus-visible) { background: var(--highlight); }
 
 @media (prefers-reduced-motion: no-preference) {
-  .home-page .hero-copy h1 { animation: proof-hero-name var(--proof-arrive) var(--ease) both; }
-  .home-page .hero-copy h2 { animation: proof-hero-name var(--proof-arrive) var(--ease) var(--quick) both; }
+  .home-page .intro-playing .hero-copy h1 { animation: proof-hero-name var(--proof-arrive) var(--ease) both; }
+  .home-page .intro-playing .hero-copy h2 { animation: proof-hero-name var(--proof-arrive) var(--ease) var(--quick) both; }
   .revision[data-stage="1"] ins { animation: proof-revision-in var(--standard) var(--ease); }
   .revision[data-stage="1"] del { animation: proof-revision-in var(--standard) var(--ease); }
   @keyframes proof-hero-name {
-    from { opacity: .35; transform: translateY(var(--rise)); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: .2; clip-path: inset(-.25em 100% -.25em -.15em); transform: translateX(-.2em); }
+    to { opacity: 1; clip-path: inset(-.25em -.25em); transform: translateX(0); }
   }
   @keyframes proof-revision-in { from { opacity: .35; } to { opacity: 1; } }
 }
 @media (min-width: 55rem) and (prefers-reduced-motion: no-preference) {
-  .home-page .hero-art { animation: proof-paper-arrive var(--proof-arrive) var(--ease) both; }
+  .home-page .intro-playing .hero-art:not(.is-explored) { animation: proof-paper-arrive var(--proof-arrive) var(--ease) both; }
   @keyframes proof-paper-arrive {
     from { opacity: .15; transform: translate(22%, 18%) rotate(3deg); }
     to { opacity: 1; transform: translate(8%, 8%) rotate(-7deg); }
