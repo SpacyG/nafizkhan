@@ -3,6 +3,15 @@ const samples = document.querySelector('.samples');
 const viewer = document.querySelector('#photo-viewer');
 const workList = document.querySelector('.work-list');
 const sampleSelector = document.querySelector('.sample-selector');
+const sampleDialog = document.querySelector('.sample-dialog');
+const heroArt = document.querySelector('.hero-art');
+const featuredText = new Map(
+  [...document.querySelectorAll('template[data-featured-sample]')].map(template => [
+    template.dataset.featuredSample,
+    template.content
+  ])
+);
+let readingCard;
 
 function element(tag, text, className) {
   const node = document.createElement(tag);
@@ -72,6 +81,63 @@ function setupFeaturedSamples() {
   sampleSelector.replaceChildren(...buttons);
   sampleSelector.hidden = cards.length < 2;
   select(Math.max(0, cards.findIndex(card => card.id === activeId)));
+}
+
+function showFeaturedSample(card) {
+  const content = featuredText.get(card.hash.slice(1));
+  if (!content) return false;
+  const cards = [...workList.querySelectorAll('.work-card')];
+  const index = cards.indexOf(card);
+  const title = card.querySelector('strong').textContent;
+  const reader = sampleDialog.querySelector('.reader-content');
+  sampleDialog.querySelector('#reader-title').textContent = title;
+  reader.replaceChildren(content.cloneNode(true));
+  reader.scrollTop = 0;
+  sampleDialog.querySelector('.reader-position').textContent = title + ' · ' + (index + 1) + ' of ' + cards.length;
+  sampleDialog.querySelector('.reader-footer').hidden = cards.length < 2;
+  readingCard = card;
+  if (!sampleDialog.open) sampleDialog.showModal();
+  return true;
+}
+
+if (sampleDialog && typeof sampleDialog.showModal === 'function') {
+  workList.addEventListener('click', event => {
+    const card = event.target.closest('.work-card');
+    if (!card || event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (showFeaturedSample(card)) event.preventDefault();
+  });
+  sampleDialog.querySelector('.reader-footer').addEventListener('click', event => {
+    const step = event.target.closest('[data-reader-step]')?.dataset.readerStep;
+    if (!step) return;
+    const cards = [...workList.querySelectorAll('.work-card')];
+    if (cards.length < 2) return;
+    const index = cards.findIndex(card => card.hash === readingCard.hash);
+    const next = (Math.max(0, index) + Number(step) + cards.length) % cards.length;
+    if (showFeaturedSample(cards[next])) sampleSelector.children[next].click();
+  });
+  sampleDialog.addEventListener('close', () => {
+    const visible = workList.querySelector('.work-card:not([hidden])');
+    visible?.focus({ preventScroll: true });
+  });
+}
+
+if (heroArt) {
+  const hero = heroArt.parentElement;
+  const motion = matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
+  const resetArt = () => {
+    heroArt.style.removeProperty('--art-x');
+    heroArt.style.removeProperty('--art-y');
+  };
+  hero.addEventListener('pointermove', event => {
+    if (!motion.matches || event.pointerType !== 'mouse') return;
+    const bounds = hero.getBoundingClientRect();
+    const x = (event.clientX - bounds.left) / bounds.width - .5;
+    const y = (event.clientY - bounds.top) / bounds.height - .5;
+    heroArt.style.setProperty('--art-x', (x * 24).toFixed(1) + 'px');
+    heroArt.style.setProperty('--art-y', (y * 18).toFixed(1) + 'px');
+  });
+  hero.addEventListener('pointerleave', resetArt);
+  motion.addEventListener('change', resetArt);
 }
 
 function renderMedia(entry) {
@@ -149,6 +215,8 @@ async function loadContent() {
     if (Array.isArray(entries)) {
       if (workList) {
         const featured = entries.filter(entry => entry.kind === 'sample').slice(0, 3);
+        featuredText.clear();
+        for (const entry of featured) featuredText.set(entry.id, element('p', entry.body, 'plain-copy'));
         workList.replaceChildren(...featured.map(renderWorkCard));
         setupFeaturedSamples();
         if (!featured.length) workList.append(element('p', 'New samples will appear here as they are published.'));
