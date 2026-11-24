@@ -364,7 +364,7 @@ export function createPortfolio({ origin, dataDir, host = '127.0.0.1', passwordH
     }
     if (name === 'index.html') {
       response.setHeader('Content-Security-Policy', headers['Content-Security-Policy'].replace(
-        "script-src 'self';", "script-src 'self' " + splashHashes + ";"
+        "script-src 'self';", "script-src 'self' " + splashHashes + "; frame-src https://script.google.com https://*.googleusercontent.com;"
       ));
     }
     response.writeHead(200, {

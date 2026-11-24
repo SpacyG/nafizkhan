@@ -41,8 +41,14 @@ The `DATA_DIR` contains all managed content and photo files stored inside SQLite
 
 The existing GitHub Pages address remains a static option. A Node host can serve both the site and dashboard under its own address or a domain you control.
 
-## Public feedback
 
-The Home form runs on the Node host and stores public display names and messages in the same persistent SQLite database. Submissions appear immediately and the homepage shows the latest 20. Use a persistent disk and back up the database if retaining feedback matters. Set an edge rate limit for `POST /api/feedback` on a public deployment.
+## Google Form feedback
 
-For GitHub Pages, deploy the Node app separately using the setup above. On the Node host set `FEEDBACK_FRONTEND_ORIGIN=https://spacyg.github.io`. On the GitHub Pages copy of `index.html`, set `data-feedback-api` on the form to the deployed HTTPS URL ending in `/api/feedback`. The form is enabled only when the endpoint responds.
+The feedback link points to the existing Google Form. The homepage can display the latest 20 responses that explicitly opt in to public display. It shows the display name and feedback only. The response spreadsheet stays private.
+
+1. Open the Google Form and link its responses to a Google Sheet. Add a multiple-choice question called `Show my feedback on the portfolio?` with `Yes` and `No` options. Explain that Yes makes the visitor’s display name and feedback public.
+2. In the linked Sheet, open **Extensions → Apps Script**. Replace the editor’s starter code with the full contents of `google-feedback.gs`. Adjust the tab and the two response headers at the top of the file to match the Sheet.
+3. In Apps Script **Project Settings → Script properties**, add `RESPONSE_SPREADSHEET_ID` with the Sheet ID from its address (the part between `/d/` and `/edit`).
+4. Choose **Deploy → New deployment → Web app**. Set it to execute as you and allow **Anyone** to access it. Copy the deployment’s `/exec` URL and add it as the `data-src` attribute of the `feedback-feed` iframe in `index.html`.
+5. Upload `index.html` to GitHub Pages. Open the portfolio in a private window and submit a test response with **Yes**. Reload the portfolio to see it. To take a response off the display, change its consent cell to **No**. Earlier responses without a Yes remain private.
+

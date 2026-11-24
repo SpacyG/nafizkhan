@@ -4,6 +4,12 @@
 
 Home, Work and About use the marked-up proof design. The homepage leads straight from the first-person hero to Work. Five concept samples include case notes and playable edits. The section menu and project-type email controls work with keyboard and touch. Privacy and Terms are static. The owner studio uses the Node server for publishing.
 
+## 2026-11-24 - Google Form feedback and margin symbols
+
+- Restored the Google Form link and replaced the native publishing form with a public feedback display.
+- Added a Google Apps Script feed for consented responses.
+- Added clearer groups of four hand-drawn symbols to the hero and Work backgrounds.
+
 ## 2026-11-24 - Sample interactions and native feedback
 
 - Looped visible edit cards automatically, with manual stages and reduced-motion support.

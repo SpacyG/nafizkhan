@@ -592,50 +592,13 @@ function writeSample(content) {
 }
 
 function setupFeedback() {
-  const form = document.querySelector('.feedback-form');
-  if (!form) return;
-  const endpoint = form.dataset.feedbackApi || 'api/feedback';
-  const fields = form.querySelector('fieldset');
-  const status = form.querySelector('[role="status"]');
-  const list = document.querySelector('.feedback-list');
-  function render(entries) {
-    list.replaceChildren(...entries.map(entry => {
-      const quote = element('blockquote');
-      quote.append(element('p', entry.message), element('footer', entry.name));
-      return quote;
-    }));
-  }
-  async function request(options) {
-    const response = await fetch(endpoint, { ...options, credentials: 'omit', signal: AbortSignal.timeout(8000) });
-    if (!response.headers.get('content-type')?.includes('application/json')) throw Error('Feedback is unavailable here. You can contact me by email above.');
-    const data = await response.json();
-    if (!response.ok) throw Error(data.error || 'Feedback is unavailable right now.');
-    if (!Array.isArray(data.feedback)) throw Error('Feedback could not be loaded.');
-    return data.feedback;
-  }
-  request().then(entries => {
-    render(entries);
-    fields.disabled = false;
-    status.textContent = entries.length ? '' : 'No feedback yet.';
-  }).catch(() => {
-    status.textContent = 'Public feedback is unavailable here. You can contact me by email above.';
-  });
-  form.addEventListener('submit', async event => {
-    event.preventDefault();
-    if (fields.disabled) return;
-    const body = Object.fromEntries(new FormData(form));
-    fields.disabled = true;
-    status.textContent = 'Publishing feedback…';
-    try {
-      render(await request({ method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }));
-      form.reset();
-      status.textContent = 'Your feedback was published.';
-    } catch (error) {
-      status.textContent = error.message;
-    } finally {
-      fields.disabled = false;
-    }
-  });
+  const frame = document.querySelector('.feedback-feed');
+  if (!frame) return;
+  const source = frame.dataset.src;
+  if (!source || !/^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(source)) return;
+  frame.src = source;
+  frame.hidden = false;
+  frame.previousElementSibling.hidden = true;
 }
 
 function setupWriting(blocks = document.querySelectorAll('[data-writing], .samples > .sample')) {
