@@ -467,15 +467,21 @@ function setupInkPointer() {
   const tilt = number('--tilt-strength');
   const pull = number('--magnet-strength');
   let x = 0, y = 0, rx = 0, ry = 0, target, card, magnet, frame = 0;
+  let needsHitTest = false;
   function reset() {
     cancelAnimationFrame(frame);
     frame = 0;
+    needsHitTest = false;
     document.body.classList.remove('ink-pointer-on');
     for (const item of [card,magnet]) item?.removeAttribute('data-reactive');
     card = magnet = target = null;
   }
   function paint() {
     frame = 0;
+    if (needsHitTest) {
+      needsHitTest = false;
+      target = document.elementFromPoint(x, y);
+    }
     const nextCard = target?.closest('.work-card,.sample');
     const nextMagnet = target?.closest('.button,.header nav a,.header-contact');
     if (card !== nextCard) card?.removeAttribute('data-reactive');
@@ -514,7 +520,11 @@ function setupInkPointer() {
   }, {passive:true});
   document.documentElement.addEventListener('pointerleave',reset);
   window.addEventListener('blur',reset);
-  window.addEventListener('scroll',reset,{passive:true});
+  window.addEventListener('scroll', () => {
+    if (!document.body.classList.contains('ink-pointer-on')) return;
+    needsHitTest = true;
+    if (!frame) frame = requestAnimationFrame(paint);
+  }, { passive: true, capture: true });
   document.addEventListener('keydown',reset);
   document.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse') reset();});
   fine.addEventListener('change',reset);
@@ -628,25 +638,6 @@ function setupProofMotion() {
   document.querySelectorAll('[data-proof-motion]').forEach(mark => observer.observe(mark));
 }
 
-function setupIntroReplay() {
-  const hero = document.getElementById('home');
-  const replay = hero?.querySelector('.hero-replay');
-  if (!replay) return;
-  const motion = matchMedia('(prefers-reduced-motion: no-preference)');
-  function update() {
-    replay.hidden = !motion.matches;
-  }
-  replay.addEventListener('click', () => {
-    if (!motion.matches) return;
-    hero.classList.remove('intro-playing');
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      hero.classList.add('intro-playing');
-    }));
-  });
-  motion.addEventListener('change', update);
-  update();
-}
-
 function setupHeroProof() {
   const paper = document.getElementById('hero-proof');
   const toggle = document.querySelector('.hero-proof-toggle');
@@ -690,7 +681,7 @@ function setupInquiry() {
 }
 
 if (siteHeader) {
-  for (const setup of [setupHeadline, setupServices, setupCopyEmail, setupFlourish, setupInkPointer, setupInkProgress, setupFeedback, setupWriting, setupProofMotion, setupIntroReplay, setupHeroProof, setupInquiry, attachWorkComparisons]) {
+  for (const setup of [setupHeadline, setupServices, setupCopyEmail, setupFlourish, setupInkPointer, setupInkProgress, setupFeedback, setupWriting, setupProofMotion, setupHeroProof, setupInquiry, attachWorkComparisons]) {
     try {
       setup();
     } catch (error) {
