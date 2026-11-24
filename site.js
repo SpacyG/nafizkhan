@@ -2,6 +2,16 @@ const filters = document.querySelector('.filters');
 const samples = document.querySelector('.samples');
 const viewer = document.querySelector('#photo-viewer');
 const workList = document.querySelector('.work-list');
+const sampleSelector = document.querySelector('.sample-selector');
+const sampleDialog = document.querySelector('.sample-dialog');
+const siteHeader = document.querySelector('.site-header');
+const featuredText = new Map(
+  [...document.querySelectorAll('template[data-featured-sample]')].map(template => [
+    template.dataset.featuredSample,
+    template.content
+  ])
+);
+let readingCard;
 
 function element(tag, text, className) {
   const node = document.createElement(tag);
@@ -30,21 +40,118 @@ function renderWorkCard(entry) {
 
   const preview = element('div', '', 'work-preview');
   const type = element('span', entry.category, 'work-type');
-  const firstLine = entry.body.split('\n').find(line => line.trim());
-  const excerpt = firstLine?.trim().replace(/^(?:Subject|Headline):\s*/i, '') || entry.title;
+  const [firstLine, ...bodyLines] = entry.body.split('\n').map(line => line.trim()).filter(Boolean);
+  const excerpt = firstLine?.replace(/^(?:Subject|Headline):\s*/i, '') || entry.title;
   const excerptText = excerpt.length > 140 ? excerpt.slice(0, 137).trimEnd() + '…' : excerpt;
   preview.append(type, element('p', excerptText, 'work-excerpt'));
+  const opening = bodyLines.slice(0, 2).join(' ');
+  if (opening) {
+    preview.append(element('p', opening.length > 220 ? opening.slice(0, 217).trimEnd() + '…' : opening, 'work-opening'));
+  }
 
   const meta = element('div', '', 'work-meta');
   const description = element('div');
   description.append(element('strong', entry.title));
   if (entry.description) description.append(element('p', entry.description));
-  const arrow = element('span', '↗');
-  arrow.setAttribute('aria-hidden', 'true');
-  meta.append(description, arrow);
+  meta.append(description, element('span', 'Read full sample ↗'));
   card.append(preview, meta);
   return card;
 }
+
+function setupFeaturedSamples() {
+  if (!sampleSelector) return;
+  const cards = [...workList.querySelectorAll('.work-card')];
+  const activeId = sampleSelector.querySelector('[aria-pressed="true"]')?.getAttribute('aria-controls');
+  const buttons = cards.map((card, index) => {
+    card.id = 'featured-' + card.hash.slice(1);
+    const button = element('button', card.querySelector('strong').textContent);
+    button.type = 'button';
+    button.setAttribute('aria-controls', card.id);
+    button.addEventListener('click', () => select(index));
+    return button;
+  });
+
+  function select(activeIndex) {
+    cards.forEach((card, index) => {
+      card.hidden = index !== activeIndex;
+      buttons[index].setAttribute('aria-pressed', String(!card.hidden));
+    });
+  }
+
+  sampleSelector.replaceChildren(...buttons);
+  sampleSelector.hidden = cards.length < 2;
+  select(Math.max(0, cards.findIndex(card => card.id === activeId)));
+}
+
+function showFeaturedSample(card) {
+  const content = featuredText.get(card.hash.slice(1));
+  if (!content) return false;
+  const cards = [...workList.querySelectorAll('.work-card')];
+  const index = cards.indexOf(card);
+  const title = card.querySelector('strong').textContent;
+  const reader = sampleDialog.querySelector('.reader-content');
+  sampleDialog.querySelector('#reader-title').textContent = title;
+  reader.replaceChildren(content.cloneNode(true));
+  reader.scrollTop = 0;
+  sampleDialog.querySelector('.reader-position').textContent = title + ' · ' + (index + 1) + ' of ' + cards.length;
+  sampleDialog.querySelector('.reader-footer').hidden = cards.length < 2;
+  readingCard = card;
+  if (!sampleDialog.open) sampleDialog.showModal();
+  return true;
+}
+
+if (sampleDialog && typeof sampleDialog.showModal === 'function') {
+  workList.addEventListener('click', event => {
+    const card = event.target.closest('.work-card');
+    if (!card || event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (showFeaturedSample(card)) event.preventDefault();
+  });
+  sampleDialog.querySelector('.reader-footer').addEventListener('click', event => {
+    const step = event.target.closest('[data-reader-step]')?.dataset.readerStep;
+    if (!step) return;
+    const cards = [...workList.querySelectorAll('.work-card')];
+    if (cards.length < 2) return;
+    const index = cards.findIndex(card => card.hash === readingCard.hash);
+    const next = (Math.max(0, index) + Number(step) + cards.length) % cards.length;
+    if (showFeaturedSample(cards[next])) sampleSelector.children[next].click();
+  });
+  sampleDialog.addEventListener('close', () => {
+    const visible = workList.querySelector('.work-card:not([hidden])');
+    visible?.focus({ preventScroll: true });
+  });
+}
+
+if (siteHeader) {
+  const updateHeader = () => siteHeader.classList.toggle('is-scrolled', scrollY > 12);
+  addEventListener('scroll', updateHeader, { passive: true });
+  addEventListener('pageshow', updateHeader);
+  updateHeader();
+}
+
+const revealObserver = siteHeader && 'IntersectionObserver' in window
+  ? new IntersectionObserver((entries, observer) => {
+    const motion = matchMedia('(prefers-reduced-motion: no-preference)');
+    const entering = entries.filter(entry => entry.isIntersecting);
+    entering.forEach(({ target }, index) => {
+      observer.unobserve(target);
+      if (!motion.matches || target.contains(document.activeElement)) return;
+      target.style.setProperty('--reveal-index', Math.min(index, 2));
+      target.classList.add('is-revealing');
+      target.addEventListener('animationend', () => {
+        target.classList.remove('is-revealing');
+        target.style.removeProperty('--reveal-index');
+      }, { once: true });
+    });
+  }, { rootMargin: '0px 0px -24px' })
+  : null;
+
+function observeBelowFold(items) {
+  for (const item of items) {
+    if (item.hidden || item.getBoundingClientRect().top >= innerHeight) revealObserver?.observe(item);
+  }
+}
+
+observeBelowFold(document.querySelectorAll('main .section, main .contact, .work-section, .samples > .sample'));
 
 function renderMedia(entry) {
   const gallery = document.querySelector('[data-gallery="' + entry.kind + '"]');
@@ -111,6 +218,7 @@ viewer?.querySelector('[data-close]').addEventListener('click', () => viewer.clo
 addEventListener('hashchange', openHash);
 openHash();
 if (filters) filters.hidden = false;
+setupFeaturedSamples();
 
 async function loadContent() {
   try {
@@ -120,7 +228,10 @@ async function loadContent() {
     if (Array.isArray(entries)) {
       if (workList) {
         const featured = entries.filter(entry => entry.kind === 'sample').slice(0, 3);
+        featuredText.clear();
+        for (const entry of featured) featuredText.set(entry.id, element('p', entry.body, 'plain-copy'));
         workList.replaceChildren(...featured.map(renderWorkCard));
+        setupFeaturedSamples();
         if (!featured.length) workList.append(element('p', 'New samples will appear here as they are published.'));
         const note = workList.closest('section').querySelector('.section-note');
         note.hidden = !featured.length || !featured.every(entry => entry.credit === 'Concept project');
@@ -128,6 +239,7 @@ async function loadContent() {
       if (samples) {
         const sampleEntries = entries.filter(entry => entry.kind === 'sample');
         samples.replaceChildren(...sampleEntries.map(renderSample));
+        observeBelowFold(samples.children);
         for (const button of filters.querySelectorAll('button')) {
           button.hidden = button.dataset.filter !== 'all' && !sampleEntries.some(entry => entry.category === button.dataset.filter);
         }
