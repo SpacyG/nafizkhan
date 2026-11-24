@@ -24,16 +24,26 @@ function renderSample(entry) {
   return article;
 }
 
-function renderWorkRow(entry) {
-  const row = element('a', '', 'work-row');
-  row.href = 'work.html#' + entry.id;
-  const detail = element('span');
-  detail.append(element('strong', entry.title));
-  if (entry.description) detail.append(element('span', entry.description, 'work-desc'));
-  const arrow = element('span', '↗', 'row-arrow');
+function renderWorkCard(entry) {
+  const card = element('a', '', 'work-card');
+  card.href = 'work.html#' + entry.id;
+
+  const preview = element('div', '', 'work-preview');
+  const type = element('span', entry.category, 'work-type');
+  const firstLine = entry.body.split('\n').find(line => line.trim());
+  const excerpt = firstLine?.trim().replace(/^(?:Subject|Headline):\s*/i, '') || entry.title;
+  const excerptText = excerpt.length > 140 ? excerpt.slice(0, 137).trimEnd() + '…' : excerpt;
+  preview.append(type, element('p', excerptText, 'work-excerpt'));
+
+  const meta = element('div', '', 'work-meta');
+  const description = element('div');
+  description.append(element('strong', entry.title));
+  if (entry.description) description.append(element('p', entry.description));
+  const arrow = element('span', '↗');
   arrow.setAttribute('aria-hidden', 'true');
-  row.append(element('span', entry.category, 'work-type'), detail, arrow);
-  return row;
+  meta.append(description, arrow);
+  card.append(preview, meta);
+  return card;
 }
 
 function renderMedia(entry) {
@@ -110,7 +120,7 @@ async function loadContent() {
     if (Array.isArray(entries)) {
       if (workList) {
         const featured = entries.filter(entry => entry.kind === 'sample').slice(0, 3);
-        workList.replaceChildren(...featured.map(renderWorkRow));
+        workList.replaceChildren(...featured.map(renderWorkCard));
         if (!featured.length) workList.append(element('p', 'New samples will appear here as they are published.'));
         const note = workList.closest('section').querySelector('.section-note');
         note.hidden = !featured.length || !featured.every(entry => entry.credit === 'Concept project');

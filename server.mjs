@@ -26,7 +26,7 @@ const assets = new Map([
   ['index.html', 'text/html'], ['about.html', 'text/html'], ['work.html', 'text/html'],
   ['terms.html', 'text/html'], ['privacy.html', 'text/html'], ['studio.html', 'text/html'],
   ['site.css', 'text/css'], ['site.js', 'text/javascript'], ['studio.js', 'text/javascript'],
-  ['images/mark.svg', 'image/svg+xml'], ['images/nafiz-portrait.jpg', 'image/jpeg'],
+  ['images/mark.svg', 'image/svg+xml'], ['images/nafiz-portrait.jpg', 'image/jpeg'], ['images/cosmic-hero.jpg', 'image/jpeg'],
   ['robots.txt', 'text/plain'], ['sitemap.xml', 'application/xml']
 ]);
 const headers = {

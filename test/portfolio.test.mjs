@@ -87,8 +87,11 @@ test('public pages, headers, assets, and protected paths', async () => {
     assert.equal(result.headers.get('x-content-type-options'), 'nosniff');
     assert.match(await result.text(), /id="main"/);
   }
-  const photo = await request('/images/nafiz-portrait.jpg');
-  assert.equal(photo.headers.get('content-type'), 'image/jpeg');
+  for (const image of ['nafiz-portrait.jpg', 'cosmic-hero.jpg']) {
+    const asset = await request('/images/' + image);
+    assert.equal(asset.status, 200);
+    assert.equal(asset.headers.get('content-type'), 'image/jpeg');
+  }
   const seeded = await (await request('/api/content.json')).json();
   assert.deepEqual(seeded.entries.map(entry => entry.id), ['sample-email', 'sample-sales', 'sample-landing', 'sample-bookstore', 'sample-lumaskin']);
   for (const name of ['/server.mjs', '/samples.json', '/data/portfolio.sqlite', '/.git/config']) {
