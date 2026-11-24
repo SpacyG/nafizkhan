@@ -4,7 +4,7 @@ const viewer = document.querySelector('#photo-viewer');
 const workList = document.querySelector('.work-list');
 const sampleSelector = document.querySelector('.sample-selector');
 const sampleDialog = document.querySelector('.sample-dialog');
-const heroArt = document.querySelector('.hero-art');
+const siteHeader = document.querySelector('.site-header');
 const featuredText = new Map(
   [...document.querySelectorAll('template[data-featured-sample]')].map(template => [
     template.dataset.featuredSample,
@@ -121,24 +121,37 @@ if (sampleDialog && typeof sampleDialog.showModal === 'function') {
   });
 }
 
-if (heroArt) {
-  const hero = heroArt.parentElement;
-  const motion = matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
-  const resetArt = () => {
-    heroArt.style.removeProperty('--art-x');
-    heroArt.style.removeProperty('--art-y');
-  };
-  hero.addEventListener('pointermove', event => {
-    if (!motion.matches || event.pointerType !== 'mouse') return;
-    const bounds = hero.getBoundingClientRect();
-    const x = (event.clientX - bounds.left) / bounds.width - .5;
-    const y = (event.clientY - bounds.top) / bounds.height - .5;
-    heroArt.style.setProperty('--art-x', (x * 24).toFixed(1) + 'px');
-    heroArt.style.setProperty('--art-y', (y * 18).toFixed(1) + 'px');
-  });
-  hero.addEventListener('pointerleave', resetArt);
-  motion.addEventListener('change', resetArt);
+if (siteHeader) {
+  const updateHeader = () => siteHeader.classList.toggle('is-scrolled', scrollY > 12);
+  addEventListener('scroll', updateHeader, { passive: true });
+  addEventListener('pageshow', updateHeader);
+  updateHeader();
 }
+
+const revealObserver = siteHeader && 'IntersectionObserver' in window
+  ? new IntersectionObserver((entries, observer) => {
+    const motion = matchMedia('(prefers-reduced-motion: no-preference)');
+    const entering = entries.filter(entry => entry.isIntersecting);
+    entering.forEach(({ target }, index) => {
+      observer.unobserve(target);
+      if (!motion.matches || target.contains(document.activeElement)) return;
+      target.style.setProperty('--reveal-index', Math.min(index, 2));
+      target.classList.add('is-revealing');
+      target.addEventListener('animationend', () => {
+        target.classList.remove('is-revealing');
+        target.style.removeProperty('--reveal-index');
+      }, { once: true });
+    });
+  }, { rootMargin: '0px 0px -24px' })
+  : null;
+
+function observeBelowFold(items) {
+  for (const item of items) {
+    if (item.hidden || item.getBoundingClientRect().top >= innerHeight) revealObserver?.observe(item);
+  }
+}
+
+observeBelowFold(document.querySelectorAll('main .section, main .contact, .work-section, .samples > .sample'));
 
 function renderMedia(entry) {
   const gallery = document.querySelector('[data-gallery="' + entry.kind + '"]');
@@ -226,6 +239,7 @@ async function loadContent() {
       if (samples) {
         const sampleEntries = entries.filter(entry => entry.kind === 'sample');
         samples.replaceChildren(...sampleEntries.map(renderSample));
+        observeBelowFold(samples.children);
         for (const button of filters.querySelectorAll('button')) {
           button.hidden = button.dataset.filter !== 'all' && !sampleEntries.some(entry => entry.category === button.dataset.filter);
         }
