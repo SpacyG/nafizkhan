@@ -446,3 +446,99 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
 .revision-note { margin-top:var(--space-3); padding-inline-start:var(--space-3); border-inline-start:2px solid var(--accent); }
 .ink-scribble { position:fixed; right:var(--gutter); bottom:var(--space-7); z-index:9; pointer-events:none; background:var(--surface); padding-inline:var(--space-3); }
 .ink-pointer-on dialog[open], .ink-pointer-on dialog[open] button { cursor:auto; }
+
+/* Portfolio index and proof sections */
+:root {
+  --proof-paper: color-mix(in srgb, var(--ink) 5%, var(--paper));
+  --proof-ink-muted: color-mix(in srgb, var(--paper) 77%, var(--ink));
+  --proof-mark-time: 650ms;
+  --proof-type-time: 850ms;
+}
+.portfolio-index { background: var(--proof-paper); border-bottom: var(--stroke) solid var(--line); padding-block: var(--space-8); }
+.index-layout { display: grid; gap: var(--space-6) var(--space-8); }
+.portfolio-index h2 { max-width: 26ch; font-size: clamp(1.75rem, 3.6vw, 3rem); line-height: 1.14; margin-block: var(--space-2); }
+.portfolio-index h2 + p { color: var(--muted); }
+.index-links { display: grid; align-content: center; }
+.index-links a {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+  min-height: var(--button-height); padding-inline: var(--space-2);
+  border-bottom: var(--stroke) solid var(--line); font-weight: 700;
+}
+.index-links a:is(:hover, :focus-visible) { background: var(--highlight); }
+.index-links [data-sample-count] { color: var(--accent-text); font-variant-numeric: tabular-nums; }
+.proof-label { display: flex; align-items: center; gap: var(--space-2); color: var(--accent-text); margin-bottom: var(--space-3); }
+.proof-label span { border-right: var(--stroke) solid currentColor; padding-right: var(--space-2); font-variant-numeric: tabular-nums; }
+.section-marker {
+  position: fixed; z-index: 2; bottom: var(--space-2); right: var(--space-2); pointer-events: none;
+  background: var(--paper); color: var(--accent-text); border: var(--stroke) solid var(--line);
+  padding: var(--space-1) var(--space-2); font-size: var(--label); font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+}
+.work-caption { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-3); margin-bottom: var(--space-3); }
+.proof-mark { width: 2rem; height: auto; color: var(--accent-text); vertical-align: middle; overflow: visible; }
+.proof-mark :is(path, rect) { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.proof-star { width: 1rem; margin-left: var(--space-2); }
+.proof-squiggle, .proof-arrow { width: 5rem; margin-top: var(--space-4); }
+.proof-note { margin-block: var(--space-3); transform: rotate(5deg); }
+.proof-stamp { width: 8rem; transform: rotate(-5deg); }
+.proof-stamp text { fill: currentColor; font: 700 12px var(--sans); letter-spacing: 1.1px; }
+.service-band, .about-band { background: var(--proof-paper); }
+.about-band { border-block: var(--stroke) solid var(--line); }
+.home-details .home-about { border: 0; }
+.home-about .proof-note + p { max-width: var(--narrow); color: var(--muted); margin-bottom: var(--space-3); }
+.home-details .services { grid-template-columns: 1fr; counter-reset: service; gap: 0; }
+.home-details .services > div {
+  position: relative; padding: var(--space-4) 0 var(--space-4) var(--space-8); counter-increment: service;
+}
+.home-details .services > div::before {
+  content: "0" counter(service); position: absolute; top: var(--space-4); left: 0;
+  color: var(--accent-text); font-size: var(--small); font-variant-numeric: tabular-nums;
+}
+.home-details .services > div:last-child { border-bottom: var(--stroke) solid var(--line); }
+.home-details .service-example { margin-top: var(--space-2); padding-left: var(--space-3); border-left: 2px solid var(--accent); }
+.service-example strong { display: block; }
+.approach-steps { list-style: none; padding: 0; counter-reset: step; max-width: var(--measure); }
+.approach-steps li {
+  counter-increment: step; position: relative; padding: var(--space-3) 0 var(--space-3) var(--space-8);
+  border-bottom: var(--stroke) solid var(--line);
+}
+.approach-steps li::before {
+  content: counter(step) "."; position: absolute; left: var(--space-2); color: var(--accent-text); font: italic var(--service-type)/1 var(--display);
+}
+.circled-word { position: relative; display: inline-block; isolation: isolate; }
+.proof-circle { position: absolute; inset: -12% -10%; width: 120%; height: 124%; pointer-events: none; z-index: -1; }
+.proof-circle path { stroke-width: 3; vector-effect: non-scaling-stroke; }
+.proof-highlight {
+  background-image: linear-gradient(var(--highlight), var(--highlight)); background-repeat: no-repeat;
+  background-position: left 92%; background-size: 100% .55em;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+.contact-band { background: var(--ink); color: var(--paper); }
+.contact-band .contact { border: 0; }
+.contact-band .contact h2 + p, .contact-band .email { color: var(--proof-ink-muted); }
+.contact-band :is(.proof-label, .proof-arrow) { color: color-mix(in srgb, var(--accent) 60%, var(--paper)); }
+.contact-band :focus-visible { outline-color: var(--paper); }
+.contact-band .copy-email { background: transparent; color: var(--paper); border-color: var(--proof-ink-muted); }
+.proof-type { display: inline-block; white-space: nowrap; }
+.home-details .feedback { padding-block: var(--space-3); }
+.portfolio-page .page-intro .proof-stamp { display: block; margin: var(--space-3) 0; }
+.case-notes {
+  display: grid; grid-column: 1 / -1; gap: var(--space-3) var(--space-6);
+  margin-top: var(--space-4); padding: var(--space-4); background: var(--proof-paper);
+  border-inline-start: 2px solid var(--accent);
+}
+.case-notes dt { color: var(--accent-text); font-weight: 700; }
+.case-notes dd { color: var(--muted); }
+.portfolio-page .sample details { margin-top: var(--space-3); }
+@media (min-width: 48rem) {
+  .index-layout { grid-template-columns: minmax(0, 1.4fr) minmax(13rem, .6fr); align-items: center; }
+  .case-notes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .proof-highlight.proof-play { animation: proof-marker var(--proof-mark-time) var(--ease) both; }
+  .circled-word.proof-play .proof-circle path { stroke-dasharray: 1; animation: proof-draw var(--proof-mark-time) var(--ease) both; }
+  .proof-type.proof-play { animation: proof-type var(--proof-type-time) steps(11, end) both; }
+  @keyframes proof-marker { from { background-size: 0 .55em; } }
+  @keyframes proof-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  @keyframes proof-type { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0); } }
+}
+

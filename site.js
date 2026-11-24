@@ -207,8 +207,9 @@ function showCategory(category) {
 function openHash() {
   const article = document.getElementById(location.hash.slice(1));
   if (!article?.classList.contains('sample')) return;
-  showCategory('all');
-  article.querySelector('details').open = true;
+  const category = new URLSearchParams(location.search).get('category');
+  showCategory(category === article.dataset.category ? category : 'all');
+  if (!category) article.querySelector('details').open = true;
   article.scrollIntoView();
 }
 
@@ -279,7 +280,7 @@ function attachWorkComparisons() {
     const text = article.querySelector('.plain-copy')?.textContent || firstLine;
     const line = text.trim().split('\n').filter(s => s.trim())[0]?.trim().replace(/^(?:Email 1 · )?(?:Subject|Headline):\s*/i, '');
     const panel = revisionControl(article.id, article.querySelector('h2').textContent, line);
-    if (panel) article.append(panel);
+    if (panel) article.insertBefore(panel, article.querySelector('details'));
   }
 }
 
@@ -318,10 +319,10 @@ function setupHeadline() {
 }
 
 function setupServices() {
-  const examples = ['Morning Ritual — welcome email', 'The Daily Planner — sales page', 'Local Gym — landing page', 'Homepage headline — Find the words for your next launch.'];
   document.querySelectorAll('.services dt').forEach((term, index) => {
-    const button = element('button', term.textContent + ' ＋');
-    const example = element('p', examples[index], 'service-example');
+    const example = term.parentElement.querySelector('.service-example');
+    if (!example) return;
+    const button = element('button', term.textContent + ' +');
     example.id = 'service-example-' + index;
     let pinned = false;
     let hovering = false;
@@ -336,7 +337,6 @@ function setupServices() {
     row.addEventListener('pointerenter', e => { hovering = e.pointerType === 'mouse'; show(); });
     row.addEventListener('pointerleave', () => { hovering = false; show(); });
     term.replaceChildren(button);
-    row.querySelector('dd').append(example);
     show();
   });
 }
@@ -459,7 +459,8 @@ function setupInkProgress() {
   if (!bar) return;
   const nav = [...siteHeader.querySelectorAll('nav a,.header-contact')];
   const sections = [...document.querySelectorAll('.home-page main section[id]')];
-  const targets = {home:'Home',work:'Work',services:'Services',approach:'Services',about:'About',contact:'Get in touch'};
+  const targets = {home:'Home',portfolio:'Home',work:'Work',services:'Services',approach:'Services',about:'About',contact:'Get in touch'};
+  const sectionMarker = document.querySelector('.section-marker');
   let frame = 0;
   function update() {
     frame = 0;
@@ -467,7 +468,13 @@ function setupInkProgress() {
     bar.style.transform = 'scaleX('+Math.max(0,Math.min(1,max ? scrollY/max : 0))+')';
     if (!sections.length) return;
     const current = sections.filter(section=>section.getBoundingClientRect().top <= siteHeader.offsetHeight+innerHeight*.25).at(-1) || sections[0];
-    const label = max > 0 && scrollY >= max-2 ? targets.contact : targets[current.id];
+    const active = max > 0 && scrollY >= max - 2 ? sections.at(-1) : current;
+    const label = targets[active.id];
+    if (sectionMarker) {
+      const sectionName = active.querySelector('.proof-label')?.textContent;
+      sectionMarker.hidden = !sectionName;
+      if (sectionMarker.textContent !== (sectionName || '')) sectionMarker.textContent = sectionName || '';
+    }
     nav.forEach(link=>link.classList.toggle('current-section',link.textContent.trim().startsWith(label)));
   }
   function queue(){ if (!frame) frame=requestAnimationFrame(update); }
@@ -476,8 +483,36 @@ function setupInkProgress() {
   if ('ResizeObserver' in window) new ResizeObserver(queue).observe(document.body);
   update();
 }
+function setupProofMotion() {
+  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver(entries => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      entry.target.classList.add('proof-play');
+      observer.unobserve(entry.target);
+    }
+  }, { threshold: 0.35 });
+  document.querySelectorAll('[data-proof-motion]').forEach(mark => observer.observe(mark));
+}
+
+function updatePortfolioIndex(entries) {
+  const count = document.querySelector('[data-portfolio-count]');
+  if (!count) return;
+  const published = entries.filter(entry => entry.kind === 'sample');
+  const concepts = published.every(entry => entry.credit === 'Concept project');
+  count.textContent = 'Portfolio · ' + published.length + (concepts ? ' concept project' : ' writing sample') + (published.length === 1 ? '' : 's');
+  document.querySelectorAll('[data-sample-category]').forEach(link => {
+    const group = published.filter(entry => entry.category === link.dataset.sampleCategory);
+    link.querySelector('[data-sample-count]').textContent = group.length;
+    link.hidden = !group.length;
+    if (group.length) {
+      link.href = 'work.html?category=' + encodeURIComponent(link.dataset.sampleCategory) + '#' + encodeURIComponent(group[0].id);
+    }
+  });
+}
+
 if (siteHeader) {
-  for (const setup of [setupHeadline, setupServices, setupCopyEmail, setupFlourish, setupInkPointer, setupInkProgress, attachWorkComparisons]) {
+  for (const setup of [setupHeadline, setupServices, setupCopyEmail, setupFlourish, setupInkPointer, setupInkProgress, setupProofMotion, attachWorkComparisons]) {
     try {
       setup();
     } catch (error) {
@@ -485,7 +520,7 @@ if (siteHeader) {
     }
   }
   samples?.addEventListener('click', event => {
-    if (event.target.closest('a,button,input,details,.revision') || getSelection()?.toString()) return;
+    if (event.target.closest('a,button,input,details,.revision,.case-notes') || getSelection()?.toString()) return;
     const details = event.target.closest('.sample')?.querySelector('details');
     if (details) details.open = !details.open;
   });
@@ -508,6 +543,7 @@ async function loadContent() {
     const { entries } = await result.json();
     if (Array.isArray(entries)) {
       if (workList) {
+        updatePortfolioIndex(entries);
         const featured = entries.filter(entry => entry.kind === 'sample').slice(0, 3);
         featuredText.clear();
         for (const entry of featured) featuredText.set(entry.id, element('p', entry.body, 'plain-copy'));
