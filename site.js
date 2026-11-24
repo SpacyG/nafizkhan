@@ -153,7 +153,7 @@ function observeBelowFold(items) {
   }
 }
 
-observeBelowFold(document.querySelectorAll('main .section, .work-section, .samples > .sample'));
+observeBelowFold(document.querySelectorAll('main .section:not([data-writing])'));
 
 function renderMedia(entry) {
   const gallery = document.querySelector('[data-gallery="' + entry.kind + '"]');
@@ -334,7 +334,6 @@ function setupHeadline() {
     let index = 0;
     const cycle = element('button', '', 'headline-cycle');
     cycle.type = 'button';
-    cycle.title = 'Try another headline';
     const hint = element('span', '↻ Try another headline', 'cycle-hint');
     function draw() {
       const nodes = index ? [document.createTextNode(choices[index])] : original;
@@ -369,7 +368,27 @@ function setupServices() {
     button.setAttribute('aria-controls', example.id);
     button.addEventListener('click', () => { pinned = !pinned; hovering = false; show(); });
     const row = term.parentElement;
-    row.addEventListener('pointerenter', e => { hovering = e.pointerType === 'mouse'; show(); });
+    const preview = document.querySelector('.service-proof');
+    function showPreview() {
+      if (!preview) return;
+      const label = example.querySelector('strong');
+      const lines = [
+        document.querySelector('[data-hero-rewrite]')?.firstChild?.textContent,
+        document.querySelector('.work-card[href$="#sample-sales"] .work-excerpt')?.textContent,
+        document.querySelector('.work-card[href$="#sample-landing"] .work-excerpt')?.textContent
+      ];
+      const line = lines[index]?.trim();
+      preview.querySelector('[data-service-kind]').textContent = label.textContent;
+      preview.querySelector('[data-service-line]').textContent = line ? '“' + line + '”' : example.textContent.slice(label.textContent.length).trim();
+      preview.dataset.service = String(index);
+    }
+    button.addEventListener('focus', showPreview);
+    button.addEventListener('click', showPreview);
+    row.addEventListener('pointerenter', e => {
+      hovering = e.pointerType === 'mouse';
+      if (hovering) showPreview();
+      show();
+    });
     row.addEventListener('pointerleave', () => { hovering = false; show(); });
     term.replaceChildren(button);
     show();
@@ -467,6 +486,7 @@ function setupInkPointer() {
     }
     const control = target?.closest('a,button,summary,input');
     const read = card && (!control || control.matches('.work-card,summary'));
+    ring.classList.toggle('over-headline', Boolean(control?.matches('.headline-cycle')));
     ring.dataset.mode = read ? 'read' : control ? 'link' : target?.closest('p,h1,h2,dt,dd') ? 'text' : 'idle';
     const label = read ? 'Read ↗' : '';
     if (ring.textContent !== label) ring.textContent = label;
@@ -495,17 +515,7 @@ function setupInkProgress() {
   const nav = [...siteHeader.querySelectorAll('nav a,.header-contact')];
   const sections = [...document.querySelectorAll('.home-page main section[id]')];
   const targets = {home:'Home',work:'Work',services:'Services',approach:'Services',about:'About',contact:'Get in touch'};
-  const sectionMarker = document.querySelector('.section-marker');
-  const currentLabel = sectionMarker?.querySelector('[data-current-section]');
-  const sectionLinks = [...(sectionMarker?.querySelectorAll('nav a') || [])];
-  sectionMarker?.addEventListener('click', event => {
-    if (event.target.closest('nav a')) sectionMarker.open = false;
-  });
-  sectionMarker?.addEventListener('keydown', event => {
-    if (event.key !== 'Escape' || !sectionMarker.open) return;
-    sectionMarker.open = false;
-    sectionMarker.querySelector('summary').focus();
-  });
+  const nextPill = document.querySelector('.next-pill');
   let frame = 0;
   function update() {
     frame = 0;
@@ -515,15 +525,13 @@ function setupInkProgress() {
     const current = sections.filter(section=>section.getBoundingClientRect().top <= siteHeader.offsetHeight+innerHeight*.25).at(-1) || sections[0];
     const active = max > 0 && scrollY >= max - 2 ? sections.at(-1) : current;
     const label = targets[active.id];
-    if (sectionMarker && currentLabel) {
-      const sectionName = active.querySelector('.proof-label')?.textContent.trim();
-      sectionMarker.hidden = !sectionName && !sectionMarker.matches(':focus-within') && !sectionMarker.open;
-      const markerText = sectionName || 'Jump to section';
-      if (currentLabel.textContent !== markerText) currentLabel.textContent = markerText;
-      sectionLinks.forEach(link => {
-        if (link.hash === '#' + active.id) link.setAttribute('aria-current', 'location');
-        else link.removeAttribute('aria-current');
-      });
+    if (nextPill) {
+      const next = sections[sections.indexOf(active) + 1];
+      nextPill.hidden = active.id === 'home' || !next;
+      if (next) {
+        nextPill.href = '#' + next.id;
+        nextPill.setAttribute('aria-label', 'Next section: ' + (next.querySelector('.proof-label')?.textContent.trim() || next.id));
+      }
     }
     nav.forEach(link=>link.classList.toggle('current-section',link.textContent.trim().startsWith(label)));
   }
@@ -533,6 +541,38 @@ function setupInkProgress() {
   if ('ResizeObserver' in window) new ResizeObserver(queue).observe(document.body);
   update();
 }
+const writingObserver = 'IntersectionObserver' in window ? new IntersectionObserver((entries, observer) => {
+  for (const entry of entries) {
+    if (!entry.isIntersecting) continue;
+    observer.unobserve(entry.target);
+    const block = entry.target.closest('[data-writing]');
+    if (block && !block.contains(document.activeElement)) block.classList.add('writing-visible');
+  }
+}, { rootMargin: '0px 0px -12% 0px' }) : null;
+
+const penObserver = 'IntersectionObserver' in window ? new IntersectionObserver((entries, observer) => {
+  for (const entry of entries) {
+    if (!entry.isIntersecting) continue;
+    observer.unobserve(entry.target);
+    entry.target.classList.add('guide-drawn');
+  }
+}, { rootMargin: '0px 0px -9% 0px' }) : null;
+
+function setupWriting(blocks = document.querySelectorAll('[data-writing], .samples > .sample')) {
+  document.querySelectorAll('.guide-next:not(.guide-drawn), .approach-steps:not(.guide-drawn)').forEach(mark => penObserver?.observe(mark));
+  for (const block of blocks) {
+    block.dataset.writing = '';
+    const heading = block.querySelector('h1,h2');
+    if (!heading) continue;
+    if (block.matches('.sample') && !heading.querySelector('mark')) {
+      const title = heading.textContent.trim();
+      const boundary = title.lastIndexOf(' ') + 1;
+      heading.replaceChildren(title.slice(0, boundary), element('mark', title.slice(boundary), 'guide-highlight'));
+    }
+    writingObserver?.observe(heading);
+  }
+}
+
 function setupProofMotion() {
   if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const observer = new IntersectionObserver(entries => {
@@ -608,7 +648,7 @@ function setupInquiry() {
 }
 
 if (siteHeader) {
-  for (const setup of [setupHeadline, setupServices, setupCopyEmail, setupFlourish, setupInkPointer, setupInkProgress, setupProofMotion, setupIntroReplay, setupHeroProof, setupInquiry, attachWorkComparisons]) {
+  for (const setup of [setupHeadline, setupServices, setupCopyEmail, setupFlourish, setupInkPointer, setupInkProgress, setupWriting, setupProofMotion, setupIntroReplay, setupHeroProof, setupInquiry, attachWorkComparisons]) {
     try {
       setup();
     } catch (error) {
@@ -652,7 +692,7 @@ async function loadContent() {
         const sampleEntries = entries.filter(entry => entry.kind === 'sample');
         samples.replaceChildren(...sampleEntries.map(renderSample));
         attachWorkComparisons();
-        observeBelowFold(samples.children);
+        setupWriting(samples.children);
         for (const button of filters.querySelectorAll('button')) {
           button.hidden = button.dataset.filter !== 'all' && !sampleEntries.some(entry => entry.category === button.dataset.filter);
         }

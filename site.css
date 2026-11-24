@@ -1,5 +1,13 @@
 :root {
   color-scheme: light;
+  --marker: #ffd84d;
+  --guide-tick: 105ms;
+  --guide-write: 560ms;
+  --guide-arrive: 480ms;
+  --guide-line-time: 700ms;
+  --guide-mark-time: 470ms;
+  --guide-step-gap: 230ms;
+  --guide-process-time: 920ms;
   --paper: #f5f0e6;
   --ink: #15130f;
   --muted: #5e554b;
@@ -458,11 +466,7 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
 }
 .proof-label { display: flex; align-items: center; gap: var(--space-2); color: var(--accent-text); margin-bottom: var(--space-3); }
 .proof-label span { border-right: var(--stroke) solid currentColor; padding-right: var(--space-2); font-variant-numeric: tabular-nums; }
-.section-marker {
-  position: fixed; z-index: 2; bottom: var(--space-2); right: var(--space-2); pointer-events: auto;
-  background: var(--paper); color: var(--accent-text); border: var(--stroke) solid var(--line);
-  font-size: var(--label); font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
-}
+
 .work-caption { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-3); margin-bottom: var(--space-3); }
 .proof-mark { width: 2rem; height: auto; color: var(--accent-text); vertical-align: middle; overflow: visible; }
 .proof-mark :is(path, rect) { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
@@ -546,14 +550,6 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
   :is(.hero-proof-toggle, .hero-replay) { margin-left: 0; margin-right: var(--space-2); }
 }
 .home-page .footer { padding-bottom: calc(var(--space-9) + var(--space-4)); }
-.section-marker summary { padding: var(--space-2) var(--space-3); min-height: var(--button-height); }
-.section-marker nav {
-  position: absolute; inset: auto 0 calc(100% + var(--space-1)) auto; min-width: 10rem;
-  background: var(--paper); color: var(--ink); border: var(--stroke) solid var(--line);
-  box-shadow: 0 .25rem .8rem var(--shadow);
-}
-.section-marker nav a { display: block; padding: var(--space-2) var(--space-3); }
-.section-marker nav a:is(:hover, :focus-visible, [aria-current]) { background: var(--highlight); }
 
 .contact-band .contact p:not(.proof-label) { margin-top: var(--space-3); color: var(--proof-ink-muted); }
 .contact-actions { align-self: center; }
@@ -580,21 +576,137 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
   .revision[data-stage="1"] ins { animation: proof-revision-in var(--standard) var(--ease); }
   .revision[data-stage="1"] del { animation: proof-revision-in var(--standard) var(--ease); }
   @keyframes proof-hero-name {
-    from { opacity: .2; clip-path: inset(-.25em 100% -.25em -.15em); transform: translateX(-.2em); }
-    to { opacity: 1; clip-path: inset(-.25em -.25em); transform: translateX(0); }
+    from { opacity: .3; transform: translateY(.35rem); }
+    to { opacity: 1; transform: none; }
   }
   @keyframes proof-revision-in { from { opacity: .35; } to { opacity: 1; } }
 }
 @media (min-width: 55rem) and (prefers-reduced-motion: no-preference) {
   .home-page .intro-playing .hero-art:not(.is-explored) { animation: proof-paper-arrive var(--proof-arrive) var(--ease) both; }
   @keyframes proof-paper-arrive {
-    from { opacity: .15; transform: translate(22%, 18%) rotate(3deg); }
-    to { opacity: 1; transform: translate(8%, 8%) rotate(-7deg); }
+    from { opacity: .15; transform: translate(-2%, 4%) rotate(-1deg); }
+    to { opacity: 1; transform: rotate(-5deg); }
   }
 }
 
 
 
+/* Reading path */
+.home-page .masthead { overflow: visible; padding-top: max(var(--space-8), 3rem); }
+.home-page .hero-copy h1 { line-height: 1.02; }
+.home-page .hero-copy h2 { line-height: 1.13; }
+.hero-edit { min-inline-size: 2.62em; }
+.headline-cycle { overflow: visible; }
+.ink-pointer-on .ink-ring.over-headline { visibility: hidden; }
+@media (min-width: 55rem) {
+  .home-page .hero-spread { grid-template-columns: minmax(0, 1fr) minmax(0, .86fr); gap: var(--space-7); }
+  .home-page .hero-art { width: 90%; transform: rotate(-5deg); }
+}
+.guide-highlight {
+  color: var(--ink); background: linear-gradient(var(--marker), var(--marker)) 0 79% / 100% .53em no-repeat;
+  padding-inline: .035em; box-decoration-break: clone; -webkit-box-decoration-break: clone;
+}
+.contact-band .guide-highlight {
+  background-position: 0 58%; background-size: 100% .95em; padding-inline: .085em;
+}
+.guide-mark {
+  width: 3rem; height: auto; color: var(--accent-text); overflow: visible; flex: none;
+}
+.guide-mark path { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.guide-primary { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+:is(.page-intro,.about-hero) .guide-primary { margin-block-start: var(--space-5); }
+.guide-action { width: fit-content; background: var(--accent); color: var(--ink); }
+.guide-action .guide-arrow { display: inline-block; }
+.guide-next {
+  grid-column: 1/-1; display: flex; align-items: center; gap: var(--space-3);
+  margin-block-start: var(--space-7); padding-block-start: var(--space-4); position: relative;
+}
+.guide-next::before {
+  content: ""; position: absolute; inset: 0 0 auto; height: 1px;
+  background: linear-gradient(90deg, var(--accent-text), var(--accent) 43%, transparent);
+  transform-origin: left;
+}
+.guide-next a { color: var(--accent-text); font-weight: 750; text-decoration: underline; text-underline-offset: .24em; }
+.guide-arrow { display: inline-block; }
+.next-pill {
+  position: fixed; inset: auto max(var(--space-3), env(safe-area-inset-right)) max(var(--space-3), env(safe-area-inset-bottom)) auto;
+  z-index: 2; border: var(--stroke) solid var(--accent-text); border-radius: 999px; background: var(--paper);
+  color: var(--accent-text); font-weight: 750; padding: var(--space-2) var(--space-4); box-shadow: 0 .2rem .6rem var(--shadow);
+}
+.next-pill:is(:hover,:focus-visible) { background: var(--marker); }
+.sample-tabs { min-width: 0; }
+.sample-tabs:has(.sample-selector[hidden]) { display: none; }
+.start-cue { display: flex; align-items: center; gap: var(--space-1); color: var(--accent-text); font: italic var(--service-type)/1 var(--display); }
+.start-cue .guide-mark { width: 2.15rem; }
+.sample-selector button[aria-pressed="true"], .filters button[aria-pressed="true"], .revision-controls [aria-pressed="true"] {
+  background: var(--marker); color: var(--ink); border-color: var(--ink);
+}
+@media (min-width: 43rem) { .sample-tabs { flex: 0 0 clamp(10rem, 19%, 16rem); } }
+.service-band { background: color-mix(in srgb, var(--marker) 11%, var(--paper)); }
+.service-proof {
+  position: relative; isolation: isolate; width: min(94%, 23rem); margin: var(--space-7) 0 var(--space-4);
+  background: var(--marker); color: var(--ink); min-height: 10rem;
+  padding: var(--space-6); transform: rotate(-3deg); box-shadow: .3rem .52rem 0 var(--shadow);
+}
+.service-proof::before {
+  content: ""; position: absolute; z-index: -2; inset: .25rem -.35rem -.4rem .35rem;
+  background: var(--surface); border: 1px solid var(--line); transform: rotate(5deg); border-radius: .15rem;
+}
+.service-proof::after { content: ""; position: absolute; inset: 0; background: var(--marker); z-index: -1; }
+.service-proof figcaption { color: var(--accent-text); font-size: var(--label); font-weight: 750; text-transform: uppercase; letter-spacing: .1em; }
+.service-proof blockquote { margin: var(--space-3) 0; font: italic clamp(1.25rem, 2.4vw, 1.9rem)/1.22 var(--display); }
+.service-proof .guide-mark { width: 2.25rem; }
+.approach-steps { position: relative; isolation: isolate; }
+.approach-steps::before {
+  content: ""; position: absolute; inset: .7rem auto .9rem .92rem; width: 2px;
+  background: var(--accent); transform-origin: top; transform: rotate(.35deg);
+}
+.approach-steps li { padding-inline-start: 3.5rem; }
+.approach-steps li::before { content: none; }
+.approach-steps li .guide-mark {
+  position: absolute; left: 0; top: .65rem; padding: .12rem; width: 1.9rem;
+  border-radius: 50%; background: var(--paper); border: 1px solid var(--accent);
+}
+.approach-steps strong {
+  background: linear-gradient(var(--marker),var(--marker)) 0 90% / 100% .58em no-repeat;
+}
+.about-page .section.split:nth-of-type(odd) { background: var(--proof-paper); padding-inline: var(--space-4); }
+.portfolio-page .sample:has(.case-notes) { border-inline-start-color: var(--accent-text); }
+@media (prefers-reduced-motion: no-preference) {
+  .guide-action:is(:hover,:focus-visible) .guide-arrow, .guide-next a:is(:hover,:focus-visible) .guide-arrow {
+    animation: guide-arrow var(--guide-mark-time) var(--ease) both;
+  }
+  .guide-next.guide-drawn::before { animation: guide-line var(--guide-line-time) var(--ease) both; }
+  .guide-next.guide-drawn .guide-mark { animation: guide-float var(--guide-mark-time) var(--ease) var(--guide-tick) both; }
+  .writing-visible :is(.eyebrow,.about-location) { animation: guide-arrive var(--guide-arrive) var(--ease) both; }
+  .writing-visible :is(h1,h2) { animation: guide-write var(--guide-write) var(--ease) var(--guide-tick) both; }
+  .writing-visible:not(.contact-band) .guide-highlight {
+    animation: guide-highlight var(--guide-mark-time) var(--ease) calc(var(--guide-write) + var(--guide-tick)) both;
+  }
+  .writing-visible :is(.guide-primary,.proof-squiggle,.proof-note,.proof-arrow) {
+    animation: guide-float var(--guide-mark-time) var(--ease) calc(3 * var(--guide-tick)) both;
+  }
+  .writing-visible :is(.intro,.section-note,.services,.work-reader,.portrait,.case-notes,.section.split > p) {
+    animation: guide-arrive var(--guide-arrive) var(--ease) calc(3 * var(--guide-tick)) both;
+  }
+  .approach-steps.guide-drawn::before { animation: guide-pen-thread var(--guide-process-time) var(--ease) both; }
+  .approach-steps.guide-drawn strong {
+    animation: guide-highlight var(--guide-mark-time) var(--ease) calc(var(--guide-step, 0) * var(--guide-step-gap)) both;
+  }
+  .approach-steps li:nth-child(2) { --guide-step: 1; }
+  .approach-steps li:nth-child(3) { --guide-step: 2; }
+  .approach-steps.guide-drawn .guide-mark path {
+    stroke-dasharray: 1; animation: guide-stroke var(--guide-mark-time) var(--ease) calc(var(--guide-step, 0) * var(--guide-step-gap)) both;
+  }
+}
+@keyframes guide-write { from { clip-path: inset(-.6em 100% -.6em -.3em); opacity: .5; } to { clip-path: none; opacity: 1; } }
+@keyframes guide-highlight { from { background-size: 0 .53em; } }
+@keyframes guide-arrive { from { opacity: .52; transform: translateY(.35rem); } }
+@keyframes guide-line { from { transform: scaleX(0); } }
+@keyframes guide-float { from { opacity: .55; transform: translateY(.45rem) rotate(-2deg); } }
+@keyframes guide-arrow { 45% { transform: translateX(.25rem); } }
+@keyframes guide-pen-thread { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes guide-stroke { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 /* ---- Intro splash (home page, once per session) ---- */
 .splash {
   position: fixed; inset: 0; z-index: 20; display: grid; place-content: center; justify-items: center; gap: 1.1rem;
@@ -620,16 +732,14 @@ html.no-splash .splash { display: none; }
   .splash-dot { animation: splash-pop 380ms var(--ease) 1.15s both; }
   .splash-line { animation: splash-draw 520ms var(--ease) 1.3s both; }
   .splash-name { animation: splash-fade 600ms var(--ease) 1.0s both; }
-  /* hold the hero intro until the splash has lifted */
-  html.splash-wait .home-page .intro-playing .hero-copy h1 { animation-delay: 2.3s; }
-  html.splash-wait .home-page .intro-playing .hero-copy h2 { animation-delay: calc(2.3s + var(--quick)); }
-  html.splash-wait .home-page .intro-playing .hero-art { animation-delay: 2.3s; }
-  html.splash-wait .edit-draft,
-  html.splash-wait .edit-draft::after,
-  html.splash-wait .edit-final,
-  html.splash-wait .edit-final::after { animation-delay: 2.6s; }
+  /* Pause the hero at its first frame until the splash actually closes. */
+  html.splash-wait:not(.splash-done) .home-page .intro-playing .hero-copy :is(h1,h2),
+  html.splash-wait:not(.splash-done) .home-page .intro-playing .hero-art,
+  html.splash-wait:not(.splash-done) :is(.edit-draft,.edit-final),
+  html.splash-wait:not(.splash-done) .edit-draft::after,
+  html.splash-wait:not(.splash-done) .edit-final::after { animation-play-state: paused; }
 }
 @media (prefers-reduced-motion: reduce) {
-  /* no movement: show the finished mark briefly, then fade out */
-  .splash { animation: splash-fade-out 400ms ease 1.1s forwards; }
+  /* Present the hero immediately when motion is reduced. */
+  .splash { display: none; animation: none; }
 }

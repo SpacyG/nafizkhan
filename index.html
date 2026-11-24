@@ -7,8 +7,8 @@
 <meta name="description" content="Independent copywriter in Bangladesh. Explore email, sales page, and landing page samples by Nafiz Khan.">
 <script>(function(){var c=document.documentElement.classList,seen=0;try{seen=sessionStorage.getItem('nk-splash')}catch(e){}c.add(seen?'no-splash':'splash-wait')})();</script>
 <link rel="icon" href="images/mark.svg" type="image/svg+xml">
-<link rel="stylesheet" href="site.css?v=20261124-replay">
-<script defer src="site.js?v=20261124-replay"></script>
+<link rel="stylesheet" href="site.css?v=20261124-reading-path">
+<script defer src="site.js?v=20261124-reading-path"></script>
 <link rel="canonical" href="https://spacyg.github.io/nafizkhan/">
 <meta property="og:title" content="Nafiz Khan | Independent Copywriter">
 <meta property="og:description" content="Independent copywriter in Bangladesh. Explore email, sales page, and landing page samples by Nafiz Khan.">
@@ -27,8 +27,9 @@
 </div>
 <script>
 (function(){var s=document.getElementById('splash'),d=document.documentElement;
-function done(){d.classList.add('splash-done');try{sessionStorage.setItem('nk-splash','1')}catch(e){}if(s)s.hidden=true;setTimeout(function(){d.classList.remove('splash-wait')},2200)}
+function done(){if(d.classList.contains('splash-done'))return;d.classList.add('splash-done');try{sessionStorage.setItem('nk-splash','1')}catch(e){}if(s)s.hidden=true;setTimeout(function(){d.classList.remove('splash-wait')},2200)}
 if(!s||d.classList.contains('no-splash')){if(s)s.hidden=true;return}
+if(matchMedia('(prefers-reduced-motion: reduce)').matches){done();return}
 s.addEventListener('animationend',function(e){if(e.target===s)done()});
 s.addEventListener('click',done);
 setTimeout(done,4000)})();
@@ -40,17 +41,7 @@ setTimeout(done,4000)})();
   <a class="header-contact" href="index.html#contact">Get in touch <span aria-hidden="true">↗</span></a>
 </header></div>
 <main id="main" tabindex="-1">
-<details class="section-marker" hidden>
-  <summary><span data-current-section>Jump to section</span></summary>
-  <nav aria-label="On this page">
-    <a href="#work">01 Work</a>
-    <a href="#services">02 Services</a>
-    <a href="#approach">03 Approach</a>
-    <a href="#about">04 About</a>
-    <a href="#contact">05 Contact</a>
-    <a href="#home">Back to top ↑</a>
-  </nav>
-</details>
+<a class="next-pill" href="#work" hidden>Next <span aria-hidden="true">↓</span></a>
 <section class="masthead wrap intro-playing" id="home">
   <div class="hero-spread">
 
@@ -69,11 +60,11 @@ setTimeout(done,4000)})();
     </div>
   </div>
 </section>
-<section class="work-section" id="work"><div class="wrap">
-  <div class="section-heading"><div><p class="eyebrow proof-label"><span>01</span> Work</p><h2>Read the <span class="proof-highlight" data-proof-motion>work.</span></h2></div><a class="text-link" href="work.html">Browse all samples <span aria-hidden="true">↗</span></a></div>
+<section class="work-section" id="work" data-writing><div class="wrap">
+  <div class="section-heading"><div><p class="eyebrow proof-label"><span>01</span> Work</p><h2>Read the <mark class="guide-highlight">work.</mark></h2></div><div class="guide-primary"><svg class="guide-mark" viewBox="0 0 51 21" aria-hidden="true" focusable="false"><path pathLength="1" d="M3 7c11 8 24 10 43 4m-9-5 10 4-7 7"/></svg><a class="button guide-action" href="work.html">Browse all samples <span class="guide-arrow" aria-hidden="true">→</span></a></div></div>
   <div class="work-caption"><p class="section-note">Concept projects written for fictional brands.</p><svg class="proof-mark proof-stamp" viewBox="0 0 166 42" aria-hidden="true" focusable="false"><rect x="2" y="3" width="162" height="36" rx="3"/><text x="83" y="26" text-anchor="middle">CONCEPT PROJECT</text></svg></div>
   <div class="work-reader">
-  <div class="sample-selector" role="group" aria-label="Choose a featured writing sample" hidden></div>
+  <div class="sample-tabs"><div class="start-cue">Start here <svg class="guide-mark" viewBox="0 0 37 36" aria-hidden="true" focusable="false"><path pathLength="1" d="M4 3c5 13 11 19 26 21m-8-6 9 6-9 5"/></svg></div><div class="sample-selector" role="group" aria-label="Choose a featured writing sample" hidden></div></div>
   <div class="work-list">
     <a class="work-card" href="work.html#sample-email">
       <div class="work-preview"><span class="work-type">Welcome email</span><p class="work-excerpt">Make your morning as smooth as our coffee</p><p class="work-opening">From farm to your morning ritual. If we have anything in common, we'll agree that there's nothing like a fresh cup of coffee each morning.</p></div>
@@ -89,27 +80,29 @@ setTimeout(done,4000)})();
     </a>
   </div>
 </div>
-<div class="featured-comparison"></div></div></section>
+<div class="featured-comparison"></div><div class="guide-next"><svg class="guide-mark" viewBox="0 0 51 21" aria-hidden="true" focusable="false"><path pathLength="1" d="M3 7c11 8 24 10 43 4m-9-5 10 4-7 7"/></svg><a href="#services" data-next-section>Next: Services <span class="guide-arrow" aria-hidden="true">↓</span></a></div></div></section>
 <div class="home-details">
-<div class="service-band"><section class="wrap section" id="services">
-  <div class="section-heading"><div><p class="eyebrow proof-label"><span>02</span> Services</p><h2>What I write</h2><svg class="proof-mark proof-squiggle" viewBox="0 0 110 16" aria-hidden="true" focusable="false"><path d="M3 11c9 1 9-8 17-8s7 10 16 10 9-9 18-9 8 9 17 9 11-9 19-9 7 5 17 5"/></svg></div></div>
+<div class="service-band"><section class="wrap section" id="services" data-writing>
+  <div class="section-heading"><div><p class="eyebrow proof-label"><span>02</span> Services</p><h2>What I <mark class="guide-highlight">write</mark></h2><svg class="proof-mark proof-squiggle" viewBox="0 0 110 16" aria-hidden="true" focusable="false"><path d="M3 11c9 1 9-8 17-8s7 10 16 10 9-9 18-9 8 9 17 9 11-9 19-9 7 5 17 5"/></svg><figure class="service-proof" aria-hidden="true"><figcaption data-service-kind>Welcome email</figcaption><blockquote data-service-line>“Make your morning as smooth as our coffee”</blockquote><svg class="guide-mark" viewBox="0 0 37 36" aria-hidden="true" focusable="false"><path pathLength="1" d="m5 18 7 8L31 6M5 33q13-3 27-1"/></svg></figure></div></div>
   <dl class="services">
     <div><dt>Email copywriting</dt><dd>Welcome emails, product launches, and sequences that give readers a reason to come back.<p class="service-example"><strong>Welcome email</strong> “Explore our collection and find your next favourite.”</p></dd></div>
     <div><dt>Sales copy</dt><dd>Sales pages and product descriptions that explain the offer and answer the questions buyers are likely to ask.<p class="service-example"><strong>Planner sales page</strong> “Set your three daily priorities, organize your tasks, and take a moment to reflect at the end of the day.”</p></dd></div>
     <div><dt>Landing pages</dt><dd>Focused pages built around one offer and one clear action.<p class="service-example"><strong>Gym landing page</strong> “Book a free session with us and see if we’re a fit.”</p></dd></div>
     <div><dt>Website copy</dt><dd>Headlines, service pages, and calls to action that help people find what they came for.<p class="service-example"><strong>Homepage headline</strong> “Find the words for your next launch.”</p></dd></div>
   </dl>
+<div class="guide-next"><svg class="guide-mark" viewBox="0 0 51 21" aria-hidden="true" focusable="false"><path pathLength="1" d="M3 7c11 8 24 10 43 4m-9-5 10 4-7 7"/></svg><a href="#approach" data-next-section>Next: Approach <span class="guide-arrow" aria-hidden="true">↓</span></a></div>
 </section></div>
-<section class="wrap section split" id="approach">
-  <div><p class="eyebrow proof-label"><span>03</span> Approach</p><h2>How I <span class="circled-word" data-proof-motion>work<svg class="proof-mark proof-circle" viewBox="0 0 200 80" aria-hidden="true" focusable="false"><path pathLength="1" d="M172 16C140 0 52 3 19 26-9 45 7 71 64 74c62 5 127-12 130-39 2-11-13-19-43-24"/></svg></span></h2></div>
+<section class="wrap section split" id="approach" data-writing>
+  <div><p class="eyebrow proof-label"><span>03</span> Approach</p><h2>How I <span class="circled-word" data-proof-motion><mark class="guide-highlight">work</mark><svg class="proof-mark proof-circle" viewBox="0 0 200 80" aria-hidden="true" focusable="false"><path pathLength="1" d="M172 16C140 0 52 3 19 26-9 45 7 71 64 74c62 5 127-12 130-39 2-11-13-19-43-24"/></svg></span></h2></div>
   <ol class="approach-steps">
-    <li><strong>Read.</strong> Find out who’s reading and what they need.</li>
-    <li><strong>Draft.</strong> Find the details that make the offer matter and write around one clear message.</li>
-    <li><strong>Edit.</strong> Keep revising until the next step feels obvious.</li>
+    <li><svg class="guide-mark" viewBox="0 0 37 36" aria-hidden="true" focusable="false"><path pathLength="1" d="M4 5q8-4 14 1 8-5 16-1v24q-9-4-16 1-7-5-14-1ZM18 6v24"/></svg><strong>Read.</strong> Find out who’s reading and what they need.</li>
+    <li><svg class="guide-mark" viewBox="0 0 37 36" aria-hidden="true" focusable="false"><path pathLength="1" d="m5 29 3-9L26 3l6 6-17 18ZM23 7l5 6M4 33h28"/></svg><strong>Draft.</strong> Find the details that make the offer matter and write around one clear message.</li>
+    <li><svg class="guide-mark" viewBox="0 0 37 36" aria-hidden="true" focusable="false"><path pathLength="1" d="m5 18 7 8L31 6M5 33q13-3 27-1"/></svg><strong>Edit.</strong> Keep revising until the next step feels obvious.</li>
   </ol>
+<div class="guide-next"><svg class="guide-mark" viewBox="0 0 51 21" aria-hidden="true" focusable="false"><path pathLength="1" d="M3 7c11 8 24 10 43 4m-9-5 10 4-7 7"/></svg><a href="#about" data-next-section>Next: About <span class="guide-arrow" aria-hidden="true">↓</span></a></div>
 </section>
-<div class="about-band"><section class="wrap section home-about" id="about"><figure class="portrait"><img src="images/nafiz-portrait.jpg" alt="Nafiz Khan" width="700" height="846" loading="lazy"></figure><div><p class="eyebrow proof-label"><span>04</span> About</p><h2>Behind the words</h2><svg class="proof-mark proof-note" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="m5 8 36-3 3 24-12 13-24 2ZM44 29l-14 1 2 12M13 17l20-2m-19 9 14-1"/></svg><p>I’m an independent copywriter based in Bangladesh. I’m building my practice around careful research and writing that respects the reader.</p><a class="text-link" href="about.html">More about me ↗</a></div></section></div>
-<section class="contact-band" id="contact"><div class="wrap contact"><div><p class="eyebrow proof-label"><span>05</span> Contact</p><h2>Tell me what you’re working on.</h2><svg class="proof-mark proof-arrow" viewBox="0 0 105 56" aria-hidden="true" focusable="false"><path d="M4 8c19 30 50 42 92 22m-24-8 25 7-14 19"/></svg><p>Send me a little about the project, who it’s for, and when you need it.</p></div>
+<div class="about-band"><section class="wrap section home-about" id="about" data-writing><figure class="portrait"><img src="images/nafiz-portrait.jpg" alt="Nafiz Khan" width="700" height="846" loading="lazy"></figure><div><p class="eyebrow proof-label"><span>04</span> About</p><h2>Behind the <mark class="guide-highlight">words</mark></h2><svg class="proof-mark proof-note" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="m5 8 36-3 3 24-12 13-24 2ZM44 29l-14 1 2 12M13 17l20-2m-19 9 14-1"/></svg><p>I’m an independent copywriter based in Bangladesh. I’m building my practice around careful research and writing that respects the reader.</p><a class="button guide-action" href="about.html">More about me <span class="guide-arrow" aria-hidden="true">→</span></a></div><div class="guide-next"><svg class="guide-mark" viewBox="0 0 51 21" aria-hidden="true" focusable="false"><path pathLength="1" d="M3 7c11 8 24 10 43 4m-9-5 10 4-7 7"/></svg><a href="#contact" data-next-section>Next: Contact <span class="guide-arrow" aria-hidden="true">↓</span></a></div></section></div>
+<section class="contact-band" id="contact" data-writing><div class="wrap contact"><div><p class="eyebrow proof-label"><span>05</span> Contact</p><h2>Tell me what you’re <mark class="guide-highlight">working on.</mark></h2><svg class="proof-mark proof-arrow" viewBox="0 0 105 56" aria-hidden="true" focusable="false"><path d="M4 8c19 30 50 42 92 22m-24-8 25 7-14 19"/></svg><p>Send me a little about the project, who it’s for, and when you need it.</p></div>
 <div class="contact-actions">
   <fieldset class="inquiry-types" hidden>
     <legend>Project type (optional)</legend>
