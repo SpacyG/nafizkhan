@@ -447,36 +447,25 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
 .ink-scribble { position:fixed; right:var(--gutter); bottom:var(--space-7); z-index:9; pointer-events:none; background:var(--surface); padding-inline:var(--space-3); }
 .ink-pointer-on dialog[open], .ink-pointer-on dialog[open] button { cursor:auto; }
 
-/* Portfolio index and proof sections */
+/* Proof sections */
 :root {
   --proof-paper: color-mix(in srgb, var(--ink) 5%, var(--paper));
   --proof-ink-muted: color-mix(in srgb, var(--paper) 77%, var(--ink));
   --proof-mark-time: 650ms;
-  --proof-type-time: 850ms;
+  --proof-arrive: 820ms;
+  --proof-swap-ms: 320;
+  --proof-revision-ms: 860;
 }
-.portfolio-index { background: var(--proof-paper); border-bottom: var(--stroke) solid var(--line); padding-block: var(--space-8); }
-.index-layout { display: grid; gap: var(--space-6) var(--space-8); }
-.portfolio-index h2 { max-width: 26ch; font-size: clamp(1.75rem, 3.6vw, 3rem); line-height: 1.14; margin-block: var(--space-2); }
-.portfolio-index h2 + p { color: var(--muted); }
-.index-links { display: grid; align-content: center; }
-.index-links a {
-  display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
-  min-height: var(--button-height); padding-inline: var(--space-2);
-  border-bottom: var(--stroke) solid var(--line); font-weight: 700;
-}
-.index-links a:is(:hover, :focus-visible) { background: var(--highlight); }
-.index-links [data-sample-count] { color: var(--accent-text); font-variant-numeric: tabular-nums; }
 .proof-label { display: flex; align-items: center; gap: var(--space-2); color: var(--accent-text); margin-bottom: var(--space-3); }
 .proof-label span { border-right: var(--stroke) solid currentColor; padding-right: var(--space-2); font-variant-numeric: tabular-nums; }
 .section-marker {
-  position: fixed; z-index: 2; bottom: var(--space-2); right: var(--space-2); pointer-events: none;
+  position: fixed; z-index: 2; bottom: var(--space-2); right: var(--space-2); pointer-events: auto;
   background: var(--paper); color: var(--accent-text); border: var(--stroke) solid var(--line);
-  padding: var(--space-1) var(--space-2); font-size: var(--label); font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  font-size: var(--label); font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
 }
 .work-caption { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-3); margin-bottom: var(--space-3); }
 .proof-mark { width: 2rem; height: auto; color: var(--accent-text); vertical-align: middle; overflow: visible; }
 .proof-mark :is(path, rect) { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.proof-star { width: 1rem; margin-left: var(--space-2); }
 .proof-squiggle, .proof-arrow { width: 5rem; margin-top: var(--space-4); }
 .proof-note { margin-block: var(--space-3); transform: rotate(5deg); }
 .proof-stamp { width: 8rem; transform: rotate(-5deg); }
@@ -513,12 +502,11 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
   -webkit-box-decoration-break: clone; box-decoration-break: clone;
 }
 .contact-band { background: var(--ink); color: var(--paper); }
-.contact-band .contact { border: 0; }
-.contact-band .contact h2 + p, .contact-band .email { color: var(--proof-ink-muted); }
+.contact-band .contact { margin-top: 0; border: 0; background: var(--ink); color: var(--paper); }
+.contact-band .email { color: var(--proof-ink-muted); }
 .contact-band :is(.proof-label, .proof-arrow) { color: color-mix(in srgb, var(--accent) 60%, var(--paper)); }
 .contact-band :focus-visible { outline-color: var(--paper); }
 .contact-band .copy-email { background: transparent; color: var(--paper); border-color: var(--proof-ink-muted); }
-.proof-type { display: inline-block; white-space: nowrap; }
 .home-details .feedback { padding-block: var(--space-3); }
 .portfolio-page .page-intro .proof-stamp { display: block; margin: var(--space-3) 0; }
 .case-notes {
@@ -530,15 +518,78 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
 .case-notes dd { color: var(--muted); }
 .portfolio-page .sample details { margin-top: var(--space-3); }
 @media (min-width: 48rem) {
-  .index-layout { grid-template-columns: minmax(0, 1.4fr) minmax(13rem, .6fr); align-items: center; }
   .case-notes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (prefers-reduced-motion: no-preference) {
   .proof-highlight.proof-play { animation: proof-marker var(--proof-mark-time) var(--ease) both; }
   .circled-word.proof-play .proof-circle path { stroke-dasharray: 1; animation: proof-draw var(--proof-mark-time) var(--ease) both; }
-  .proof-type.proof-play { animation: proof-type var(--proof-type-time) steps(11, end) both; }
   @keyframes proof-marker { from { background-size: 0 .55em; } }
   @keyframes proof-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
-  @keyframes proof-type { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0); } }
+}
+
+
+/* Opening, edit controls, and project inquiries */
+.hero-proof-toggle {
+  display: inline-block; margin-top: var(--space-4); margin-left: var(--space-3); padding: var(--space-2);
+  min-height: var(--button-height); border: 1px solid var(--proof-ink-muted); background: transparent;
+  color: var(--paper); font-size: var(--small); font-weight: 700;
+}
+.hero-proof-toggle:is(:hover, :focus-visible) { background: color-mix(in srgb, var(--paper) 13%, var(--ink)); }
+.hero-proof-toggle:focus-visible { outline-color: var(--paper); }
+.hero-art [data-hero-draft] del { text-decoration-color: var(--accent); }
+@media (width < 55rem) {
+  .home-page .hero-art.is-explored {
+    display: block; background: var(--paper); margin-top: var(--space-5); padding: var(--space-5);
+  }
+  .home-page .hero-art blockquote { margin: 0; font: italic var(--service-type)/1.25 var(--display); }
+  .home-page .hero-art blockquote p { margin-top: var(--space-3); font: var(--small)/1.5 var(--sans); }
+  .hero-proof-toggle { margin-left: 0; }
+}
+.home-page .footer { padding-bottom: calc(var(--space-9) + var(--space-4)); }
+.section-marker summary { padding: var(--space-2) var(--space-3); min-height: var(--button-height); }
+.section-marker nav {
+  position: absolute; inset: auto 0 calc(100% + var(--space-1)) auto; min-width: 10rem;
+  background: var(--paper); color: var(--ink); border: var(--stroke) solid var(--line);
+  box-shadow: 0 .25rem .8rem var(--shadow);
+}
+.section-marker nav a { display: block; padding: var(--space-2) var(--space-3); }
+.section-marker nav a:is(:hover, :focus-visible, [aria-current]) { background: var(--highlight); }
+
+.contact-band .contact p:not(.proof-label) { margin-top: var(--space-3); color: var(--proof-ink-muted); }
+.contact-actions { align-self: center; }
+.inquiry-types {
+  display: flex; flex-wrap: wrap; gap: var(--space-2); min-width: 0; max-width: 24rem;
+  padding: 0; margin: 0 0 var(--space-4); border: 0;
+}
+.inquiry-types legend { margin-bottom: var(--space-2); font-weight: 700; }
+.inquiry-types label { position: relative; }
+.inquiry-types input { position: absolute; inset: 0; width: 100%; opacity: 0; }
+.inquiry-types label span {
+  display: flex; align-items: center; padding: var(--space-2) var(--space-3); min-height: var(--button-height);
+  border: var(--stroke) solid var(--proof-ink-muted); font-size: var(--small);
+}
+.inquiry-types input:checked + span { background: var(--paper); color: var(--ink); font-weight: 700; }
+.inquiry-types input:focus-visible + span { outline: 2px solid var(--paper); outline-offset: 3px; }
+.contact-band .email { overflow-wrap: anywhere; }
+.revision-controls .revision-play { border-color: var(--accent-text); color: var(--accent-text); font-weight: 700; }
+.revision-controls .revision-play:is(:hover, :focus-visible) { background: var(--highlight); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-page .hero-copy h1 { animation: proof-hero-name var(--proof-arrive) var(--ease) both; }
+  .home-page .hero-copy h2 { animation: proof-hero-name var(--proof-arrive) var(--ease) var(--quick) both; }
+  .revision[data-stage="1"] ins { animation: proof-revision-in var(--standard) var(--ease); }
+  .revision[data-stage="1"] del { animation: proof-revision-in var(--standard) var(--ease); }
+  @keyframes proof-hero-name {
+    from { opacity: .35; transform: translateY(var(--rise)); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes proof-revision-in { from { opacity: .35; } to { opacity: 1; } }
+}
+@media (min-width: 55rem) and (prefers-reduced-motion: no-preference) {
+  .home-page .hero-art { animation: proof-paper-arrive var(--proof-arrive) var(--ease) both; }
+  @keyframes proof-paper-arrive {
+    from { opacity: .15; transform: translate(22%, 18%) rotate(3deg); }
+    to { opacity: 1; transform: translate(8%, 8%) rotate(-7deg); }
+  }
 }
 

@@ -153,7 +153,7 @@ function observeBelowFold(items) {
   }
 }
 
-observeBelowFold(document.querySelectorAll('main .section, main .contact, .work-section, .samples > .sample'));
+observeBelowFold(document.querySelectorAll('main .section, .work-section, .samples > .sample'));
 
 function renderMedia(entry) {
   const gallery = document.querySelector('[data-gallery="' + entry.kind + '"]');
@@ -237,7 +237,7 @@ function revisionControl(id, title, finalLine) {
   const output = element('p', '', 'revision-lines');
   const oldLine = element('del', draft);
   const newLine = element('ins', finalLine);
-  const hint = element('p', 'Drag the pen or choose a stage.', 'revision-hint');
+  const hint = element('p', 'Drag the pen, pick a stage or step through the edit.', 'revision-hint');
   const note = element('p', revisionNotes[id], 'revision-note');
   const slider = element('input');
   slider.type = 'range';
@@ -248,10 +248,20 @@ function revisionControl(id, title, finalLine) {
   slider.setAttribute('aria-label', 'Revision stage for ' + title);
   const controls = element('div', '', 'revision-controls');
   const labels = ['Practice draft', 'Pen marks', 'Nafiz’s rewrite'];
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  const playLabel = () => reduced.matches ? 'Next edit stage' : 'Play the edit';
+  const play = element('button', playLabel(), 'revision-play');
+  play.type = 'button';
+  let timer = null;
+  function stopPlayback() {
+    clearTimeout(timer);
+    timer = null;
+    play.textContent = playLabel();
+  }
   const buttons = labels.map((label, index) => {
     const button = element('button', label);
     button.type = 'button';
-    button.addEventListener('click', () => { slider.value = String(index); update(); });
+    button.addEventListener('click', () => { stopPlayback(); slider.value = String(index); update(); });
     controls.append(button);
     return button;
   });
@@ -264,7 +274,32 @@ function revisionControl(id, title, finalLine) {
     slider.setAttribute('aria-valuetext', labels[stage]);
     buttons.forEach((button, index) => button.setAttribute('aria-pressed', String(index === stage)));
   }
-  slider.addEventListener('input', update);
+  slider.addEventListener('input', () => { stopPlayback(); update(); });
+  play.addEventListener('click', () => {
+    if (timer !== null) {
+      stopPlayback();
+      return;
+    }
+    if (reduced.matches) {
+      slider.value = slider.value === '2' ? '0' : String(Number(slider.value) + 1);
+      update();
+      return;
+    }
+    const beat = Number(getComputedStyle(panel).getPropertyValue('--proof-revision-ms'));
+    function advance(stage) {
+      if (!panel.isConnected || panel.hidden || panel.closest('[hidden]')) {
+        stopPlayback();
+        return;
+      }
+      slider.value = String(stage);
+      update();
+      if (stage < 2) timer = setTimeout(() => advance(stage + 1), beat);
+      else stopPlayback();
+    }
+    play.textContent = 'Pause edit';
+    advance(0);
+  });
+  controls.append(play);
   output.append(oldLine, newLine);
   panel.append(legend, hint, output, slider, controls, note);
   update();
@@ -459,8 +494,18 @@ function setupInkProgress() {
   if (!bar) return;
   const nav = [...siteHeader.querySelectorAll('nav a,.header-contact')];
   const sections = [...document.querySelectorAll('.home-page main section[id]')];
-  const targets = {home:'Home',portfolio:'Home',work:'Work',services:'Services',approach:'Services',about:'About',contact:'Get in touch'};
+  const targets = {home:'Home',work:'Work',services:'Services',approach:'Services',about:'About',contact:'Get in touch'};
   const sectionMarker = document.querySelector('.section-marker');
+  const currentLabel = sectionMarker?.querySelector('[data-current-section]');
+  const sectionLinks = [...(sectionMarker?.querySelectorAll('nav a') || [])];
+  sectionMarker?.addEventListener('click', event => {
+    if (event.target.closest('nav a')) sectionMarker.open = false;
+  });
+  sectionMarker?.addEventListener('keydown', event => {
+    if (event.key !== 'Escape' || !sectionMarker.open) return;
+    sectionMarker.open = false;
+    sectionMarker.querySelector('summary').focus();
+  });
   let frame = 0;
   function update() {
     frame = 0;
@@ -470,10 +515,15 @@ function setupInkProgress() {
     const current = sections.filter(section=>section.getBoundingClientRect().top <= siteHeader.offsetHeight+innerHeight*.25).at(-1) || sections[0];
     const active = max > 0 && scrollY >= max - 2 ? sections.at(-1) : current;
     const label = targets[active.id];
-    if (sectionMarker) {
-      const sectionName = active.querySelector('.proof-label')?.textContent;
-      sectionMarker.hidden = !sectionName;
-      if (sectionMarker.textContent !== (sectionName || '')) sectionMarker.textContent = sectionName || '';
+    if (sectionMarker && currentLabel) {
+      const sectionName = active.querySelector('.proof-label')?.textContent.trim();
+      sectionMarker.hidden = !sectionName && !sectionMarker.matches(':focus-within') && !sectionMarker.open;
+      const markerText = sectionName || 'Jump to section';
+      if (currentLabel.textContent !== markerText) currentLabel.textContent = markerText;
+      sectionLinks.forEach(link => {
+        if (link.hash === '#' + active.id) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
     }
     nav.forEach(link=>link.classList.toggle('current-section',link.textContent.trim().startsWith(label)));
   }
@@ -495,24 +545,51 @@ function setupProofMotion() {
   document.querySelectorAll('[data-proof-motion]').forEach(mark => observer.observe(mark));
 }
 
-function updatePortfolioIndex(entries) {
-  const count = document.querySelector('[data-portfolio-count]');
-  if (!count) return;
-  const published = entries.filter(entry => entry.kind === 'sample');
-  const concepts = published.every(entry => entry.credit === 'Concept project');
-  count.textContent = 'Portfolio · ' + published.length + (concepts ? ' concept project' : ' writing sample') + (published.length === 1 ? '' : 's');
-  document.querySelectorAll('[data-sample-category]').forEach(link => {
-    const group = published.filter(entry => entry.category === link.dataset.sampleCategory);
-    link.querySelector('[data-sample-count]').textContent = group.length;
-    link.hidden = !group.length;
-    if (group.length) {
-      link.href = 'work.html?category=' + encodeURIComponent(link.dataset.sampleCategory) + '#' + encodeURIComponent(group[0].id);
+function setupHeroProof() {
+  const paper = document.getElementById('hero-proof');
+  const toggle = document.querySelector('.hero-proof-toggle');
+  const firstDraft = paper?.querySelector('[data-hero-draft]');
+  const rewrite = paper?.querySelector('[data-hero-rewrite]');
+  if (!toggle || !firstDraft || !rewrite) return;
+  let swapAnimation;
+  firstDraft.querySelector('del').textContent = practiceDrafts['sample-email'];
+  toggle.hidden = false;
+  toggle.addEventListener('click', () => {
+    const showDraft = firstDraft.hidden;
+    firstDraft.hidden = !showDraft;
+    rewrite.hidden = showDraft;
+    paper.classList.add('is-explored');
+    toggle.textContent = showDraft ? 'See my rewrite ↗' : 'See the first draft ↗';
+    const motion = matchMedia('(prefers-reduced-motion: no-preference)');
+    if (motion.matches && typeof paper.animate === 'function') {
+      const duration = parseFloat(getComputedStyle(paper).getPropertyValue('--proof-swap-ms'));
+      swapAnimation?.cancel();
+      swapAnimation = paper.animate([{ opacity: .45 }, { opacity: 1 }], { duration, easing: 'ease-out' });
     }
   });
 }
 
+function setupInquiry() {
+  const choices = document.querySelector('.inquiry-types');
+  const link = document.querySelector('[data-inquiry-link]');
+  if (!choices || !link) return;
+  const base = new URL(link.href);
+  function update() {
+    const type = choices.querySelector('input:checked')?.value;
+    const message = new URL(base);
+    if (type) {
+      message.searchParams.set('subject', type + ' inquiry');
+      message.searchParams.set('body', (base.searchParams.get('body') || '').replace('Project: ', 'Project: ' + type + ' – '));
+    }
+    link.href = message.href.replaceAll('+', '%20');
+  }
+  choices.addEventListener('change', update);
+  update();
+  choices.hidden = false;
+}
+
 if (siteHeader) {
-  for (const setup of [setupHeadline, setupServices, setupCopyEmail, setupFlourish, setupInkPointer, setupInkProgress, setupProofMotion, attachWorkComparisons]) {
+  for (const setup of [setupHeadline, setupServices, setupCopyEmail, setupFlourish, setupInkPointer, setupInkProgress, setupProofMotion, setupHeroProof, setupInquiry, attachWorkComparisons]) {
     try {
       setup();
     } catch (error) {
@@ -543,7 +620,6 @@ async function loadContent() {
     const { entries } = await result.json();
     if (Array.isArray(entries)) {
       if (workList) {
-        updatePortfolioIndex(entries);
         const featured = entries.filter(entry => entry.kind === 'sample').slice(0, 3);
         featuredText.clear();
         for (const entry of featured) featuredText.set(entry.id, element('p', entry.body, 'plain-copy'));
