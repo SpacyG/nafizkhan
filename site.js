@@ -98,6 +98,7 @@ function showFeaturedSample(card) {
   sampleDialog.querySelector('.reader-footer').hidden = cards.length < 2;
   readingCard = card;
   if (!sampleDialog.open) sampleDialog.showModal();
+  writeSample(reader);
   return true;
 }
 
@@ -247,6 +248,8 @@ const featuredEdits = {
   }
 };
 
+const revisionCleanup = new WeakMap();
+
 function revisionControl(id, title, finalLine, example) {
   const draft = example?.draft ?? practiceDrafts[id];
   const rewrite = example?.rewrite ?? finalLine;
@@ -256,7 +259,7 @@ function revisionControl(id, title, finalLine, example) {
   const output = element('p', '', 'revision-lines');
   const oldLine = element('del', draft);
   const newLine = element('ins', rewrite);
-  const hint = element('p', 'Drag the pen, pick a stage or step through the edit.', 'revision-hint');
+  const hint = element('p', 'Hover or focus to hold a stage. Drag the pen or pick a stage to compare.', 'revision-hint');
   const note = element('p', example?.note ?? revisionNotes[id], 'revision-note');
   const slider = element('input');
   slider.type = 'range';
@@ -268,19 +271,12 @@ function revisionControl(id, title, finalLine, example) {
   const controls = element('div', '', 'revision-controls');
   const labels = ['Practice draft', 'Pen marks', 'Nafiz’s rewrite'];
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  const playLabel = () => reduced.matches ? 'Next edit stage' : 'Play the edit';
-  const play = element('button', playLabel(), 'revision-play');
-  play.type = 'button';
   let timer = null;
-  function stopPlayback() {
-    clearTimeout(timer);
-    timer = null;
-    play.textContent = playLabel();
-  }
+  let inView = false;
   const buttons = labels.map((label, index) => {
     const button = element('button', label);
     button.type = 'button';
-    button.addEventListener('click', () => { stopPlayback(); slider.value = String(index); update(); });
+    button.addEventListener('click', () => { slider.value = String(index); update(); });
     controls.append(button);
     return button;
   });
@@ -293,32 +289,33 @@ function revisionControl(id, title, finalLine, example) {
     slider.setAttribute('aria-valuetext', labels[stage]);
     buttons.forEach((button, index) => button.setAttribute('aria-pressed', String(index === stage)));
   }
-  slider.addEventListener('input', () => { stopPlayback(); update(); });
-  play.addEventListener('click', () => {
-    if (timer !== null) {
-      stopPlayback();
-      return;
-    }
-    if (reduced.matches) {
-      slider.value = slider.value === '2' ? '0' : String(Number(slider.value) + 1);
-      update();
-      return;
-    }
-    const beat = Number(getComputedStyle(panel).getPropertyValue('--proof-revision-ms'));
-    function advance(stage) {
-      if (!panel.isConnected || panel.hidden || panel.closest('[hidden]')) {
-        stopPlayback();
-        return;
+  slider.addEventListener('input', update);
+  function schedule() {
+    clearTimeout(timer);
+    if (!inView || panel.closest('[hidden]') || reduced.matches || panel.matches(':hover, :focus-within')) return;
+    const beat = Number(getComputedStyle(panel).getPropertyValue('--proof-revision-ms')) || 860;
+    timer = setTimeout(() => {
+      if (!panel.isConnected || panel.closest('[hidden]')) return;
+      if (!document.hidden) {
+        slider.value = String((Number(slider.value) + 1) % labels.length);
+        update();
       }
-      slider.value = String(stage);
-      update();
-      if (stage < 2) timer = setTimeout(() => advance(stage + 1), beat);
-      else stopPlayback();
-    }
-    play.textContent = 'Pause edit';
-    advance(0);
+      schedule();
+    }, beat);
+  }
+  for (const event of ['pointerenter', 'pointerleave', 'focusin']) panel.addEventListener(event, schedule);
+  panel.addEventListener('focusout', () => queueMicrotask(schedule));
+  const playback = typeof IntersectionObserver === 'function' ? new IntersectionObserver(([entry]) => {
+    inView = entry.isIntersecting;
+    schedule();
+  }) : null;
+  playback?.observe(panel);
+  reduced.addEventListener('change', schedule);
+  revisionCleanup.set(panel, () => {
+    playback?.disconnect();
+    clearTimeout(timer);
+    reduced.removeEventListener('change', schedule);
   });
-  controls.append(play);
   output.append(oldLine, newLine);
   panel.append(legend, hint, output, slider, controls, note);
   update();
@@ -341,6 +338,7 @@ function attachWorkComparisons() {
 function updateHomeComparison(card) {
   const slot = document.querySelector('.featured-comparison');
   if (!slot) return;
+  revisionCleanup.get(slot.firstElementChild)?.();
   const id = card?.hash.slice(1);
   const panel = card && revisionControl(
     id, card.querySelector('strong').textContent, card.querySelector('.work-excerpt').textContent, featuredEdits[id]
@@ -501,11 +499,8 @@ function setupInkPointer() {
       }
     }
     const control = target?.closest('a,button,summary,input');
-    const read = card && (!control || control.matches('.work-card,summary'));
     ring.classList.toggle('over-headline', Boolean(control?.matches('.headline-cycle')));
-    ring.dataset.mode = read ? 'read' : control ? 'link' : target?.closest('p,h1,h2,dt,dd') ? 'text' : 'idle';
-    const label = read ? 'Read ↗' : '';
-    if (ring.textContent !== label) ring.textContent = label;
+    ring.dataset.mode = control ? 'link' : target?.closest('p,h1,h2,dt,dd') ? 'text' : 'idle';
     rx += (x-rx)*follow; ry += (y-ry)*follow;
     dot.style.translate = x+'px '+y+'px';
     ring.style.translate = rx+'px '+ry+'px';
@@ -573,6 +568,75 @@ const penObserver = 'IntersectionObserver' in window ? new IntersectionObserver(
     entry.target.classList.add('guide-drawn');
   }
 }, { rootMargin: '0px 0px -9% 0px' }) : null;
+
+function writeSample(content) {
+  if (!content || !matchMedia('(prefers-reduced-motion: no-preference)').matches || typeof content.animate !== 'function') return;
+  content.getAnimations().forEach(animation => animation.cancel());
+  const style = getComputedStyle(content);
+  const lineHeight = parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.5;
+  const lines = Math.max(1, Math.min(24, Math.round(content.clientHeight / lineHeight)));
+  const frames = [];
+  for (let line = 0; line < lines; line++) {
+    const top = 100 * line / lines;
+    const bottom = 100 * (line + 1) / lines;
+    for (const edge of [0, 100]) {
+      frames.push({
+        clipPath: 'polygon(0 0, 100% 0, 100% ' + top + '%, ' + edge + '% ' + top +
+          '%, ' + edge + '% ' + bottom + '%, 0 ' + bottom + '%)',
+        offset: (line + (edge ? .98 : 0)) / lines
+      });
+    }
+  }
+  frames.push({ clipPath: frames.at(-1).clipPath, offset: 1 });
+  content.animate(frames, { duration: parseFloat(style.getPropertyValue('--sample-write-ms')) });
+}
+
+function setupFeedback() {
+  const form = document.querySelector('.feedback-form');
+  if (!form) return;
+  const endpoint = form.dataset.feedbackApi || 'api/feedback';
+  const fields = form.querySelector('fieldset');
+  const status = form.querySelector('[role="status"]');
+  const list = document.querySelector('.feedback-list');
+  function render(entries) {
+    list.replaceChildren(...entries.map(entry => {
+      const quote = element('blockquote');
+      quote.append(element('p', entry.message), element('footer', entry.name));
+      return quote;
+    }));
+  }
+  async function request(options) {
+    const response = await fetch(endpoint, { ...options, credentials: 'omit', signal: AbortSignal.timeout(8000) });
+    if (!response.headers.get('content-type')?.includes('application/json')) throw Error('Feedback is unavailable here. You can contact me by email above.');
+    const data = await response.json();
+    if (!response.ok) throw Error(data.error || 'Feedback is unavailable right now.');
+    if (!Array.isArray(data.feedback)) throw Error('Feedback could not be loaded.');
+    return data.feedback;
+  }
+  request().then(entries => {
+    render(entries);
+    fields.disabled = false;
+    status.textContent = entries.length ? '' : 'No feedback yet.';
+  }).catch(() => {
+    status.textContent = 'Public feedback is unavailable here. You can contact me by email above.';
+  });
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (fields.disabled) return;
+    const body = Object.fromEntries(new FormData(form));
+    fields.disabled = true;
+    status.textContent = 'Publishing feedback…';
+    try {
+      render(await request({ method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }));
+      form.reset();
+      status.textContent = 'Your feedback was published.';
+    } catch (error) {
+      status.textContent = error.message;
+    } finally {
+      fields.disabled = false;
+    }
+  });
+}
 
 function setupWriting(blocks = document.querySelectorAll('[data-writing], .samples > .sample')) {
   document.querySelectorAll('.guide-next:not(.guide-drawn), .approach-steps:not(.guide-drawn)').forEach(mark => penObserver?.observe(mark));
@@ -663,18 +727,16 @@ function setupInquiry() {
 }
 
 if (siteHeader) {
-  for (const setup of [setupHeadline, setupServices, setupCopyEmail, setupFlourish, setupInkPointer, setupInkProgress, setupWriting, setupProofMotion, setupIntroReplay, setupHeroProof, setupInquiry, attachWorkComparisons]) {
+  for (const setup of [setupHeadline, setupServices, setupCopyEmail, setupFlourish, setupInkPointer, setupInkProgress, setupFeedback, setupWriting, setupProofMotion, setupIntroReplay, setupHeroProof, setupInquiry, attachWorkComparisons]) {
     try {
       setup();
     } catch (error) {
       console.warn('[Nafiz portfolio] ' + setup.name + ' unavailable', error);
     }
   }
-  samples?.addEventListener('click', event => {
-    if (event.target.closest('a,button,input,details,.revision,.case-notes') || getSelection()?.toString()) return;
-    const details = event.target.closest('.sample')?.querySelector('details');
-    if (details) details.open = !details.open;
-  });
+  samples?.addEventListener('toggle', event => {
+    if (event.target.open && event.target.matches('.sample details')) writeSample(event.target.querySelector('.sample-copy'));
+  }, true);
 }
 
 filters?.addEventListener('click', event => {
@@ -705,6 +767,7 @@ async function loadContent() {
       }
       if (samples) {
         const sampleEntries = entries.filter(entry => entry.kind === 'sample');
+        samples.querySelectorAll('.revision').forEach(panel => revisionCleanup.get(panel)?.());
         samples.replaceChildren(...sampleEntries.map(renderSample));
         attachWorkComparisons();
         setupWriting(samples.children);

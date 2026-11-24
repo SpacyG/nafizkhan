@@ -185,3 +185,25 @@ test('HTTPS configuration issues secure owner cookies and serves the canonical o
   assert.match(cookie, /^__Host-nafiz_session=[a-f0-9]{64}; Path=\/; HttpOnly; SameSite=Strict; Max-Age=28800; Secure$/);
   assert.equal((await request('/api/entries', { cookie: cookie.split(';')[0] })).status, 200);
 });
+
+test('public feedback validates submissions and survives restarting the server', async () => {
+  await stop();
+  const dataDir = join(temp, 'feedback');
+  const frontend = 'https://spacyg.github.io';
+  await start({ dataDir, feedbackFrontendOrigin: frontend });
+  const path = '/api/feedback';
+  const message = { name: 'Test visitor', message: 'Helpful sample.' };
+  const preflight = await request(path, { method: 'OPTIONS', requestOrigin: frontend });
+  assert.equal(preflight.status, 204);
+  assert.equal(preflight.headers.get('access-control-allow-origin'), frontend);
+  assert.equal((await request(path, { method: 'POST', requestOrigin: 'https://other.example', body: message })).status, 403);
+  assert.equal((await request(path, { method: 'POST', body: { ...message, message: ' ' } })).status, 400);
+  const saved = await request(path, { method: 'POST', requestOrigin: frontend, body: message });
+  assert.equal(saved.status, 201);
+  assert.deepEqual((await saved.json()).feedback, [message]);
+  await stop();
+  await start({ dataDir });
+  assert.deepEqual((await (await request(path)).json()).feedback, [message]);
+  assert.match((await request('/')).headers.get('content-security-policy'), /script-src 'self' 'sha256-/);
+});
+

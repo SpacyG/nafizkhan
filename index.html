@@ -7,8 +7,8 @@
 <meta name="description" content="Independent copywriter in Bangladesh. Explore email, sales page, and landing page samples by Nafiz Khan.">
 <script>(function(){var c=document.documentElement.classList,seen=0;try{seen=sessionStorage.getItem('nk-splash')}catch(e){}c.add(seen?'no-splash':'splash-wait')})();</script>
 <link rel="icon" href="images/mark.svg" type="image/svg+xml">
-<link rel="stylesheet" href="site.css?v=20261124-reading-path">
-<script defer src="site.js?v=20261124-distinct-copy"></script>
+<link rel="stylesheet" href="site.css?v=20261124-feedback">
+<script defer src="site.js?v=20261124-feedback"></script>
 <link rel="canonical" href="https://spacyg.github.io/nafizkhan/">
 <meta property="og:title" content="Nafiz Khan | Independent Copywriter">
 <meta property="og:description" content="Independent copywriter in Bangladesh. Explore email, sales page, and landing page samples by Nafiz Khan.">
@@ -112,7 +112,21 @@ setTimeout(done,4000)})();
     <label><input type="radio" name="inquiry-type" value="" checked><span>General inquiry</span></label>
   </fieldset>
   <a class="button" data-inquiry-link href="mailto:n.tonmoy.khan@gmail.com?subject=Copywriting%20inquiry&amp;body=Hi%20Nafiz%2C%0A%0AProject%3A%20%0AAudience%3A%20%0ADeadline%3A%20">Email me ↗</a><button class="copy-email" type="button" hidden>Copy email</button><span class="copy-status" role="status"></span><a class="email" href="mailto:n.tonmoy.khan@gmail.com">n.tonmoy.khan@gmail.com</a></div></div></section>
-<p class="wrap feedback" id="reviews">Worked together? <a href="https://docs.google.com/forms/d/e/1FAIpQLSdGmBm0bhCCjnUQl1epHR3BdfOpEMEvg8LJhcXTGJ3K2I1fmA/viewform">Leave feedback ↗</a></p>
+<section class="wrap feedback" id="reviews" aria-labelledby="feedback-title">
+  <div><p class="eyebrow">Feedback</p><h2 id="feedback-title">Worked together?</h2>
+    <div class="feedback-list" aria-label="Public feedback"></div>
+  </div>
+  <form class="feedback-form" data-feedback-api="">
+    <fieldset disabled>
+      <legend>Leave feedback</legend>
+      <label>Display name <input name="name" maxlength="60" autocomplete="nickname" required></label>
+      <label>Your feedback <textarea name="message" rows="4" maxlength="800" required></textarea></label>
+      <p>Your name and feedback will appear publicly.</p>
+      <button class="button" type="submit">Publish feedback</button>
+    </fieldset>
+    <p class="feedback-status" role="status">Feedback requires the portfolio’s server.</p>
+  </form>
+</section>
 </div>
 </main>
 <!-- Full text of the featured concept samples from the Work page for offline previews. -->

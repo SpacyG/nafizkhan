@@ -121,8 +121,13 @@ function asEntry(row) {
   return { id, kind, title, description, category, credit, body, alt, video, published: Boolean(published), version, hasPhoto: Boolean(hasPhoto), photoVersion };
 }
 
-export function createPortfolio({ origin, dataDir, host = '127.0.0.1', passwordHash, password }) {
+export function createPortfolio({ origin, dataDir, host = '127.0.0.1', passwordHash, password, feedbackFrontendOrigin }) {
   const publicUrl = new URL(origin);
+  if (feedbackFrontendOrigin && (new URL(feedbackFrontendOrigin).origin !== feedbackFrontendOrigin ||
+      !feedbackFrontendOrigin.startsWith('https://'))) throw Error('FEEDBACK_FRONTEND_ORIGIN must be an HTTPS origin.');
+  const splashScripts = [...readFileSync(resolve(root, 'index.html'), 'utf8').matchAll(/<script>([\s\S]*?)<\/script>/g)];
+  const splashHashes = splashScripts.map(([, script]) =>
+    "'sha256-" + createHash('sha256').update(script.replace(/\r\n?/g, '\n')).digest('base64') + "'").join(' ');
   const secure = publicUrl.protocol === 'https:';
   if (publicUrl.origin !== origin || (!secure && !/^http:\/\/(?:127\.0\.0\.1|localhost)(?::\d+)?$/.test(origin))) {
     throw Error('SITE_ORIGIN must be an HTTPS origin, or a local HTTP origin for development.');
@@ -150,7 +155,14 @@ export function createPortfolio({ origin, dataDir, host = '127.0.0.1', passwordH
     CREATE TABLE IF NOT EXISTS sessions (id TEXT PRIMARY KEY, expires INTEGER NOT NULL);
     CREATE TABLE IF NOT EXISTS attempts (bucket INTEGER PRIMARY KEY, expires INTEGER NOT NULL, count INTEGER NOT NULL);
     CREATE TABLE IF NOT EXISTS metadata (key TEXT PRIMARY KEY);
+    CREATE TABLE IF NOT EXISTS feedback (
+      id INTEGER PRIMARY KEY, name TEXT NOT NULL, message TEXT NOT NULL, created INTEGER NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS feedback_created ON feedback(created);
   `);
+  const feedbackSelect = db.prepare('SELECT name, message FROM feedback ORDER BY id DESC LIMIT 20');
+  const feedbackInsert = db.prepare('INSERT INTO feedback (name, message, created) VALUES (?, ?, ?)');
+  const recentFeedback = db.prepare('SELECT count(*) AS total FROM feedback WHERE created >= ?');
   const entryFields = 'id, kind, title, description, category, credit, body, alt, video, published, version, image IS NOT NULL AS hasPhoto, photo_version AS photoVersion';
   const findEntry = db.prepare('SELECT ' + entryFields + ' FROM entries WHERE id = ?');
   const insertEntry = db.prepare('INSERT INTO entries (id, kind, title, description, category, credit, body, alt, video, published, image, mime, photo_version) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
@@ -270,6 +282,34 @@ export function createPortfolio({ origin, dataDir, host = '127.0.0.1', passwordH
       const published = db.prepare('SELECT ' + entryFields + ' FROM entries WHERE published = 1 ORDER BY rowid').all();
       return json(response, 200, { entries: published.map(asEntry) });
     }
+    if (path === '/api/feedback') {
+      const visitorOrigin = request.headers.origin;
+      const external = Boolean(feedbackFrontendOrigin && visitorOrigin === feedbackFrontendOrigin);
+      response.setHeader('Vary', 'Origin');
+      if (external) response.setHeader('Access-Control-Allow-Origin', feedbackFrontendOrigin);
+      if (method === 'OPTIONS' && external) {
+        response.writeHead(204, { 'Access-Control-Allow-Methods': 'GET, POST', 'Access-Control-Allow-Headers': 'Content-Type' });
+        return response.end();
+      }
+      if (method === 'GET') return json(response, 200, { feedback: feedbackSelect.all() });
+      if (method === 'POST') {
+        if (visitorOrigin !== origin && !external) throw new HttpError(403, 'Publish feedback from the portfolio.');
+        const input = await readJson(request, 8000);
+        const name = field(input.name, 'display name', 60, true);
+        const message = field(input.message, 'feedback', 800, true);
+        const published = transaction(() => {
+          const timestamp = now();
+          if (recentFeedback.get(timestamp - 60).total >= 8) {
+            response.setHeader('Retry-After', '60');
+            throw new HttpError(429, 'Too many submissions. Try again in a minute.');
+          }
+          feedbackInsert.run(name, message, timestamp);
+          return feedbackSelect.all();
+        });
+        return json(response, 201, { feedback: published });
+      }
+      throw new HttpError(405, 'Method not allowed.');
+    }
     if (path.startsWith('/api/')) {
       if (method === 'GET' && path === '/api/session') return json(response, 200, { signedIn: Boolean(session(request)), enabled: Boolean(expected) });
       if (!retrieval) protectWrite(request);
@@ -322,6 +362,11 @@ export function createPortfolio({ origin, dataDir, host = '127.0.0.1', passwordH
     if (secure && ['text/html', 'text/plain', 'application/xml'].includes(mime)) {
       content = Buffer.from(content.toString('utf8').replaceAll('https://spacyg.github.io/nafizkhan/', origin + '/'));
     }
+    if (name === 'index.html') {
+      response.setHeader('Content-Security-Policy', headers['Content-Security-Policy'].replace(
+        "script-src 'self';", "script-src 'self' " + splashHashes + ";"
+      ));
+    }
     response.writeHead(200, {
       'Content-Type': mime.startsWith('image/') ? mime : mime + '; charset=utf-8',
       'Content-Length': content.length,
@@ -353,6 +398,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     origin, host,
     dataDir: resolve(process.env.DATA_DIR ?? resolve(root, 'data')),
     passwordHash: process.env.OWNER_PASSWORD_HASH,
+    feedbackFrontendOrigin: process.env.FEEDBACK_FRONTEND_ORIGIN,
     password: process.env.OWNER_PASSWORD
   });
   server.listen(port, host, () => console.log('Portfolio ready at ' + origin));

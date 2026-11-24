@@ -40,3 +40,9 @@ Set `SITE_ORIGIN` to your public address before starting the production server. 
 The `DATA_DIR` contains all managed content and photo files stored inside SQLite. Back up the SQLite database before a migration. Use SQLite’s online backup mechanism or stop the server before copying the database and any WAL files. Restoring a backup may restore older content.
 
 The existing GitHub Pages address remains a static option. A Node host can serve both the site and dashboard under its own address or a domain you control.
+
+## Public feedback
+
+The Home form runs on the Node host and stores public display names and messages in the same persistent SQLite database. Submissions appear immediately and the homepage shows the latest 20. Use a persistent disk and back up the database if retaining feedback matters. Set an edge rate limit for `POST /api/feedback` on a public deployment.
+
+For GitHub Pages, deploy the Node app separately using the setup above. On the Node host set `FEEDBACK_FRONTEND_ORIGIN=https://spacyg.github.io`. On the GitHub Pages copy of `index.html`, set `data-feedback-api` on the form to the deployed HTTPS URL ending in `/api/feedback`. The form is enabled only when the endpoint responds.
