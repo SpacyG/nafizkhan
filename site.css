@@ -607,7 +607,7 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
 }
 .service-proof::after { content: ""; position: absolute; inset: 0; background: var(--marker); z-index: -1; }
 .service-proof figcaption { color: var(--accent-text); font-size: var(--label); font-weight: 700; text-transform: uppercase; letter-spacing: .1em; }
-.service-proof blockquote { margin: var(--space-3) 0; font: italic clamp(1.25rem, 2.4vw, 1.9rem)/1.22 var(--display); }
+.service-proof [data-service-line] { margin: var(--space-3) 0; font: italic clamp(1.25rem, 2.4vw, 1.9rem)/1.22 var(--display); }
 .service-proof .guide-mark { width: 2.25rem; }
 .approach-steps { position: relative; isolation: isolate; }
 .approach-steps::before {

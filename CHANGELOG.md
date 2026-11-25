@@ -4,6 +4,10 @@
 
 Home, Work and About use the marked-up proof design. The homepage leads straight from the first-person hero to Work. Five concept samples include case notes and playable edits. The section menu and project-type email controls work with keyboard and touch. Privacy and Terms are static. The owner studio uses the Node server for publishing.
 
+## 2026-11-25 - Services note
+
+- Made the yellow Services note explain the purpose of each service as visitors move between options.
+
 ## 2026-11-25 - Formspree connection
 
 - Connected the Home, Work, and About contact forms to the supplied Formspree endpoint.

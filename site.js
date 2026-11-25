@@ -430,7 +430,8 @@ function setupServices() {
   document.querySelectorAll('.services dt').forEach((term, index) => {
     const example = term.parentElement.querySelector('.service-example');
     if (!example) return;
-    const button = element('button', term.textContent + ' +');
+    const serviceName = term.textContent.trim();
+    const button = element('button', serviceName + ' +');
     example.id = 'service-example-' + index;
     let pinned = false;
     let hovering = false;
@@ -445,9 +446,8 @@ function setupServices() {
     const preview = document.querySelector('.service-proof');
     function showPreview() {
       if (!preview) return;
-      const label = example.querySelector('strong');
-      preview.querySelector('[data-service-kind]').textContent = label.textContent;
-      preview.querySelector('[data-service-line]').textContent = example.textContent.slice(label.textContent.length).trim();
+      preview.querySelector('[data-service-kind]').textContent = serviceName;
+      preview.querySelector('[data-service-line]').textContent = term.dataset.serviceBrief;
       preview.dataset.service = String(index);
     }
     button.addEventListener('focus', showPreview);
