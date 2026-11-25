@@ -1283,7 +1283,7 @@ button, input[type="range"], .contact-form :is(input, select, textarea) {
     pointer-events: none;
     color: var(--ink);
     background: var(--paper);
-    animation: site-intro-exit .55s var(--ease-arrive) 1.7s both;
+    animation: site-intro-exit .55s var(--ease-arrive) 2.35s both;
   }
   .site-intro-lockup {
     width: min(100%, 48rem);
