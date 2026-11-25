@@ -4,6 +4,11 @@
 
 Home, Work and About use the marked-up proof design. The homepage leads straight from the first-person hero to Work. Five concept samples include case notes and playable edits. The section menu and project-type email controls work with keyboard and touch. Privacy and Terms are static. The owner studio uses the Node server for publishing.
 
+## 2026-11-26 - Opening title and hero label
+
+- Replaced the homepage signature with a larger Independent copywriter label.
+- Created a full-screen name reveal with an ink rule and upward exit.
+
 ## 2026-11-26 - Header WhatsApp and opening intro
 
 - Added WhatsApp to the header on Home, Work, and About.

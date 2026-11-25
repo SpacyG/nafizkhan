@@ -1240,26 +1240,13 @@ button, input[type="range"], .contact-form :is(input, select, textarea) {
   .header-actions .header-contact > span { display: none; }
 }
 
-/* The hero signature remains visible after the opening animation. */
-.hero-signature {
-  display: flex;
-  align-items: center;
-  gap: .6rem;
-  margin: 0 0 var(--space-3);
+.hero-role {
+  margin: 0 0 var(--space-4);
   color: var(--paper);
-  font-size: .78rem;
-  letter-spacing: .055em;
+  font-size: clamp(.98rem, 1vw + .65rem, 1.2rem);
+  font-weight: 650;
+  letter-spacing: .035em;
 }
-.hero-signature svg { width: 34px; height: 36px; overflow: visible; flex: none; }
-.signature-n, .signature-stroke {
-  fill: none; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round;
-}
-.signature-n { stroke: var(--paper); }
-.signature-stroke { stroke: var(--accent); }
-.signature-dot { fill: var(--accent); }
-
-@keyframes signature-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
-@keyframes signature-dot { from { opacity: 0; } to { opacity: 1; } }
 .contact-email-actions .contact-whatsapp {
   display: flex;
   align-items: center;
@@ -1282,7 +1269,7 @@ button, input[type="range"], .contact-form :is(input, select, textarea) {
   .header nav a.header-mobile-contact { display: inline-flex; }
 }
 
-/* The opening animation is decorative and never intercepts input. */
+/* Opening title screen, played on the homepage only. */
 .site-intro { display: none; }
 @media (prefers-reduced-motion: no-preference) {
   .site-intro {
@@ -1292,33 +1279,48 @@ button, input[type="range"], .contact-form :is(input, select, textarea) {
     z-index: 1000;
     place-items: center;
     padding: var(--space-5);
+    overflow: hidden;
     pointer-events: none;
-    color: var(--paper);
-    background: var(--ink);
-    animation: site-intro-exit .42s var(--ease-arrive) 1.65s both;
+    color: var(--ink);
+    background: var(--paper);
+    animation: site-intro-exit .55s var(--ease-arrive) 1.7s both;
   }
-  .site-intro-lockup { display: grid; justify-items: center; text-align: center; }
-  .site-intro-lockup svg { width: clamp(94px, 22vw, 145px); height: auto; overflow: visible; }
-  .site-intro-lockup p {
-    margin: .2rem 0 .3rem;
-    font: 400 clamp(2rem, 7.5vw, 3.4rem)/1 var(--display);
-    letter-spacing: -.04em;
-    animation: site-intro-name .45s var(--ease-arrive) .53s both;
+  .site-intro-lockup {
+    width: min(100%, 48rem);
+    text-align: center;
   }
-  .site-intro-lockup p span { color: var(--accent); }
-  .site-intro-lockup > span {
-    letter-spacing: .13em;
+  .site-intro-title-window { overflow: hidden; }
+  .site-intro-title {
+    margin: 0;
+    padding: .1em 0 .16em;
+    font: 400 clamp(2.65rem, 12vw, 7.7rem)/.96 var(--display);
+    letter-spacing: -.055em;
+    white-space: nowrap;
+    animation: site-intro-title-in .76s var(--ease-arrive) .12s both;
+  }
+  .site-intro-title span { color: var(--accent); }
+  .site-intro-rule {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-text));
+    transform-origin: left;
+    animation: site-intro-rule-in .72s var(--ease-arrive) .44s both;
+  }
+  .site-intro-role {
+    margin: .85rem 0 0;
+    color: var(--ink);
+    font-size: clamp(.82rem, 2.2vw, 1.03rem);
+    font-weight: 650;
+    letter-spacing: .1em;
     text-transform: uppercase;
-    font-size: .72rem;
-    animation: site-intro-name .4s var(--ease-arrive) .72s both;
+    animation: site-intro-role-in .43s var(--ease-arrive) .74s both;
   }
-  .site-intro .signature-n, .site-intro .signature-stroke {
-    stroke-dasharray: 1;
-    animation: signature-draw .75s var(--ease-arrive) both;
-  }
-  .site-intro .signature-stroke { animation-delay: .36s; }
-  .site-intro .signature-dot { animation: signature-dot .28s ease-out .52s both; }
   .home-page:has(:focus-visible) .site-intro { visibility: hidden; animation: none; }
 }
-@keyframes site-intro-name { from { opacity: 0; transform: translateY(.35rem); } }
-@keyframes site-intro-exit { to { opacity: 0; visibility: hidden; } }
+@keyframes site-intro-title-in { from { transform: translateY(115%); } }
+@keyframes site-intro-rule-in { from { transform: scaleX(0); } }
+@keyframes site-intro-role-in { from { opacity: 0; transform: translateY(.4rem); } }
+@keyframes site-intro-exit {
+  to { transform: translateY(-100%); visibility: hidden; }
+}
