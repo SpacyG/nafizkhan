@@ -4,6 +4,11 @@
 
 Home, Work and About use the marked-up proof design. The homepage leads straight from the first-person hero to Work. Five concept samples include case notes and playable edits. The section menu and project-type email controls work with keyboard and touch. Privacy and Terms are static. The owner studio uses the Node server for publishing.
 
+## 2026-11-26 - Header WhatsApp and opening intro
+
+- Added WhatsApp to the header on Home, Work, and About.
+- Restored the full-screen opening animation on Home with a reduced-motion fallback.
+
 ## 2026-11-26 - Process and contact navigation
 
 - Turned the project process into four numbered steps with clear actions for the reader.
