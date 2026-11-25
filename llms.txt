@@ -14,5 +14,5 @@
 
 ## About and contact
 
-- [About Nafiz](https://spacyg.github.io/nafizkhan/#about): Learn about Nafiz Khan, an independent copywriter in Bangladesh.
+- [About Nafiz](https://spacyg.github.io/nafizkhan/about.html): Learn about Nafiz Khan, an independent copywriter in Bangladesh.
 - [Contact Nafiz](https://spacyg.github.io/nafizkhan/#contact): Send a project inquiry or get in touch by email.

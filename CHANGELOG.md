@@ -12,6 +12,14 @@ Added a responsive inline planner edit with accessible text and a caption.
 
 Removed the two labels and explanatory caption and cropped the sheet to the remaining edit.
 
+## 2026-11-26 - Portfolio navigation
+
+Linked the homepage navigation directly to Writing samples and About Nafiz, clarified contextual link text, and updated the About URL in llms.txt.
+
+## 2026-11-26 - Active navigation
+
+Mapped the portfolio page links to their homepage sections and moved scroll tracking to the middle of the visible content.
+
 ## Current state
 
 Home, Work and About use the marked-up proof design. The homepage leads straight from the first-person hero to Work. Five concept samples include case notes and playable edits. The section menu and project-type email controls work with keyboard and touch. Privacy and Terms are static. The owner studio uses the Node server for publishing.

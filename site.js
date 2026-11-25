@@ -679,11 +679,13 @@ function setupInkProgress() {
     const max = document.documentElement.scrollHeight-innerHeight;
     bar.style.transform = 'scaleX('+Math.max(0,Math.min(1,max ? scrollY/max : 0))+')';
     if (!sections.length) return;
-    const current = sections.filter(section=>section.getBoundingClientRect().top <= siteHeader.offsetHeight+innerHeight*.25).at(-1) || sections[0];
+    const visibleTop = Math.max(0, siteHeader.getBoundingClientRect().bottom);
+    const readingLine = (visibleTop + innerHeight) / 2;
+    const current = sections.filter(section => section.getBoundingClientRect().top <= readingLine).at(-1) || sections[0];
     const active = max > 0 && scrollY >= max - 2 ? sections.at(-1) : current;
     const destination = destinations[active.id] || '#' + active.id;
     nav.forEach(link => {
-      const isCurrent = link.hash === destination;
+      const isCurrent = (link.dataset.sectionId ? '#' + link.dataset.sectionId : link.hash) === destination;
       link.classList.toggle('current-section', isCurrent);
       if (isCurrent) link.setAttribute('aria-current', 'location');
       else link.removeAttribute('aria-current');
