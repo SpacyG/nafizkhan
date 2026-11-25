@@ -4,6 +4,12 @@
 
 Home, Work and About use the marked-up proof design. The homepage leads straight from the first-person hero to Work. Five concept samples include case notes and playable edits. The section menu and project-type email controls work with keyboard and touch. Privacy and Terms are static. The owner studio uses the Node server for publishing.
 
+## 2026-11-25 - Margin lead qualification
+
+- Grounded Margin's answers in portfolio services, samples, pricing, and process.
+- Required a listed service before accepting a project brief, checked each answer against the current step, and kept unrelated requests from advancing it.
+- Added GitHub and Instagram profile links to the top bar on Home, Work, and About.
+
 ## 2026-11-25 - Margin chat interface
 
 - Redesigned Margin as a corner chat window on desktop and a scroll-locked full-screen sheet on phones.

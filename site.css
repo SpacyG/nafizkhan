@@ -1179,3 +1179,25 @@ button, input[type="range"], .contact-form :is(input, select, textarea) {
   .header-contact { gap: var(--space-1); }
   .footer { row-gap: var(--space-1); }
 }
+
+.header-actions {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.header-actions .header-contact { margin-inline-end: var(--space-1); }
+.header a.header-social {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+}
+.header-social svg { width: 20px; height: 20px; }
+.header-social:hover { background: var(--highlight); color: var(--accent-text); }
+.home-page .site-header .header-social:hover { background: var(--marker); color: var(--ink); }
+@media (width < 25rem) {
+  .header-actions .header-contact > span { display: none; }
+}
