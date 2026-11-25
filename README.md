@@ -52,3 +52,11 @@ The feedback link points to the existing Google Form. The homepage can display t
 4. Choose **Deploy → New deployment → Web app**. Set it to execute as you and allow **Anyone** to access it. Copy the deployment’s `/exec` URL and add it as the `data-src` attribute of the `feedback-feed` iframe in `index.html`.
 5. Upload `index.html` to GitHub Pages. Open the portfolio in a private window and submit a test response with **Yes**. Reload the portfolio to see it. To take a response off the display, change its consent cell to **No**. Earlier responses without a Yes remain private.
 
+
+## Portfolio availability and LinkedIn
+
+Set the `availabilityMonth` value in `site.js` to a month such as December. Home, Work, and About then show “Taking projects for December”. Leave it empty to invite availability inquiries without listing a date.
+
+The footer's LinkedIn link opens a name search. Replace it with your actual profile URL in the HTML files when you have it.
+
+The preview image is `images/social-preview.png` (1200 × 630). The Open Graph and Twitter image tags use its public GitHub Pages address.

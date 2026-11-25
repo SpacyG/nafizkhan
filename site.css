@@ -402,8 +402,6 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
   .home-page .hero-art { width: 106%; aspect-ratio: 1.15; transform: translate(8%, 8%) rotate(-7deg); }
   .home-page .hero-art::before { display: none; }
   .home-page .hero-art::after { background: var(--paper); transform: none; }
-  .home-page .hero-art blockquote { margin: 0; padding: 13%; font: italic var(--card-title)/1.12 var(--display); }
-  .home-page .hero-art blockquote p { margin-top: var(--space-7); text-decoration: underline wavy var(--accent); text-underline-offset: .15em; font-size: var(--service-type); }
 }
 
 
@@ -414,9 +412,6 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
 .sample .revision { grid-column:1/-1; }
 .revision legend { padding-inline:var(--space-2); font-size:var(--small); font-weight:700; }
 .revision-lines { display:grid; gap:var(--space-2); font:italic var(--service-type)/1.3 var(--display); }
-.revision del { color:var(--muted); text-decoration-color:var(--accent-text); }
-.revision[data-stage="0"] del { text-decoration:none; }
-.revision ins { text-decoration:underline var(--accent); text-underline-offset:.15em; }
 .revision input { display:block; width:min(100%,30rem); min-height:2.75rem; accent-color:var(--accent-text); cursor:ew-resize; }
 .revision-controls { display:flex; flex-wrap:wrap; gap:var(--space-2); }
 .revision-controls button,.copy-email { border:var(--stroke) solid var(--line); padding:var(--space-2) var(--space-3); background:var(--surface); color:var(--ink); }
@@ -456,7 +451,6 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
   --proof-ink-muted: color-mix(in srgb, var(--paper) 77%, var(--ink));
   --proof-mark-time: 650ms;
   --proof-arrive: 1100ms;
-  --proof-swap-ms: 320;
   --proof-revision-ms: 860;
 }
 .proof-label { display: flex; align-items: center; gap: var(--space-2); color: var(--accent-text); margin-bottom: var(--space-3); }
@@ -527,24 +521,7 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
 }
 
 
-/* Opening, edit controls, and project inquiries */
-.hero-proof-toggle {
-  display: inline-block; margin-top: var(--space-4); margin-left: var(--space-3); padding: var(--space-2);
-  min-height: var(--button-height); border: 1px solid var(--proof-ink-muted); background: transparent;
-  color: var(--paper); font-size: var(--small); font-weight: 700;
-}
-.hero-proof-toggle:is(:hover, :focus-visible) { background: color-mix(in srgb, var(--paper) 13%, var(--ink)); }
-.hero-proof-toggle:focus-visible { outline-color: var(--paper); }
-.hero-art [data-hero-draft] del { text-decoration-color: var(--accent); }
-@media (width < 55rem) {
-  .home-page .hero-art.is-explored {
-    display: block; background: var(--paper); margin-top: var(--space-5); padding: var(--space-5);
-  }
-  .home-page .hero-art blockquote { margin: 0; font: italic var(--service-type)/1.25 var(--display); }
-  .home-page .hero-art blockquote p { margin-top: var(--space-3); font: var(--small)/1.5 var(--sans); }
-  .hero-proof-toggle { margin-left: 0; margin-right: var(--space-2); }
-}
-
+/* Project inquiries */
 .contact-band .contact p:not(.proof-label) { margin-top: var(--space-3); color: var(--proof-ink-muted); }
 .contact-actions { align-self: center; }
 .inquiry-types {
@@ -565,16 +542,13 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
 @media (prefers-reduced-motion: no-preference) {
   .home-page .intro-playing .hero-copy h1 { animation: proof-hero-name var(--proof-arrive) var(--ease) both; }
   .home-page .intro-playing .hero-copy h2 { animation: proof-hero-name var(--proof-arrive) var(--ease) var(--quick) both; }
-  .revision[data-stage="1"] ins { animation: proof-revision-in var(--standard) var(--ease); }
-  .revision[data-stage="1"] del { animation: proof-revision-in var(--standard) var(--ease); }
   @keyframes proof-hero-name {
     from { opacity: .3; transform: translateY(.35rem); }
     to { opacity: 1; transform: none; }
   }
-  @keyframes proof-revision-in { from { opacity: .35; } to { opacity: 1; } }
 }
 @media (min-width: 55rem) and (prefers-reduced-motion: no-preference) {
-  .home-page .intro-playing .hero-art:not(.is-explored) { animation: proof-paper-arrive var(--proof-arrive) var(--ease) both; }
+  .home-page .intro-playing .hero-art { animation: proof-paper-arrive var(--proof-arrive) var(--ease) both; }
   @keyframes proof-paper-arrive {
     from { opacity: .15; transform: translate(-2%, 4%) rotate(-1deg); }
     to { opacity: 1; transform: rotate(-5deg); }
@@ -595,11 +569,17 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
   .home-page .hero-art { width: 90%; transform: rotate(-5deg); }
 }
 .guide-highlight {
-  color: var(--ink); background: linear-gradient(var(--marker), var(--marker)) 0 79% / 100% .53em no-repeat;
+  --marker-height: .53em;
+  --marker-underlay: transparent;
+  color: var(--ink);
+  background: linear-gradient(var(--marker), var(--marker)) 0 79% / 100% var(--marker-height) no-repeat,
+    linear-gradient(var(--marker-underlay), var(--marker-underlay)) 0 79% / 100% var(--marker-height) no-repeat;
   padding-inline: .035em; box-decoration-break: clone; -webkit-box-decoration-break: clone;
 }
 .contact-band .guide-highlight {
-  background-position: 0 58%; background-size: 100% .95em; padding-inline: .085em;
+  --marker-height: .95em;
+  --marker-underlay: #d8b950;
+  background-position: 0 58%, 0 58%; padding-inline: .085em;
 }
 .guide-mark {
   width: 3rem; height: auto; color: var(--accent-text); overflow: visible; flex: none;
@@ -666,9 +646,6 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
   .guide-next.guide-drawn .guide-mark { animation: guide-float var(--guide-mark-time) var(--ease) var(--guide-tick) both; }
   .writing-visible .eyebrow { animation: guide-arrive var(--guide-arrive) var(--ease) both; }
   .writing-visible :is(h1,h2) { animation: guide-write var(--guide-write) var(--ease) var(--guide-tick) both; }
-  .writing-visible:not(.contact-band) .guide-highlight {
-    animation: guide-highlight var(--guide-mark-time) var(--ease) calc(var(--guide-write) + var(--guide-tick)) both;
-  }
   .writing-visible :is(.guide-primary,.proof-squiggle,.proof-note,.proof-arrow) {
     animation: guide-float var(--guide-mark-time) var(--ease) calc(3 * var(--guide-tick)) both;
   }
@@ -789,3 +766,67 @@ html.no-splash .splash { display: none; }
   .working-together dl { grid-template-columns: repeat(3,minmax(0,1fr)); }
   .about-page .section.split { grid-template-columns: minmax(0,.8fr) minmax(0,1.2fr); }
 }
+
+
+/* Editorial proofs and sample context */
+.hero-proof { display: grid; gap: var(--space-5); margin: 0; padding: clamp(1.25rem,4vw,3rem); }
+.hero-proof > div + div { padding-top: var(--space-4); border-top: 1px solid var(--line); }
+.hero-proof dt { color: var(--accent-text); font: 750 .75rem/1.5 var(--sans); letter-spacing: .09em; text-transform: uppercase; }
+.hero-proof dd { margin-top: var(--space-1); font: italic clamp(1.4rem,3vw,2.85rem)/1.15 var(--display); }
+.hero-proof del { font-size: .78em; text-decoration-color: var(--accent-text); }
+.hero-proof mark { color: var(--ink); background: var(--marker); padding-inline: .04em; box-decoration-break: clone; }
+@media (min-width: 55rem) {
+  .home-page .hero-art { aspect-ratio: auto; }
+}
+@media (width < 55rem) {
+  .home-page .hero-art { display: block; background: var(--paper); margin-top: var(--space-5); }
+}
+.revision-draft, .revision-rewrite { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: var(--space-2) var(--space-4); }
+.revision-draft { color: var(--muted); }
+.revision[data-stage="1"] .revision-cut {
+  text-decoration: line-through var(--accent-text); text-decoration-thickness: .095em;
+}
+.revision[data-stage="1"] .revision-key {
+  border: 2px solid var(--accent-text); border-radius: 48% 53% 48% 51% / 54% 46% 49% 43%;
+  padding-inline: .12em; box-decoration-break: clone; -webkit-box-decoration-break: clone;
+}
+.revision-margin {
+  color: var(--accent-text); font: italic 650 .95rem/1.25 "Segoe Print", "Bradley Hand", cursive;
+  transform: rotate(-4deg); margin-inline-start: auto;
+}
+.sample-frame {
+  margin-block-start: var(--space-4); max-width: 72ch; border: 1px solid var(--line);
+  border-radius: .45rem; background: var(--surface); overflow: hidden;
+}
+.sample-frame-bar {
+  display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--line); background: var(--proof-paper); color: var(--muted);
+  font-size: var(--small); font-weight: 750;
+}
+.sample-frame-icon { display: inline-block; inline-size: 1.05rem; block-size: .77rem; border: 1.5px solid var(--accent-text); border-radius: .13rem; position: relative; }
+.sample-frame--email .sample-frame-icon::before {
+  content: ""; position: absolute; inset: 0; background: var(--accent-text);
+  clip-path: polygon(0 10%, 50% 62%, 100% 10%, 100% 27%, 50% 78%, 0 27%);
+}
+.sample-frame--browser .sample-frame-icon::before {
+  content: ""; position: absolute; inset: 25% 0 auto; border-top: 1px solid var(--accent-text);
+}
+.sample .sample-frame .sample-copy { margin: 0; max-width: none; background: var(--surface); border-inline-start: 0; }
+.sample-frame--email .sample-subject:first-child {
+  border-bottom: 1px solid var(--line); padding-bottom: var(--space-3);
+}
+.availability-badge {
+  width: fit-content; color: var(--accent-text); background: var(--surface); border: 1px solid var(--line);
+  border-radius: 999px; padding: .15rem var(--space-2); font-size: var(--small); font-weight: 750;
+  margin-bottom: var(--space-3);
+}
+.contact-band .contact p.availability-badge { color: var(--paper); background: transparent; border-color: var(--proof-ink-muted); }
+@media (prefers-reduced-motion: no-preference) {
+  .marker-observed:not(.marker-drawn) { background-size: 0 var(--marker-height), 100% var(--marker-height); }
+  .marker-drawn { animation: heading-marker var(--guide-mark-time) var(--ease) var(--guide-tick) both; }
+}
+@keyframes heading-marker {
+  from { background-size: 0 var(--marker-height), 100% var(--marker-height); }
+  to { background-size: 100% var(--marker-height), 100% var(--marker-height); }
+}
+

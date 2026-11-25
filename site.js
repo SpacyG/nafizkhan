@@ -29,7 +29,14 @@ function renderSample(entry) {
   const details = element('details');
   const text = element('div', '', 'sample-copy');
   text.append(element('p', entry.body, 'plain-copy'));
-  details.append(element('summary', 'Read the full sample'), text);
+  const email = entry.category === 'Email copy';
+  const frame = element('div', '', 'sample-frame sample-frame--' + (email ? 'email' : 'browser'));
+  const bar = element('div', '', 'sample-frame-bar');
+  const icon = element('span', '', 'sample-frame-icon');
+  icon.setAttribute('aria-hidden', 'true');
+  bar.append(icon, document.createTextNode(email ? 'Inbox preview' : entry.category + ' preview'));
+  frame.append(bar, text);
+  details.append(element('summary', 'Read the full sample'), frame);
   article.append(details);
   return article;
 }
@@ -248,7 +255,40 @@ const featuredEdits = {
   }
 };
 
+const editorialKeys = {
+  'sample-email': ['your morning', 'Bold or light'],
+  'sample-sales': ['a little more direction', 'three priorities'],
+  'sample-landing': ['take the steps', 'a trainer showing you'],
+  'sample-bookstore': ['Your preferences'],
+  'sample-lumaskin': ['your skin']
+};
+
 const revisionCleanup = new WeakMap();
+
+function annotateRevision(oldLine, newLine, draft, rewrite, phrase) {
+  const before = draft.split(/(?<=\s)|(?=\s)/);
+  const after = rewrite.split(/(?<=\s)|(?=\s)/);
+  let start = 0;
+  let end = 0;
+  while (start < Math.min(before.length, after.length) && before[start] === after[start]) start++;
+  while (end < Math.min(before.length, after.length) - start &&
+    before[before.length - end - 1] === after[after.length - end - 1]) end++;
+  oldLine.replaceChildren(
+    before.slice(0, start).join(''),
+    element('span', before.slice(start, before.length - end).join(''), 'revision-cut'),
+    before.slice(before.length - end).join('')
+  );
+
+  const key = phrase && rewrite.toLowerCase().includes(phrase.toLowerCase())
+    ? phrase
+    : rewrite.trim().split(/\s+/).slice(0, 3).join(' ');
+  const index = rewrite.toLowerCase().indexOf(key.toLowerCase());
+  newLine.replaceChildren(
+    rewrite.slice(0, index),
+    element('span', rewrite.slice(index, index + key.length), 'revision-key'),
+    rewrite.slice(index + key.length)
+  );
+}
 
 function revisionControl(id, title, finalLine, example) {
   const draft = example?.draft ?? practiceDrafts[id];
@@ -256,9 +296,16 @@ function revisionControl(id, title, finalLine, example) {
   if (!draft || !rewrite) return null;
   const panel = element('fieldset', '', 'revision');
   const legend = element('legend', 'Compare the edit · ' + title);
-  const output = element('p', '', 'revision-lines');
-  const oldLine = element('del', draft);
-  const newLine = element('ins', rewrite);
+  const output = element('div', '', 'revision-lines');
+  const oldLine = element('p', '', 'revision-draft');
+  const newLine = element('p', '', 'revision-rewrite');
+  const oldText = element('span');
+  const newText = element('span');
+  const cutNote = element('span', 'cut', 'revision-margin');
+  const keyNote = element('span', 'key change', 'revision-margin');
+  annotateRevision(oldText, newText, draft, rewrite, editorialKeys[id]?.[example ? 1 : 0]);
+  oldLine.append(oldText, cutNote);
+  newLine.append(newText, keyNote);
   const hint = element('p', 'Hover or focus to hold a stage. Drag the pen or pick a stage to compare.', 'revision-hint');
   const note = element('p', example?.note ?? revisionNotes[id], 'revision-note');
   const slider = element('input');
@@ -284,6 +331,7 @@ function revisionControl(id, title, finalLine, example) {
     const stage = Number(slider.value);
     panel.dataset.stage = slider.value;
     note.hidden = stage === 0;
+    cutNote.hidden = keyNote.hidden = stage !== 1;
     oldLine.hidden = stage === 2;
     newLine.hidden = stage === 0;
     slider.setAttribute('aria-valuetext', labels[stage]);
@@ -540,6 +588,22 @@ const writingObserver = 'IntersectionObserver' in window ? new IntersectionObser
   }
 }, { rootMargin: '0px 0px -12% 0px' }) : null;
 
+const markerObserver = 'IntersectionObserver' in window ? new IntersectionObserver((entries, observer) => {
+  for (const { target, isIntersecting } of entries) {
+    if (!isIntersecting) continue;
+    target.classList.add('marker-drawn');
+    observer.unobserve(target);
+  }
+}, { threshold: 0.15 }) : null;
+
+function observeHeadingMarker(heading) {
+  const [first, ...extra] = heading.querySelectorAll('mark.guide-highlight');
+  extra.forEach(mark => mark.replaceWith(...mark.childNodes));
+  if (!first || !markerObserver || first.classList.contains('marker-observed')) return;
+  first.classList.add('marker-observed');
+  markerObserver.observe(first);
+}
+
 const penObserver = 'IntersectionObserver' in window ? new IntersectionObserver((entries, observer) => {
   for (const entry of entries) {
     if (!entry.isIntersecting) continue;
@@ -592,6 +656,7 @@ function setupWriting(blocks = document.querySelectorAll('[data-writing], .sampl
       const boundary = title.lastIndexOf(' ') + 1;
       heading.replaceChildren(title.slice(0, boundary), element('mark', title.slice(boundary), 'guide-highlight'));
     }
+    observeHeadingMarker(heading);
     writingObserver?.observe(heading);
   }
 }
@@ -608,26 +673,13 @@ function setupProofMotion() {
   document.querySelectorAll('[data-proof-motion]').forEach(mark => observer.observe(mark));
 }
 
-function setupHeroProof() {
-  const paper = document.getElementById('hero-proof');
-  const toggle = document.querySelector('.hero-proof-toggle');
-  const firstDraft = paper?.querySelector('[data-hero-draft]');
-  const rewrite = paper?.querySelector('[data-hero-rewrite]');
-  if (!toggle || !firstDraft || !rewrite) return;
-  let swapAnimation;
-  toggle.hidden = false;
-  toggle.addEventListener('click', () => {
-    const showDraft = firstDraft.hidden;
-    firstDraft.hidden = !showDraft;
-    rewrite.hidden = showDraft;
-    paper.classList.add('is-explored');
-    toggle.textContent = showDraft ? 'See my rewrite ↗' : 'See the first draft ↗';
-    const motion = matchMedia('(prefers-reduced-motion: no-preference)');
-    if (motion.matches && typeof paper.animate === 'function') {
-      const duration = parseFloat(getComputedStyle(paper).getPropertyValue('--proof-swap-ms'));
-      swapAnimation?.cancel();
-      swapAnimation = paper.animate([{ opacity: .45 }, { opacity: 1 }], { duration, easing: 'ease-out' });
-    }
+// Set one month here to update the badge on Home, Work, and About.
+const availabilityMonth = '';
+
+function setupAvailability() {
+  if (!availabilityMonth.trim()) return;
+  document.querySelectorAll('[data-availability]').forEach(badge => {
+    badge.textContent = 'Taking projects for ' + availabilityMonth.trim();
   });
 }
 
@@ -651,7 +703,7 @@ function setupInquiry() {
 }
 
 if (siteHeader) {
-  for (const setup of [setupHeadline, setupServices, setupCopyEmail, setupInkPointer, setupInkProgress, setupFeedback, setupWriting, setupProofMotion, setupHeroProof, setupInquiry, attachWorkComparisons]) {
+  for (const setup of [setupHeadline, setupServices, setupCopyEmail, setupInkPointer, setupInkProgress, setupFeedback, setupWriting, setupProofMotion, setupAvailability, setupInquiry, attachWorkComparisons]) {
     try {
       setup();
     } catch (error) {
