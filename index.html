@@ -7,8 +7,8 @@
 <meta name="description" content="Independent copywriter in Bangladesh. Explore email, sales page, and landing page samples by Nafiz Khan.">
 <script>(function(){var c=document.documentElement.classList,seen=0;try{seen=sessionStorage.getItem('nk-splash')}catch(e){}c.add(seen?'no-splash':'splash-wait')})();</script>
 <link rel="icon" href="images/mark.svg" type="image/svg+xml">
-<link rel="stylesheet" href="site.css?v=20261125-ritual-edit">
-<script defer src="site.js?v=20261125-ritual-edit"></script>
+<link rel="stylesheet" href="site.css?v=20261125-headline-loop">
+<script defer src="site.js?v=20261125-visible-comparison"></script>
 <link rel="canonical" href="https://spacyg.github.io/nafizkhan/">
 
 <meta property="og:type" content="website">
@@ -60,7 +60,12 @@ setTimeout(done,4000)})();
       <p class="eyebrow">I’m an independent copywriter in Bangladesh.</p>
       <h1>Nafiz <br>Khan<span>.</span></h1>
       <!-- Copy options for “Give your launch a line worth remembering”: “Give people a reason to care about your launch.” / “Make the first line of your launch count.” -->
-      <h2 data-alt-headline="Give your launch a line worth remembering.">Find the <span class="hero-edit"><span class="edit-draft" aria-hidden="true">WORDS</span><em class="edit-final">words</em></span> for your next launch.</h2>
+      <h2 class="hero-headlines" aria-label="Find the words for your next launch.">
+        <span class="hero-headline" data-active aria-hidden="true">Find the <span class="hero-edit"><span class="edit-draft">WORDS</span><em class="edit-final">words</em></span> for your next launch.</span>
+        <span class="hero-headline" aria-hidden="true">Give your launch a line worth remembering.</span>
+        <span class="hero-headline" aria-hidden="true">Write emails people want to finish.</span>
+        <span class="hero-headline" aria-hidden="true">Turn a rough draft into a clear message.</span>
+      </h2>
       <p class="hero-intro">I write emails, sales pages, and landing pages that make your offer easy to understand and give readers a clear next step.</p>
       <a class="button" href="#work">Read my writing <span aria-hidden="true">↓</span></a>
     </div>
@@ -326,12 +331,12 @@ setTimeout(done,4000)})();
   <fieldset class="revision ritual-edit">
     <legend>Compare the edit · Morning Ritual</legend>
     <div class="revision-controls" role="group" aria-label="Edit stages">
-      <button type="button" aria-pressed="false">Practice draft</button>
-      <button type="button" aria-pressed="true">Pen marks</button>
+      <button type="button" aria-pressed="true">Practice draft</button>
+      <button type="button" aria-pressed="false">Pen marks</button>
       <button type="button" aria-pressed="false">Nafiz’s rewrite</button>
     </div>
-    <p class="ritual-copy" data-edit-draft hidden></p>
-    <p class="ritual-copy" data-edit-markup>
+    <p class="ritual-copy" data-edit-draft></p>
+    <p class="ritual-copy" data-edit-markup hidden>
       <span class="ritual-change"><span class="ritual-sr-only">Deleted:</span> <del>Our coffee is a really good choice for the morning.</del>
       <span class="ritual-sr-only">Inserted:</span> <ins>Start your morning with the roast you’re in the mood for.</ins><sup><span class="ritual-sr-only">Note </span>1</sup></span>
       <span class="ritual-change"><span class="ritual-sr-only">Deleted:</span> <del>There are light and bold roasts available for you to choose from.</del>
@@ -339,7 +344,7 @@ setTimeout(done,4000)})();
       <span class="ritual-change"><span class="ritual-sr-only">Deleted:</span> <del>You can browse our selection to find a coffee for your morning routine.</del><sup><span class="ritual-sr-only">Note </span>3</sup></span>
     </p>
     <p class="ritual-copy" data-edit-rewrite hidden></p>
-    <div class="ritual-notes" data-edit-notes>
+    <div class="ritual-notes" data-edit-notes hidden>
       <h3>Why I made these edits</h3>
       <ol>
         <li>Cut “really good choice” and opened with a decision the reader can make.</li>
@@ -348,8 +353,8 @@ setTimeout(done,4000)})();
       </ol>
     </div>
     <p class="ritual-outcome">The reader’s choice comes first, and the repeated invitation is gone.</p>
-    <input type="range" min="0" max="2" step="1" value="1"
-      aria-label="Morning Ritual edit slider" aria-valuetext="Pen marks">
+    <input type="range" min="0" max="2" step="1" value="0"
+      aria-label="Morning Ritual edit slider" aria-valuetext="Practice draft">
     <span class="ritual-status ritual-sr-only" role="status" aria-live="polite" aria-atomic="true"></span>
   </fieldset>
 </template>

@@ -4,6 +4,14 @@
 
 Home, Work and About use the marked-up proof design. The homepage leads straight from the first-person hero to Work. Five concept samples include case notes and playable edits. The section menu and project-type email controls work with keyboard and touch. Privacy and Terms are static. The owner studio uses the Node server for publishing.
 
+## 2026-11-25 - Viewport-aware sample comparisons
+
+- Start home comparisons on Practice draft and play through the edit only while the panel is in view. Picking a stage or using the slider pauses autoplay for that sample.
+
+## 2026-11-25 - Hero headline loop
+
+- Replaced the headline switch button with four automatically rotating lines. The loop pauses offscreen and leaves a static headline in reduced-motion mode.
+
 ## 2026-11-25 - Collaboration and Morning Ritual edit
 
 - Replaced the collaboration overview with four steps, a first-email checklist, and a fixed-project pricing explanation with editable terms.

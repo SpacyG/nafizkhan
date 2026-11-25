@@ -271,6 +271,67 @@ const editorialKeys = {
 
 const revisionCleanup = new WeakMap();
 
+function setupRevisionPlayback(panel, slider, update, featured) {
+  if (typeof IntersectionObserver !== 'function') return;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  const threshold = featured ? .35 : 0;
+  const events = new AbortController();
+  const options = { signal: events.signal };
+  const featuredDelays = [4200, 6500, 4200];
+  let inView = false;
+  let manual = false;
+  let timer;
+
+  function canPlay() {
+    return inView && !manual && !reduced.matches && !document.hidden &&
+      panel.isConnected && !panel.closest('[hidden]') &&
+      !panel.matches(featured ? ':focus-within' : ':hover, :focus-within') &&
+      !(featured && sampleDialog?.open);
+  }
+
+  function schedule() {
+    clearTimeout(timer);
+    if (!canPlay()) return;
+    const delay = featured ? featuredDelays[slider.valueAsNumber]
+      : Number(getComputedStyle(panel).getPropertyValue('--proof-revision-ms')) || 860;
+    timer = setTimeout(() => {
+      if (!canPlay()) return;
+      slider.value = String((slider.valueAsNumber + 1) % 3);
+      update();
+      schedule();
+    }, delay);
+  }
+
+  function stopForManualControl() {
+    manual = true;
+    clearTimeout(timer);
+  }
+  if (featured) {
+    slider.addEventListener('input', stopForManualControl, options);
+    panel.querySelector('.revision-controls').addEventListener('click', event => {
+      if (event.target.closest('button')) stopForManualControl();
+    }, options);
+    sampleDialog?.addEventListener('close', schedule, options);
+  } else {
+    panel.addEventListener('pointerenter', schedule, options);
+    panel.addEventListener('pointerleave', schedule, options);
+  }
+  panel.addEventListener('focusin', schedule, options);
+  panel.addEventListener('focusout', () => queueMicrotask(schedule), options);
+  document.addEventListener('visibilitychange', schedule, options);
+  reduced.addEventListener('change', schedule, options);
+  const observer = new IntersectionObserver(([entry]) => {
+    inView = entry.isIntersecting && entry.intersectionRatio >= threshold;
+    schedule();
+  }, { threshold });
+  observer.observe(panel);
+  revisionCleanup.set(panel, () => {
+    events.abort();
+    observer.disconnect();
+    clearTimeout(timer);
+  });
+}
+
 function annotateRevision(oldLine, newLine, draft, rewrite, phrase) {
   const before = draft.split(/(?<=\s)|(?=\s)/);
   const after = rewrite.split(/(?<=\s)|(?=\s)/);
@@ -297,7 +358,7 @@ function annotateRevision(oldLine, newLine, draft, rewrite, phrase) {
 }
 
 // START: Compare the edit · Morning Ritual
-function createMorningRitualEdit() {
+function createMorningRitualEdit(featured) {
   const template = document.getElementById('morning-ritual-edit');
   if (!template) return null;
 
@@ -331,14 +392,15 @@ function createMorningRitualEdit() {
     button.addEventListener('click', () => showStage(index));
   });
   slider.addEventListener('input', () => showStage(slider.valueAsNumber));
-  showStage(1, false);
+  showStage(featured ? 0 : 1, false);
+  if (featured) setupRevisionPlayback(panel, slider, () => showStage(slider.valueAsNumber, false), true);
   return panel;
 }
 // END: Compare the edit · Morning Ritual
 
-function revisionControl(id, title, finalLine, example) {
+function revisionControl(id, title, finalLine, example, featured = false) {
   if (id === 'sample-email') {
-    const ritual = createMorningRitualEdit();
+    const ritual = createMorningRitualEdit(featured);
     if (ritual) return ritual;
   }
   const draft = example?.draft ?? practiceDrafts[id];
@@ -356,20 +418,18 @@ function revisionControl(id, title, finalLine, example) {
   annotateRevision(oldText, newText, draft, rewrite, editorialKeys[id]?.[example ? 1 : 0]);
   oldLine.append(oldText, cutNote);
   newLine.append(newText, keyNote);
-  const hint = element('p', 'Hover or focus to hold a stage. Drag the pen or pick a stage to compare.', 'revision-hint');
+  const hint = element('p', featured ? 'Pick a stage or drag the pen to compare at your own pace.'
+    : 'Hover or focus to hold a stage. Drag the pen or pick a stage to compare.', 'revision-hint');
   const note = element('p', example?.note ?? revisionNotes[id], 'revision-note');
   const slider = element('input');
   slider.type = 'range';
   slider.min = '0';
   slider.max = '2';
   slider.step = '1';
-  slider.value = '1';
+  slider.value = featured ? '0' : '1';
   slider.setAttribute('aria-label', 'Revision stage for ' + title);
   const controls = element('div', '', 'revision-controls');
   const labels = ['Practice draft', 'Pen marks', 'Nafiz’s rewrite'];
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  let timer = null;
-  let inView = false;
   const buttons = labels.map((label, index) => {
     const button = element('button', label);
     button.type = 'button';
@@ -388,35 +448,10 @@ function revisionControl(id, title, finalLine, example) {
     buttons.forEach((button, index) => button.setAttribute('aria-pressed', String(index === stage)));
   }
   slider.addEventListener('input', update);
-  function schedule() {
-    clearTimeout(timer);
-    if (!inView || panel.closest('[hidden]') || reduced.matches || panel.matches(':hover, :focus-within')) return;
-    const beat = Number(getComputedStyle(panel).getPropertyValue('--proof-revision-ms')) || 860;
-    timer = setTimeout(() => {
-      if (!panel.isConnected || panel.closest('[hidden]')) return;
-      if (!document.hidden) {
-        slider.value = String((Number(slider.value) + 1) % labels.length);
-        update();
-      }
-      schedule();
-    }, beat);
-  }
-  for (const event of ['pointerenter', 'pointerleave', 'focusin']) panel.addEventListener(event, schedule);
-  panel.addEventListener('focusout', () => queueMicrotask(schedule));
-  const playback = typeof IntersectionObserver === 'function' ? new IntersectionObserver(([entry]) => {
-    inView = entry.isIntersecting;
-    schedule();
-  }) : null;
-  playback?.observe(panel);
-  reduced.addEventListener('change', schedule);
-  revisionCleanup.set(panel, () => {
-    playback?.disconnect();
-    clearTimeout(timer);
-    reduced.removeEventListener('change', schedule);
-  });
   output.append(oldLine, newLine);
   panel.append(legend, hint, output, slider, controls, note);
   update();
+  setupRevisionPlayback(panel, slider, update, featured);
   return panel;
 }
 
@@ -439,35 +474,60 @@ function updateHomeComparison(card) {
   revisionCleanup.get(slot.firstElementChild)?.();
   const id = card?.hash.slice(1);
   const panel = card && revisionControl(
-    id, card.querySelector('strong').textContent, card.querySelector('.work-excerpt').textContent, featuredEdits[id]
+    id, card.querySelector('strong').textContent, card.querySelector('.work-excerpt').textContent, featuredEdits[id], true
   );
   slot.replaceChildren(...(panel ? [panel] : []));
 }
 
 function setupHeadline() {
-  const headline = document.querySelector('.hero-copy h2');
-  if (headline) {
-    const original = [...headline.childNodes].map(node => node.cloneNode(true));
-    const choices = [null, headline.dataset.altHeadline, 'Make the next step feel obvious.'];
-    let index = 0;
-    const cycle = element('button', '', 'headline-cycle');
-    cycle.type = 'button';
-    const hint = element('span', '↻ Try another headline', 'cycle-hint');
-    function draw() {
-      const nodes = index ? [document.createTextNode(choices[index])] : original;
-      cycle.replaceChildren();
-      for (const node of nodes) {
-        if (node.nodeType !== Node.TEXT_NODE) { cycle.append(node.cloneNode(true)); continue; }
-        for (const part of node.textContent.split(/(\s+)/)) {
-          cycle.append(part.trim() ? element('span', part, 'markup-word') : document.createTextNode(part));
-        }
-      }
-      cycle.append(hint);
-    }
-    cycle.addEventListener('click', () => { index = (index + 1) % choices.length; draw(); });
-    draw();
-    headline.replaceChildren(cycle);
+  const headline = document.querySelector('.hero-headlines');
+  if (!headline) return;
+  const lines = [...headline.querySelectorAll('.hero-headline')];
+  if (lines.length < 2) return;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  const hover = matchMedia('(hover: hover)');
+  const splash = document.querySelector('#splash');
+  let index = 0;
+  let inView = !('IntersectionObserver' in window);
+  let timer;
+
+  function showLine(next) {
+    lines[index].removeAttribute('data-active');
+    index = next;
+    lines[index].setAttribute('data-active', '');
   }
+
+  function schedule() {
+    clearTimeout(timer);
+    if (reduced.matches || document.hidden || !inView ||
+        (splash && !splash.hidden) || (hover.matches && headline.matches(':hover'))) return;
+    timer = setTimeout(() => {
+      showLine((index + 1) % lines.length);
+      schedule();
+    }, 5400);
+  }
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      schedule();
+    }).observe(headline);
+  }
+  if (splash && !splash.hidden) {
+    new MutationObserver((_, observer) => {
+      if (!splash.hidden) return;
+      observer.disconnect();
+      schedule();
+    }).observe(splash, { attributeFilter: ['hidden'] });
+  }
+  headline.addEventListener('pointerenter', schedule);
+  headline.addEventListener('pointerleave', schedule);
+  document.addEventListener('visibilitychange', schedule);
+  reduced.addEventListener('change', () => {
+    if (reduced.matches) showLine(0);
+    schedule();
+  });
+  schedule();
 }
 
 function setupServices() {
@@ -608,7 +668,6 @@ function setupInkPointer() {
     const control = target?.closest('a,button,summary,input');
     const nativeControl = target?.closest('.contact-form :is(input,select,textarea,button:disabled)');
     document.body.classList.toggle('ink-pointer-native', Boolean(nativeControl));
-    ring.classList.toggle('over-headline', Boolean(control?.matches('.headline-cycle')));
     ring.dataset.mode = control ? 'link' : target?.closest('p,h1,h2,dt,dd') ? 'text' : 'idle';
   }
   document.addEventListener('pointermove', e => {
