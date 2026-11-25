@@ -1,5 +1,6 @@
 const filters = document.querySelector('.filters');
 const samples = document.querySelector('.samples');
+const gymCaseStudy = samples?.querySelector('#sample-landing [data-case-study]');
 const viewer = document.querySelector('#photo-viewer');
 const workList = document.querySelector('.work-list');
 const sampleSelector = document.querySelector('.sample-selector');
@@ -37,6 +38,10 @@ function renderSample(entry) {
   bar.append(icon, document.createTextNode(email ? 'Inbox preview' : entry.category + ' preview'));
   frame.append(bar, text);
   details.append(element('summary', 'Read the full sample'), frame);
+  if (entry.id === 'sample-landing' && gymCaseStudy &&
+      entry.body.trimStart().startsWith('We lay the path, you take the steps.')) {
+    article.append(gymCaseStudy.cloneNode(true));
+  }
   article.append(details);
   return article;
 }
@@ -175,6 +180,7 @@ function renderMedia(entry) {
     image.src = 'api/entries/' + entry.id + '/photo?v=' + entry.photoVersion;
     image.alt = entry.alt;
     image.loading = 'lazy';
+    image.decoding = 'async';
     button.append(image);
     const caption = entry.description ? entry.title + ' · ' + entry.description : entry.title;
     figure.append(button, element('figcaption', caption));
@@ -683,27 +689,35 @@ function setupAvailability() {
   });
 }
 
-function setupInquiry() {
-  const choices = document.querySelector('.inquiry-types');
-  const link = document.querySelector('[data-inquiry-link]');
-  if (!choices || !link) return;
-  const base = new URL(link.href);
-  function update() {
-    const type = choices.querySelector('input:checked')?.value;
-    const message = new URL(base);
-    if (type) {
-      message.searchParams.set('subject', type + ' inquiry');
-      message.searchParams.set('body', (base.searchParams.get('body') || '').replace('Project: ', 'Project: ' + type + ' – '));
-    }
-    link.href = message.href.replaceAll('+', '%20');
+// Set this to the full endpoint from your Formspree dashboard.
+const formspreeEndpoint = '';
+
+function setupContactForm() {
+  const form = document.querySelector('.contact-form');
+  if (!form) return;
+  const status = form.querySelector('.contact-form-status');
+  const fields = form.querySelector('fieldset');
+  const project = form.elements.namedItem('project_type');
+  const ready = /^https:\/\/formspree\.io\/f\/[a-z0-9]+$/i.test(formspreeEndpoint.trim());
+  if (ready) {
+    form.action = formspreeEndpoint.trim();
+    fields.disabled = false;
+    status.hidden = true;
   }
-  choices.addEventListener('change', update);
-  update();
-  choices.hidden = false;
+  form.addEventListener('submit', event => {
+    if (!ready) event.preventDefault();
+  });
+  document.querySelectorAll('[data-contact-project]').forEach(link => {
+    const type = link.dataset.contactProject;
+    link.addEventListener('click', () => {
+      project.value = type;
+      requestAnimationFrame(() => (ready ? form.elements.namedItem('name') : status).focus({ preventScroll: true }));
+    });
+  });
 }
 
 if (siteHeader) {
-  for (const setup of [setupHeadline, setupServices, setupCopyEmail, setupInkPointer, setupInkProgress, setupFeedback, setupWriting, setupProofMotion, setupAvailability, setupInquiry, attachWorkComparisons]) {
+  for (const setup of [setupHeadline, setupServices, setupCopyEmail, setupInkPointer, setupInkProgress, setupFeedback, setupWriting, setupProofMotion, setupAvailability, setupContactForm, attachWorkComparisons]) {
     try {
       setup();
     } catch (error) {

@@ -1,5 +1,3 @@
 User-agent: *
-Disallow: /studio.html
-Disallow: /api/session
+Disallow: /nafizkhan/api/
 Sitemap: https://spacyg.github.io/nafizkhan/sitemap.xml
-

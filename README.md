@@ -60,3 +60,11 @@ Set the `availabilityMonth` value in `site.js` to a month such as December. Home
 The footer's LinkedIn link opens a name search. Replace it with your actual profile URL in the HTML files when you have it.
 
 The preview image is `images/social-preview.png` (1200 × 630). The Open Graph and Twitter image tags use its public GitHub Pages address.
+
+## Contact and SEO
+
+Set `formspreeEndpoint` in `site.js` to the full endpoint from your Formspree dashboard, such as `https://formspree.io/f/your-id`. All three contact forms use it. Submit a test inquiry on the published site and check your inbox. Until configured, the email link and Copy email are available.
+
+The teardown button on Home opens the normal inquiry form with the project type selected. Edit FAQ answers in `index.html`; the Local Gym case study is in `work.html`.
+
+The sitemap lists the five indexable public pages. The owner dashboard and error page signal noindex. The GitHub Pages project's `robots.txt` sits under `/nafizkhan/`; crawlers read robots rules at the host root. The sitemap is available directly at `https://spacyg.github.io/nafizkhan/sitemap.xml`.

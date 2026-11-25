@@ -4,6 +4,12 @@
 
 Home, Work and About use the marked-up proof design. The homepage leads straight from the first-person hero to Work. Five concept samples include case notes and playable edits. The section menu and project-type email controls work with keyboard and touch. Privacy and Terms are static. The owner studio uses the Node server for publishing.
 
+## 2026-11-25 - Contact, case study, and search metadata
+
+- Added a contact form, free headline teardown, and editable FAQ.
+- Expanded the Local Gym sample into a concept case study with illustrative drafts.
+- Added a custom 404, refined page metadata and keyboard focus, and adjusted image loading.
+
 ## 2026-11-25 - Editorial proof and share previews
 
 - Added a side-by-side hero edit, annotations in Pen marks, and inbox/browser contexts for samples.

@@ -139,12 +139,12 @@ button, summary { cursor: pointer; }
 .button {
   display: inline-flex; align-items: center; gap: var(--space-3); min-height: var(--button-height);
   padding: var(--space-2) var(--space-4); border: var(--stroke) solid var(--ink);
-  background: var(--accent); color: var(--ink); font-weight: 720; text-decoration: none;
+  background: var(--accent); color: var(--ink); font-weight: 700; text-decoration: none;
 }
 .button:hover { background: var(--highlight); box-shadow: var(--space-1) var(--space-1) 0 var(--ink); }
 .eyebrow, .work-type {
   margin-bottom: var(--space-3); color: var(--accent-text);
-  font-size: var(--label); font-weight: 750; letter-spacing: var(--label-tracking); text-transform: uppercase;
+  font-size: var(--label); font-weight: 700; letter-spacing: var(--label-tracking); text-transform: uppercase;
 }
 .intro, .hero-intro { max-width: var(--narrow); margin-top: var(--space-4); color: var(--muted); font-size: var(--lede); text-wrap: pretty; }
 
@@ -156,7 +156,7 @@ button, summary { cursor: pointer; }
 .hero-copy .button { margin-top: var(--space-6); }
 .hero-edit, .pen-underline { display: inline-block; position: relative; isolation: isolate; }
 .edit-final { display: inline-block; position: relative; }
-.edit-draft { display: none; position: absolute; inset: 0 auto auto 0; color: var(--muted); font: 720 .7em/1.5 var(--sans); letter-spacing: -.045em; }
+.edit-draft { display: none; position: absolute; inset: 0 auto auto 0; color: var(--muted); font: 700 .7em/1.5 var(--sans); letter-spacing: -.045em; }
 .edit-draft::after {
   content: ""; position: absolute; inset: 50% -5% auto; height: var(--pen-stroke);
   background: var(--accent); border-radius: 45% 30% 55% 25%; transform-origin: left;
@@ -388,7 +388,7 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
 /* Marked-up proof cover */
 .home-page .site-header, .home-page .masthead { background: var(--ink); color: var(--paper); }
 .home-page .site-header a, .home-page .hero-intro, .home-page .hero-copy .eyebrow { color: var(--paper); }
-.home-page .site-header :focus-visible { outline-color: var(--paper); }
+.home-page :is(.site-header,.masthead) :focus-visible { outline-color: var(--marker); }
 .home-page .masthead { width: 100%; overflow: hidden; padding: var(--space-8) var(--gutter); }
 .home-page .hero-spread { max-width: var(--frame); margin: auto; }
 .home-page .hero-copy h1 { line-height: .82; font-size: clamp(4.5rem, 10vw, 10rem); }
@@ -524,19 +524,6 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
 /* Project inquiries */
 .contact-band .contact p:not(.proof-label) { margin-top: var(--space-3); color: var(--proof-ink-muted); }
 .contact-actions { align-self: center; }
-.inquiry-types {
-  display: flex; flex-wrap: wrap; gap: var(--space-2); min-width: 0; max-width: 24rem;
-  padding: 0; margin: 0 0 var(--space-4); border: 0;
-}
-.inquiry-types legend { margin-bottom: var(--space-2); font-weight: 700; }
-.inquiry-types label { position: relative; }
-.inquiry-types input { position: absolute; inset: 0; width: 100%; opacity: 0; }
-.inquiry-types label span {
-  display: flex; align-items: center; padding: var(--space-2) var(--space-3); min-height: var(--button-height);
-  border: var(--stroke) solid var(--proof-ink-muted); font-size: var(--small);
-}
-.inquiry-types input:checked + span { background: var(--paper); color: var(--ink); font-weight: 700; }
-.inquiry-types input:focus-visible + span { outline: 2px solid var(--paper); outline-offset: 3px; }
 .contact-band .email { overflow-wrap: anywhere; }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -598,7 +585,7 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
   background: linear-gradient(90deg, var(--accent-text), var(--accent) 43%, transparent);
   transform-origin: left;
 }
-.guide-next a { color: var(--accent-text); font-weight: 750; text-decoration: underline; text-underline-offset: .24em; }
+.guide-next a { color: var(--accent-text); font-weight: 700; text-decoration: underline; text-underline-offset: .24em; }
 .guide-arrow { display: inline-block; }
 .sample-tabs { min-width: 0; }
 .sample-tabs:has(.sample-selector[hidden]) { display: none; }
@@ -619,7 +606,7 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
   background: var(--surface); border: 1px solid var(--line); transform: rotate(5deg); border-radius: .15rem;
 }
 .service-proof::after { content: ""; position: absolute; inset: 0; background: var(--marker); z-index: -1; }
-.service-proof figcaption { color: var(--accent-text); font-size: var(--label); font-weight: 750; text-transform: uppercase; letter-spacing: .1em; }
+.service-proof figcaption { color: var(--accent-text); font-size: var(--label); font-weight: 700; text-transform: uppercase; letter-spacing: .1em; }
 .service-proof blockquote { margin: var(--space-3) 0; font: italic clamp(1.25rem, 2.4vw, 1.9rem)/1.22 var(--display); }
 .service-proof .guide-mark { width: 2.25rem; }
 .approach-steps { position: relative; isolation: isolate; }
@@ -681,7 +668,7 @@ html.no-splash .splash { display: none; }
 .splash-n { fill: none; stroke: var(--ink); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
 .splash-dot { fill: var(--accent); transform-box: fill-box; transform-origin: center; }
 .splash-line { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
-.splash-name { font: 600 .8rem/1 var(--sans); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+.splash-name { font: 700 .8rem/1 var(--sans); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
 .splash-name span { color: var(--accent-text); }
 
 @keyframes splash-out { to { transform: translateY(-100%); visibility: hidden; } }
@@ -744,11 +731,11 @@ html.no-splash .splash { display: none; }
 }
 
 
-.service-detail { margin-top: var(--space-2); color: var(--ink); font-weight: 650; }
+.service-detail { margin-top: var(--space-2); color: var(--ink); font-weight: 700; }
 .working-together { padding-block: var(--space-7); }
 .working-together h2 { font-size: clamp(1.65rem,3vw,2.45rem); }
 .working-together dl { display: grid; gap: var(--space-4); margin-top: var(--space-4); }
-.working-together dt { font-weight: 750; }
+.working-together dt { font-weight: 700; }
 .working-together dd { color: var(--muted); margin-top: var(--space-1); }
 .about-hero, .about-page .section.split { padding-block: clamp(1.7rem,4.2vw,3.4rem); }
 .about-hero h1 { font-size: clamp(2.9rem,6.8vw,5.55rem); }
@@ -771,7 +758,7 @@ html.no-splash .splash { display: none; }
 /* Editorial proofs and sample context */
 .hero-proof { display: grid; gap: var(--space-5); margin: 0; padding: clamp(1.25rem,4vw,3rem); }
 .hero-proof > div + div { padding-top: var(--space-4); border-top: 1px solid var(--line); }
-.hero-proof dt { color: var(--accent-text); font: 750 .75rem/1.5 var(--sans); letter-spacing: .09em; text-transform: uppercase; }
+.hero-proof dt { color: var(--accent-text); font: 700 .75rem/1.5 var(--sans); letter-spacing: .09em; text-transform: uppercase; }
 .hero-proof dd { margin-top: var(--space-1); font: italic clamp(1.4rem,3vw,2.85rem)/1.15 var(--display); }
 .hero-proof del { font-size: .78em; text-decoration-color: var(--accent-text); }
 .hero-proof mark { color: var(--ink); background: var(--marker); padding-inline: .04em; box-decoration-break: clone; }
@@ -791,7 +778,7 @@ html.no-splash .splash { display: none; }
   padding-inline: .12em; box-decoration-break: clone; -webkit-box-decoration-break: clone;
 }
 .revision-margin {
-  color: var(--accent-text); font: italic 650 .95rem/1.25 "Segoe Print", "Bradley Hand", cursive;
+  color: var(--accent-text); font: italic 700 .95rem/1.25 "Segoe Print", "Bradley Hand", cursive;
   transform: rotate(-4deg); margin-inline-start: auto;
 }
 .sample-frame {
@@ -801,7 +788,7 @@ html.no-splash .splash { display: none; }
 .sample-frame-bar {
   display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-4);
   border-bottom: 1px solid var(--line); background: var(--proof-paper); color: var(--muted);
-  font-size: var(--small); font-weight: 750;
+  font-size: var(--small); font-weight: 700;
 }
 .sample-frame-icon { display: inline-block; inline-size: 1.05rem; block-size: .77rem; border: 1.5px solid var(--accent-text); border-radius: .13rem; position: relative; }
 .sample-frame--email .sample-frame-icon::before {
@@ -817,7 +804,7 @@ html.no-splash .splash { display: none; }
 }
 .availability-badge {
   width: fit-content; color: var(--accent-text); background: var(--surface); border: 1px solid var(--line);
-  border-radius: 999px; padding: .15rem var(--space-2); font-size: var(--small); font-weight: 750;
+  border-radius: 999px; padding: .15rem var(--space-2); font-size: var(--small); font-weight: 700;
   margin-bottom: var(--space-3);
 }
 .contact-band .contact p.availability-badge { color: var(--paper); background: transparent; border-color: var(--proof-ink-muted); }
@@ -828,5 +815,66 @@ html.no-splash .splash { display: none; }
 @keyframes heading-marker {
   from { background-size: 0 var(--marker-height), 100% var(--marker-height); }
   to { background-size: 100% var(--marker-height), 100% var(--marker-height); }
+}
+
+
+/* Contact and editorial case study */
+.contact-prelude {
+  display: grid; gap: var(--space-6); padding-block: var(--space-7);
+  border-top: 1px solid var(--line);
+}
+.headline-teardown {
+  align-self: start; background: var(--surface); border: 1px solid var(--line);
+  border-inline-start: .25rem solid var(--accent); padding: var(--space-5);
+}
+.contact-prelude h2 { font-size: clamp(1.8rem, 3vw, 2.6rem); }
+.headline-teardown p:not(.eyebrow) { margin-block: var(--space-3); }
+.faq h2 { margin-bottom: var(--space-3); }
+.faq details { border-bottom: 1px solid var(--line); padding-block: var(--space-2); }
+.faq summary { cursor: pointer; font-weight: 700; min-height: 2.75rem; padding-block: var(--space-1); }
+.faq details p { padding: var(--space-1) var(--space-3) var(--space-2); color: var(--muted); }
+.contact-form { width: 100%; }
+.contact-form fieldset { min-inline-size: 0; border: 0; margin: 0; padding: 0; }
+.contact-form legend { font-weight: 700; margin-bottom: var(--space-3); }
+.contact-form-fields { display: grid; gap: var(--space-3); margin-bottom: var(--space-3); }
+.contact-form label { display: grid; gap: var(--space-1); min-inline-size: 0; font-size: var(--small); font-weight: 700; }
+.contact-form :is(input, select, textarea) {
+  font: inherit; font-size: 1rem; width: 100%; min-inline-size: 0;
+  color: var(--ink); background: var(--surface); border: 1px solid var(--muted);
+  padding: var(--space-2); border-radius: .15rem;
+}
+.contact-form textarea { resize: vertical; }
+.contact-form button:disabled { opacity: .72; cursor: not-allowed; }
+.contact-email-actions { margin-top: var(--space-3); }
+.contact-email-actions .copy-email { margin: var(--space-2) 0 0; }
+.contact-form-status { margin-top: var(--space-3); }
+.contact-form-status:focus { outline: 2px solid currentColor; outline-offset: .2rem; }
+.contact-band .contact :focus-visible {
+  outline: 3px solid var(--marker);
+  outline-offset: .22rem;
+}
+.contact-form :is(input, select, textarea):focus-visible { box-shadow: 0 0 0 1px var(--ink); }
+.case-study {
+  grid-column: 1/-1; margin-top: var(--space-4); padding: var(--space-5);
+  background: var(--proof-paper); border-inline-start: 2px solid var(--accent-text);
+}
+.case-study h3 { font: 400 clamp(1.55rem, 3vw, 2.35rem)/1.15 var(--display); }
+.case-study-context, .case-study small { color: var(--muted); }
+.case-study-brief { display: grid; gap: var(--space-3); margin-top: var(--space-4); }
+.case-study-brief dt, .case-study-drafts strong { color: var(--accent-text); font-weight: 700; }
+.case-study-drafts { display: grid; gap: var(--space-2); padding: 0; margin-block: var(--space-4); list-style: none; }
+.case-study-drafts li { padding: var(--space-3); background: var(--surface); border-block-start: 1px solid var(--line); }
+.case-study-drafts li p { font: italic 400 1.2rem/1.35 var(--display); margin-block: var(--space-1); }
+.missing-page { min-height: 72vh; display: grid; align-content: center; gap: var(--space-4); padding-block: var(--section-space); }
+@media (min-width: 43rem) {
+  .contact-prelude { grid-template-columns: minmax(0,.8fr) minmax(0,1fr); }
+  .contact:has(.contact-form) { grid-template-columns: minmax(0,1fr) minmax(0,.95fr); align-items: start; gap: var(--space-6); }
+  .contact-actions:has(.contact-form) { align-self: start; }
+  .case-study-brief { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (min-width: 60rem) {
+  .contact-form-fields { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .contact-form-fields :is(.contact-project,.contact-message) { grid-column: 1/-1; }
+  .case-study-drafts { grid-template-columns: repeat(3,minmax(0,1fr)); }
 }
 

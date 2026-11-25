@@ -24,13 +24,13 @@ const photoFormats = {
 };
 const assets = new Map([
   ['index.html', 'text/html'], ['about.html', 'text/html'], ['work.html', 'text/html'],
-  ['terms.html', 'text/html'], ['privacy.html', 'text/html'], ['studio.html', 'text/html'],
+  ['404.html', 'text/html'], ['terms.html', 'text/html'], ['privacy.html', 'text/html'], ['studio.html', 'text/html'],
   ['site.css', 'text/css'], ['site.js', 'text/javascript'], ['studio.js', 'text/javascript'],
   ['images/mark.svg', 'image/svg+xml'], ['images/nafiz-portrait.jpg', 'image/jpeg'], ['images/cosmic-hero.jpg', 'image/jpeg'], ['images/social-preview.png', 'image/png'],
   ['robots.txt', 'text/plain'], ['sitemap.xml', 'application/xml']
 ]);
 const headers = {
-  'Content-Security-Policy': "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'; object-src 'none'",
+  'Content-Security-Policy': "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; form-action 'self' https://formspree.io; base-uri 'none'; frame-ancestors 'none'; object-src 'none'",
   'X-Content-Type-Options': 'nosniff',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'X-Frame-Options': 'DENY',
@@ -355,11 +355,13 @@ export function createPortfolio({ origin, dataDir, host = '127.0.0.1', passwordH
       }
       throw new HttpError(404, 'Endpoint not found.');
     }
-    const name = path === '/' ? 'index.html' : path.slice(1);
+    const requestedName = path === '/' ? 'index.html' : path.slice(1);
+    if (!retrieval) throw new HttpError(404, 'Page not found.');
+    const name = assets.has(requestedName) ? requestedName : '404.html';
+    const status = name === '404.html' ? 404 : 200;
     const mime = assets.get(name);
-    if (!retrieval || !mime) throw new HttpError(404, 'Page not found.');
     let content = await readFile(resolve(root, name));
-    if (secure && ['text/html', 'text/plain', 'application/xml'].includes(mime)) {
+    if ((secure || name === '404.html') && ['text/html', 'text/plain', 'application/xml'].includes(mime)) {
       content = Buffer.from(content.toString('utf8').replaceAll('https://spacyg.github.io/nafizkhan/', origin + '/'));
     }
     if (name === 'index.html') {
@@ -367,7 +369,7 @@ export function createPortfolio({ origin, dataDir, host = '127.0.0.1', passwordH
         "script-src 'self';", "script-src 'self' " + splashHashes + "; frame-src https://script.google.com https://*.googleusercontent.com;"
       ));
     }
-    response.writeHead(200, {
+    response.writeHead(status, {
       'Content-Type': mime.startsWith('image/') ? mime : mime + '; charset=utf-8',
       'Content-Length': content.length,
       'Cache-Control': mime.startsWith('image/') ? 'public, max-age=86400' : 'no-cache'

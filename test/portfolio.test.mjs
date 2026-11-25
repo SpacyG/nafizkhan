@@ -207,3 +207,16 @@ test('public feedback validates submissions and survives restarting the server',
   assert.match((await request('/')).headers.get('content-security-policy'), /script-src 'self' 'sha256-/);
 });
 
+
+test('custom 404 links resolve to the running portfolio with a 404 status', async () => {
+  const missing = await request('/missing/nested/path');
+  assert.equal(missing.status, 404);
+  assert.match(missing.headers.get('content-type'), /^text\/html/);
+  const html = await missing.text();
+  assert.match(html, /This page is missing/);
+  assert.match(html, /href="https?:\/\/[^"]+\/site\.css\?/);
+  assert.match(html, /name="robots" content="noindex, follow"/);
+  assert.equal((await request('/site.css')).status, 200);
+  assert.match((await request('/')).headers.get('content-security-policy'), /form-action 'self' https:\/\/formspree\.io/);
+});
+
