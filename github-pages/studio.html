@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Owner Dashboard | Nafiz Khan</title>
+<meta name="description" content="Manage portfolio content.">
+<link rel="icon" href="images/mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="site.css?v=20261125-audit-fixes">
+<link rel="canonical" href="https://spacyg.github.io/nafizkhan/studio.html">
+<meta name="robots" content="noindex, nofollow">
+<script type="module" src="studio.js"></script>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Nafiz Khan">
+<meta property="og:title" content="Owner Dashboard | Nafiz Khan">
+<meta property="og:description" content="Manage portfolio content.">
+<meta property="og:url" content="https://spacyg.github.io/nafizkhan/studio.html">
+<meta property="og:image" content="https://spacyg.github.io/nafizkhan/images/social-preview.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Nafiz Khan, independent copywriter. Emails, sales pages, and landing pages.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Owner Dashboard | Nafiz Khan">
+<meta name="twitter:description" content="Manage portfolio content.">
+<meta name="twitter:image" content="https://spacyg.github.io/nafizkhan/images/social-preview.png">
+<meta name="twitter:image:alt" content="Nafiz Khan, independent copywriter. Emails, sales pages, and landing pages.">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="header wrap">
+  <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">N<span>.</span></span> Nafiz Khan</a>
+  <nav aria-label="Main navigation"><a href="index.html">Home</a><a href="work.html">Work</a><a href="index.html#services">Services</a><a href="about.html">About</a></nav>
+  <a class="header-contact" href="index.html#contact">Get in touch <span aria-hidden="true">↗</span></a>
+</header>
+<main class="wrap" id="main" tabindex="-1">
+<header class="page-intro"><p class="eyebrow">Owner dashboard</p><h1>Manage content<span class="purple">.</span></h1></header>
+<noscript><p>Enable JavaScript to manage your portfolio.</p></noscript>
+<p id="studio-status" role="status" aria-live="polite"></p>
+<form id="login" class="studio-form" hidden>
+  <label>Owner passphrase <input name="password" type="password" maxlength="256" autocomplete="current-password" required></label>
+  <button class="button" type="submit">Sign in</button>
+</form>
+<section id="studio" hidden>
+  <div class="studio-toolbar"><button class="button" type="button" id="new-entry">New entry</button><button type="button" id="logout">Sign out</button></div>
+  <div class="studio-grid">
+    <div><h2>Entries</h2><ul id="entries" class="entries"></ul></div>
+    <form id="editor" class="studio-form">
+      <h2 id="editor-heading">New entry</h2>
+      <label>Type <select name="kind"><option value="sample">Writing sample</option><option value="photo">Photo</option><option value="vlog">Vlog</option></select></label>
+      <label>Title <input name="title" required maxlength="100"></label>
+      <label><span>Description or caption</span><textarea name="description" rows="3" maxlength="500"></textarea></label>
+      <div data-kind="sample">
+        <label>Category <select name="category"><option>Email copy</option><option>Sales page</option><option>Landing page</option><option>Website copy</option></select></label>
+        <label>Project type <select name="credit"><option>Concept project</option><option>Client work</option><option>Personal project</option></select></label>
+        <label>Sample copy <textarea name="body" rows="9" maxlength="16000"></textarea></label>
+        <label>Import a plain-text sample <input id="text-file" type="file" accept=".txt,text/plain"></label>
+      </div>
+      <div data-kind="photo" hidden>
+        <label>Photo (JPEG, PNG or WebP, up to 5 MB) <input name="image" type="file" accept="image/jpeg,image/png,image/webp"></label>
+        <label>Alt text <input name="alt" maxlength="180"></label>
+        <img id="studio-photo" class="studio-photo" alt="" hidden>
+      </div>
+      <div data-kind="vlog" hidden><label>YouTube link <input name="video" type="url" placeholder="https://www.youtube.com/watch?v=…" maxlength="300"></label></div>
+      <label class="check-label"><input name="published" type="checkbox"> Publish on the public site</label>
+      <div class="actions"><button class="button" type="submit">Save entry</button><button type="button" id="remove-entry" hidden>Delete entry</button></div>
+    </form>
+  </div>
+</section>
+</main>
+<footer class="footer wrap"><span>© Nafiz Khan · Bangladesh</span><nav aria-label="Footer"><a href="https://github.com/SpacyG">GitHub</a><a href="https://www.instagram.com/spacy_gambiot/">Instagram</a><!-- Replace this LinkedIn search URL with your profile URL when available. --><a href="https://www.linkedin.com/search/results/people/?keywords=Nafiz%20Khan%20Tonmoy">LinkedIn search</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></nav></footer>
+</body>
+</html>
