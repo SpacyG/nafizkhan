@@ -4,6 +4,17 @@
 
 Home, Work and About use the marked-up proof design. The homepage leads straight from the first-person hero to Work. Five concept samples include case notes and playable edits. The section menu and project-type email controls work with keyboard and touch. Privacy and Terms are static. The owner studio uses the Node server for publishing.
 
+## 2026-11-25 - Collaboration and Morning Ritual edit
+
+- Replaced the collaboration overview with four steps, a first-email checklist, and a fixed-project pricing explanation with editable terms.
+- Added a three-sentence Morning Ritual practice draft and a marked-up comparison with three numbered edit notes on Home and Work.
+- Softened the splash exit and section reveals, tuned the page crossfade, and made the cursor trail smoother across refresh rates.
+- Removed the empty headshot placeholder from About and kept the existing portrait.
+
+## 2026-11-25 - Contact cursor
+
+- Use the native cursor on contact form fields and hide the custom cursor there, including when scrolling under a stationary pointer.
+
 ## 2026-11-25 - Services note
 
 - Made the yellow Services note explain the purpose of each service as visitors move between options.

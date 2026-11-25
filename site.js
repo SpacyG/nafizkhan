@@ -296,7 +296,51 @@ function annotateRevision(oldLine, newLine, draft, rewrite, phrase) {
   );
 }
 
+// START: Compare the edit · Morning Ritual
+function createMorningRitualEdit() {
+  const template = document.getElementById('morning-ritual-edit');
+  if (!template) return null;
+
+  const panel = template.content.firstElementChild.cloneNode(true);
+  const draft = panel.querySelector('[data-edit-draft]');
+  const markup = panel.querySelector('[data-edit-markup]');
+  const rewrite = panel.querySelector('[data-edit-rewrite]');
+  const notes = panel.querySelector('[data-edit-notes]');
+  const slider = panel.querySelector('input[type="range"]');
+  const buttons = [...panel.querySelectorAll('.revision-controls button')];
+  const status = panel.querySelector('.ritual-status');
+
+  const collect = tag => [...markup.querySelectorAll(tag)]
+    .map(part => part.textContent.trim()).join(' ');
+  draft.textContent = collect('del');
+  rewrite.textContent = collect('ins');
+
+  function showStage(index, announce = true) {
+    slider.value = String(index);
+    const label = buttons[index].textContent.trim();
+    slider.setAttribute('aria-valuetext', label);
+    [draft, markup, rewrite].forEach((stage, i) => {
+      stage.hidden = i !== index;
+      buttons[i].setAttribute('aria-pressed', String(i === index));
+    });
+    notes.hidden = index !== 1;
+    if (announce) status.textContent = 'Morning Ritual: ' + label;
+  }
+
+  buttons.forEach((button, index) => {
+    button.addEventListener('click', () => showStage(index));
+  });
+  slider.addEventListener('input', () => showStage(slider.valueAsNumber));
+  showStage(1, false);
+  return panel;
+}
+// END: Compare the edit · Morning Ritual
+
 function revisionControl(id, title, finalLine, example) {
+  if (id === 'sample-email') {
+    const ritual = createMorningRitualEdit();
+    if (ritual) return ritual;
+  }
   const draft = example?.draft ?? practiceDrafts[id];
   const rewrite = example?.rewrite ?? finalLine;
   if (!draft || !rewrite) return null;
@@ -500,29 +544,54 @@ function setupInkPointer() {
   const pull = number('--magnet-strength');
   let x = 0, y = 0, rx = 0, ry = 0, target, card, magnet, frame = 0;
   let needsHitTest = false;
+  let pointerChanged = false;
+  let lastPaint = 0;
   function reset() {
     cancelAnimationFrame(frame);
     frame = 0;
     needsHitTest = false;
-    document.body.classList.remove('ink-pointer-on');
+    pointerChanged = false;
+    lastPaint = 0;
+    document.body.classList.remove('ink-pointer-on', 'ink-pointer-native');
     for (const item of [card,magnet]) item?.removeAttribute('data-reactive');
     card = magnet = target = null;
   }
-  function paint() {
+  function paint(now) {
     frame = 0;
     if (needsHitTest) {
       needsHitTest = false;
       target = document.elementFromPoint(x, y);
+      pointerChanged = true;
     }
+    if (pointerChanged) {
+      pointerChanged = false;
+      updatePointerTarget();
+      dot.style.translate = x+'px '+y+'px';
+    }
+    const elapsed = lastPaint ? Math.min(now - lastPaint, 64) : 1000 / 60;
+    const blend = 1 - (1 - follow) ** (elapsed / (1000 / 60));
+    lastPaint = now;
+    rx += (x-rx)*blend; ry += (y-ry)*blend;
+    const settled = Math.abs(x-rx)+Math.abs(y-ry) <= .35;
+    if (settled) {
+      rx = x; ry = y;
+      lastPaint = 0;
+    }
+    ring.style.translate = rx+'px '+ry+'px';
+    if (!settled) frame = requestAnimationFrame(paint);
+  }
+  function updatePointerTarget() {
     const nextCard = target?.closest('.work-card,.sample');
     const nextMagnet = target?.closest('.button,.header nav a,.header-contact');
+    const cardBox = nextCard?.getBoundingClientRect();
+    const magnetBox = nextMagnet?.getBoundingClientRect();
     if (card !== nextCard) card?.removeAttribute('data-reactive');
     if (magnet !== nextMagnet) magnet?.removeAttribute('data-reactive');
     card = nextCard;
     magnet = nextMagnet;
     for (const item of [card,magnet]) {
       if (!item) continue;
-      const box = item.getBoundingClientRect();
+      const box = item === card ? cardBox : magnetBox;
       const px = Math.max(0,Math.min(1,(x-box.left)/box.width));
       const py = Math.max(0,Math.min(1,(y-box.top)/box.height));
       item.dataset.reactive = '';
@@ -537,16 +606,15 @@ function setupInkPointer() {
       }
     }
     const control = target?.closest('a,button,summary,input');
+    const nativeControl = target?.closest('.contact-form :is(input,select,textarea,button:disabled)');
+    document.body.classList.toggle('ink-pointer-native', Boolean(nativeControl));
     ring.classList.toggle('over-headline', Boolean(control?.matches('.headline-cycle')));
     ring.dataset.mode = control ? 'link' : target?.closest('p,h1,h2,dt,dd') ? 'text' : 'idle';
-    rx += (x-rx)*follow; ry += (y-ry)*follow;
-    dot.style.translate = x+'px '+y+'px';
-    ring.style.translate = rx+'px '+ry+'px';
-    if (Math.abs(x-rx)+Math.abs(y-ry) > .35) frame = requestAnimationFrame(paint);
   }
   document.addEventListener('pointermove', e => {
     if (!fine.matches || e.pointerType !== 'mouse' || document.querySelector('dialog[open]')) { reset(); return; }
     target = e.target; x = e.clientX; y = e.clientY;
+    pointerChanged = true;
     if (!document.body.classList.contains('ink-pointer-on')) { rx=x; ry=y; document.body.classList.add('ink-pointer-on'); }
     if (!frame) frame = requestAnimationFrame(paint);
   }, {passive:true});

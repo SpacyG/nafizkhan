@@ -1,9 +1,9 @@
 :root {
   color-scheme: light;
   --marker: #ffd84d;
-  --guide-tick: 105ms;
-  --guide-write: 560ms;
-  --guide-arrive: 480ms;
+  --guide-tick: 75ms;
+  --guide-write: 460ms;
+  --guide-arrive: 420ms;
   --guide-line-time: 700ms;
   --guide-mark-time: 470ms;
   --guide-step-gap: 230ms;
@@ -67,7 +67,7 @@
   --rise: .85rem;
   --proof-line: 1.35rem;
 
-  --ring-follow: .28;
+  --ring-follow: .24;
   --tilt-strength: 5;
   --magnet-strength: 11;
   --cursor-dot: 5px;
@@ -82,6 +82,10 @@
   --rewrite-time: 580ms;
   --stagger: 45ms;
   --ease: cubic-bezier(.22, .68, .23, 1);
+  --ease-arrive: cubic-bezier(.22, 1, .36, 1);
+  --ease-crossfade: cubic-bezier(.4, 0, .2, 1);
+  --page-fade: 280ms;
+  --splash-exit: 520ms;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -344,12 +348,12 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
 @view-transition { navigation: auto; }
 
 @media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+  ::view-transition-group(root), ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
 }
 
 @media (prefers-reduced-motion: no-preference) {
   html:has(.site-header) { scroll-behavior: smooth; }
-  ::view-transition-old(root), ::view-transition-new(root) { animation-duration: var(--standard); animation-timing-function: var(--ease); }
+  ::view-transition-group(root) { animation-duration: var(--page-fade); animation-timing-function: var(--ease-crossfade); }
   .site-header { transition: background-color var(--standard) var(--ease), box-shadow var(--standard) var(--ease); }
   .header a, .footer a, .text-link, .email, .feedback a { transition: background-size var(--standard) var(--ease); }
   .button, .sample-selector button, .filters button, .sample-dialog button { transition: background-color var(--quick) var(--ease), box-shadow var(--quick) var(--ease); }
@@ -432,6 +436,9 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
   .ink-ring[data-mode=link] { width:var(--cursor-expanded); height:var(--cursor-expanded); }
   .ink-pointer-on .ink-ring[data-mode=link] { width:var(--cursor-expanded); height:var(--cursor-expanded); }
   .ink-pointer-on .ink-ring[data-mode=text] { width:1.6rem; height:.65rem; background:var(--spot-color); border-radius:0; }
+  .ink-pointer-native :is(.ink-dot,.ink-ring) { visibility:hidden; }
+  .ink-pointer-on .contact-form :is(input,textarea) { cursor:text; }
+  .ink-pointer-on .contact-form select { cursor:default; }
   :is(.button,.header a)[data-reactive] { translate:var(--pull-x) var(--pull-y); }
   :is(.work-card,.sample)[data-reactive] { transform:perspective(60rem) rotateX(var(--pitch)) rotateY(var(--yaw)); background-image:radial-gradient(circle var(--spot-radius) at var(--spot-x) var(--spot-y),var(--spot-color),transparent); }
 }
@@ -631,13 +638,13 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
   }
   .guide-next.guide-drawn::before { animation: guide-line var(--guide-line-time) var(--ease) both; }
   .guide-next.guide-drawn .guide-mark { animation: guide-float var(--guide-mark-time) var(--ease) var(--guide-tick) both; }
-  .writing-visible .eyebrow { animation: guide-arrive var(--guide-arrive) var(--ease) both; }
-  .writing-visible :is(h1,h2) { animation: guide-write var(--guide-write) var(--ease) var(--guide-tick) both; }
+  .writing-visible .eyebrow { animation: guide-arrive var(--guide-arrive) var(--ease-arrive) both; }
+  .writing-visible :is(h1,h2) { animation: guide-write var(--guide-write) var(--ease-arrive) var(--guide-tick) both; }
   .writing-visible :is(.guide-primary,.proof-squiggle,.proof-note,.proof-arrow) {
     animation: guide-float var(--guide-mark-time) var(--ease) calc(3 * var(--guide-tick)) both;
   }
   .writing-visible :is(.intro,.section-note,.services,.work-reader,.portrait,.case-notes,.section.split > p) {
-    animation: guide-arrive var(--guide-arrive) var(--ease) calc(3 * var(--guide-tick)) both;
+    animation: guide-arrive var(--guide-arrive) var(--ease-arrive) calc(2 * var(--guide-tick)) both;
   }
   .approach-steps.guide-drawn::before { animation: guide-pen-thread var(--guide-process-time) var(--ease) both; }
   .approach-steps.guide-drawn strong {
@@ -649,7 +656,7 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
     stroke-dasharray: 1; animation: guide-stroke var(--guide-mark-time) var(--ease) calc(var(--guide-step, 0) * var(--guide-step-gap)) both;
   }
 }
-@keyframes guide-write { from { clip-path: inset(-.6em 100% -.6em -.3em); opacity: .5; } to { clip-path: none; opacity: 1; } }
+@keyframes guide-write { from { opacity: .42; transform: translateY(.42rem); } to { opacity: 1; transform: none; } }
 @keyframes guide-highlight { from { background-size: 0 .53em; } }
 @keyframes guide-arrive { from { opacity: .52; transform: translateY(.35rem); } }
 @keyframes guide-line { from { transform: scaleX(0); } }
@@ -661,7 +668,7 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
 .splash {
   position: fixed; inset: 0; z-index: 20; display: grid; place-content: center; justify-items: center; gap: 1.1rem;
   background: var(--paper); color: var(--ink); cursor: pointer;
-  animation: splash-out 650ms var(--ease) 2.15s forwards;
+  animation: splash-out var(--splash-exit) var(--ease-crossfade) 2.15s forwards;
 }
 html.no-splash .splash { display: none; }
 .splash-mark { width: clamp(6.5rem, 22vw, 9.5rem); height: auto; overflow: visible; }
@@ -671,7 +678,7 @@ html.no-splash .splash { display: none; }
 .splash-name { font: 700 .8rem/1 var(--sans); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
 .splash-name span { color: var(--accent-text); }
 
-@keyframes splash-out { to { transform: translateY(-100%); visibility: hidden; } }
+@keyframes splash-out { to { opacity: 0; transform: translateY(-.75rem); visibility: hidden; } }
 @keyframes splash-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 @keyframes splash-pop { 0% { transform: scale(0); } 70% { transform: scale(1.35); } 100% { transform: scale(1); } }
 @keyframes splash-fade { from { opacity: 0; transform: translateY(.4rem); } to { opacity: 1; transform: none; } }
@@ -732,25 +739,12 @@ html.no-splash .splash { display: none; }
 
 
 .service-detail { margin-top: var(--space-2); color: var(--ink); font-weight: 700; }
-.working-together { padding-block: var(--space-7); }
-.working-together h2 { font-size: clamp(1.65rem,3vw,2.45rem); }
-.working-together dl { display: grid; gap: var(--space-4); margin-top: var(--space-4); }
-.working-together dt { font-weight: 700; }
-.working-together dd { color: var(--muted); margin-top: var(--space-1); }
 .about-hero, .about-page .section.split { padding-block: clamp(1.7rem,4.2vw,3.4rem); }
 .about-hero h1 { font-size: clamp(2.9rem,6.8vw,5.55rem); }
 .about-page .section.split h2 { font-size: clamp(2rem,4.3vw,3.55rem); }
 .about-page .section.split { row-gap: var(--space-3); }
 .about-details > p { color: var(--muted); max-width: var(--measure); }
-.face-photo { margin: var(--space-4) 0 0; max-width: 13rem; }
-.face-photo-slot {
-  display: grid; place-items: center; min-height: 6.5rem; padding: var(--space-2);
-  border: 1px dashed var(--muted); background: var(--surface); color: var(--muted);
-  font-size: var(--small); text-align: center;
-}
-.face-photo img { width: 100%; height: auto; }
 @media (min-width: 43rem) {
-  .working-together dl { grid-template-columns: repeat(3,minmax(0,1fr)); }
   .about-page .section.split { grid-template-columns: minmax(0,.8fr) minmax(0,1.2fr); }
 }
 
@@ -878,3 +872,113 @@ html.no-splash .splash { display: none; }
   .case-study-drafts { grid-template-columns: repeat(3,minmax(0,1fr)); }
 }
 
+/* START: How working together works */
+.working-together { padding-block: var(--space-7); }
+.working-together h2 { font-size: clamp(1.65rem, 3vw, 2.45rem); }
+.working-together .collab-steps {
+  counter-reset: step;
+  list-style: none;
+  display: grid;
+  margin: var(--space-5) 0 0;
+  padding: 0;
+}
+.collab-steps > li {
+  counter-increment: step;
+  position: relative;
+  border-top: 1px solid var(--line);
+  padding: var(--space-4) 0 var(--space-4) var(--space-9);
+}
+.collab-steps > li::before {
+  content: counter(step, decimal-leading-zero);
+  position: absolute;
+  inset-inline-start: 0;
+  color: var(--accent-text);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.working-together h3 {
+  margin: 0;
+  font: 700 1.3rem/1.2 var(--display);
+}
+.working-together p { margin: var(--space-2) 0 0; }
+.collab-time {
+  color: var(--accent-text);
+  font-size: var(--small);
+  font-weight: 700;
+}
+.collab-details {
+  display: grid;
+  gap: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--line);
+}
+.collab-details ul {
+  margin: var(--space-2) 0 0;
+  padding-inline-start: 1.25em;
+}
+.collab-details li::marker { color: var(--accent-text); }
+@media (min-width: 48rem) {
+  .working-together .collab-steps,
+  .collab-details { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-7); }
+}
+@media (min-width: 75rem) {
+  .working-together .collab-steps { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+/* END: How working together works */
+
+/* START: Compare the edit · Morning Ritual */
+.ritual-edit .revision-controls { margin-bottom: var(--space-4); }
+.ritual-edit .revision-controls button { min-height: 44px; }
+.ritual-edit .revision-controls button[aria-pressed="true"] {
+  background: var(--marker);
+  color: var(--ink);
+  border-color: var(--ink);
+}
+.ritual-edit :is(button, input):focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 3px;
+}
+.ritual-copy {
+  margin: 0;
+  font: 400 clamp(1.15rem, 1rem + .65vw, 1.55rem)/1.55 var(--display);
+}
+.ritual-copy del {
+  color: var(--accent-text);
+  text-decoration-thickness: .1em;
+}
+.ritual-copy ins {
+  color: var(--ink);
+  text-decoration: underline var(--accent-text) .09em;
+  text-underline-offset: .16em;
+}
+.ritual-change { display: block; }
+.ritual-change + .ritual-change { margin-top: var(--space-2); }
+.ritual-change sup {
+  margin-inline-start: .35em;
+  padding: .06em .33em;
+  border: 1px solid currentColor;
+  color: var(--accent-text);
+  font: 700 var(--label)/1.25 var(--sans);
+}
+.ritual-notes {
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--line);
+  font-size: var(--small);
+}
+.ritual-notes h3 { margin: 0; font-size: inherit; }
+.ritual-notes ol { margin: var(--space-2) 0 0; padding-inline-start: 1.4em; }
+.ritual-notes li::marker { color: var(--accent-text); font-weight: 700; }
+.ritual-outcome { margin: var(--space-4) 0 0; font-size: var(--small); }
+.ritual-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ritual-edit, .ritual-edit * { transition: none; animation: none; }
+}
+/* END: Compare the edit · Morning Ritual */
