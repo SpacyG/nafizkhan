@@ -4,6 +4,11 @@
 
 Home, Work and About use the marked-up proof design. The homepage leads straight from the first-person hero to Work. Five concept samples include case notes and playable edits. The section menu and project-type email controls work with keyboard and touch. Privacy and Terms are static. The owner studio uses the Node server for publishing.
 
+## 2026-11-25 - Margin portfolio chat
+
+- Embedded Margin on Home, Work, and About. The widget answers common portfolio questions and prepares a brief for the visitor to send.
+- Kept chat messages in the current page and preserved the existing contact form and email handoff.
+
 ## 2026-11-25 - Portfolio audit fixes
 
 - Removed the full-screen intro so the portfolio is readable on first paint. Kept the on-page pen effects for visitors who allow motion.
