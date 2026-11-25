@@ -1,40 +1,7 @@
 (function () {
   'use strict';
-    if (typeof HTMLDialogElement === 'undefined' || typeof HTMLDialogElement.prototype.showModal !== 'function') return;
-    const widget = document.createElement('div');
-    widget.className = 'margin-widget';
-    widget.innerHTML = `
-    <button type="button" class="margin-launcher" aria-haspopup="dialog" aria-controls="margin-dialog">
-      <span aria-hidden="true">M.</span> Chat with Margin
-    </button>
-    <dialog id="margin-dialog" class="margin-dialog" aria-labelledby="margin-title">
-      <div class="margin-head">
-        <div><h2 id="margin-title">Margin<span>.</span></h2><p>Nafiz Khan’s portfolio assistant</p></div>
-        <button type="button" data-margin-close aria-label="Close Margin">Close</button>
-      </div>
-      <section data-margin-transcript role="log" aria-label="Conversation" tabindex="0"></section>
-      <div class="margin-starters" role="group" aria-label="Suggested messages">
-        <button type="button" data-intent="process">How it works</button>
-        <button type="button" data-intent="pricing">Pricing</button>
-        <button type="button" data-intent="sample">See a sample edit</button>
-        <button type="button" data-intent="start">Start a project</button>
-      </div>
-      <form class="margin-form">
-        <label for="margin-message">Message Margin</label>
-        <input id="margin-message" maxlength="800" autocomplete="off" enterkeyhint="send" required>
-        <button type="submit">Send</button>
-      </form>
-      <div class="margin-foot"><p>Chat stays on this page.</p><button type="button" data-margin-reset>New chat</button></div>
-    </dialog>
-  `;
-    document.body.append(widget);
-    const dialog = widget.querySelector('dialog');
-    const launcher = widget.querySelector('.margin-launcher');
-    const closeButton = dialog.querySelector('[data-margin-close]');
-    launcher.addEventListener('click', () => { dialog.showModal(); closeButton.focus(); });
-    closeButton.addEventListener('click', () => dialog.close());
-    dialog.addEventListener('close', () => launcher.focus());
 
+  // BEGIN EXISTING MARGIN ANSWER ENGINE
   const portfolio = new URL('index.html', location.href).href;
   const workPage = new URL('work.html', location.href).href;
   const email = 'n.tonmoy.khan@gmail.com';
@@ -137,19 +104,98 @@
       return { text: fallback, links: [['Email Nafiz', 'mailto:' + email]] };
     };
   }
+  // END EXISTING MARGIN ANSWER ENGINE
 
+  // BEGIN MARGIN CHAT INTERFACE
+  const widget = document.querySelector('.margin-widget');
+  if (!widget || typeof HTMLDialogElement === 'undefined' ||
+      typeof HTMLDialogElement.prototype.showModal !== 'function') return;
+
+  const dialog = widget.querySelector('dialog');
+  const launcher = widget.querySelector('.margin-launcher');
+  const unread = widget.querySelector('.margin-unread');
+  const thread = dialog.querySelector('.margin-thread');
   const transcript = dialog.querySelector('[data-margin-transcript]');
+  const typing = dialog.querySelector('.margin-typing');
+  const starters = dialog.querySelector('.margin-starters');
+  const form = dialog.querySelector('.margin-form');
   const message = dialog.querySelector('#margin-message');
+  const submit = form.querySelector('[type="submit"]');
+  const narrow = matchMedia('(max-width: 479px)');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  const clock = new Intl.DateTimeFormat(undefined, {hour:'numeric', minute:'2-digit'});
+  const replyQueue = [];
   let respond = createMargin();
+  let replyTimer;
+  let lastAuthor;
+  let started = false;
+
+  function scrollToLatest() {
+    thread.scrollTop = thread.scrollHeight;
+  }
+
+  function setUnread(value) {
+    unread.hidden = !value;
+    launcher.setAttribute('aria-label', value ? 'Chat with Margin, unread reply' : 'Chat with Margin');
+  }
+
+  function openChat() {
+    if (!started) {
+      started = true;
+      addMessage('Margin', {text: welcome});
+    }
+    if (narrow.matches) dialog.showModal();
+    else dialog.show();
+    widget.classList.toggle('margin-sheet-open', narrow.matches);
+    launcher.setAttribute('aria-expanded', 'true');
+    launcher.hidden = true;
+    setUnread(false);
+    message.focus({preventScroll:true});
+    scrollToLatest();
+  }
+
+  launcher.addEventListener('click', openChat);
+  dialog.querySelector('[data-margin-close]').addEventListener('click', () => dialog.close());
+  dialog.addEventListener('close', () => {
+    if (dialog.open) return;
+    widget.classList.remove('margin-sheet-open');
+    launcher.hidden = false;
+    launcher.setAttribute('aria-expanded', 'false');
+    launcher.focus({preventScroll:true});
+  });
+  narrow.addEventListener('change', () => {
+    if (!dialog.open) return;
+    dialog.close();
+    openChat();
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && dialog.open && !narrow.matches &&
+        !document.querySelector('dialog:modal')) {
+      event.preventDefault();
+      dialog.close();
+    }
+  });
 
   function addMessage(who, result) {
+    const isVisitor = who === 'You';
     const entry = document.createElement('article');
-    if (who === 'You') entry.className = 'margin-visitor';
-    const label = document.createElement('strong');
-    label.textContent = who;
+    entry.className = isVisitor ? 'margin-entry margin-visitor' : 'margin-entry';
+    entry.tabIndex = 0;
+    const avatar = document.createElement('span');
+    avatar.className = 'margin-avatar';
+    avatar.setAttribute('aria-hidden', 'true');
+    avatar.textContent = 'M.';
+    if (!isVisitor && lastAuthor !== who) entry.append(avatar);
+    lastAuthor = who;
+
+    const bubble = document.createElement('div');
+    bubble.className = 'margin-bubble';
+    const label = document.createElement('span');
+    label.className = 'margin-sr-only';
+    label.textContent = who + ': ';
     const text = document.createElement('p');
     text.textContent = result.text;
-    entry.append(label, text);
+    bubble.append(label, text);
     if (result.links) {
       const links = document.createElement('div');
       links.className = 'margin-links';
@@ -157,34 +203,78 @@
         const link = document.createElement('a');
         link.textContent = label;
         link.href = href;
+        link.addEventListener('click', () => dialog.close());
         links.append(link);
       }
-      entry.append(links);
+      bubble.append(links);
     }
+
+    const timestamp = document.createElement('time');
+    const now = new Date();
+    timestamp.dateTime = now.toISOString();
+    timestamp.textContent = clock.format(now);
+    entry.append(bubble, timestamp);
     transcript.append(entry);
-    transcript.scrollTop = transcript.scrollHeight;
+    scrollToLatest();
+  }
+
+  function deliverReply() {
+    if (!replyQueue.length) {
+      typing.hidden = true;
+      return;
+    }
+    typing.hidden = false;
+    scrollToLatest();
+    replyTimer = setTimeout(() => {
+      replyTimer = undefined;
+      addMessage('Margin', replyQueue.shift());
+      if (!dialog.open) setUnread(true);
+      deliverReply();
+    }, reduced.matches ? 0 : 360);
   }
 
   function send(text, suggested) {
     if (!text.trim()) return;
-    addMessage('You', { text });
-    addMessage('Margin', respond(text, suggested));
+    addMessage('You', {text});
+    message.focus({preventScroll:true});
+    starters.hidden = true;
+    replyQueue.push(respond(text, suggested));
+    if (replyTimer === undefined) deliverReply();
   }
 
-  dialog.querySelector('.margin-form').addEventListener('submit', event => {
+  function updateSubmit() {
+    submit.disabled = !message.value.trim();
+  }
+  message.addEventListener('input', updateSubmit);
+  message.addEventListener('keydown', event => {
+    if (event.key !== 'Enter' || event.shiftKey || event.isComposing) return;
+    event.preventDefault();
+    if (!submit.disabled) form.requestSubmit();
+  });
+  form.addEventListener('submit', event => {
     event.preventDefault();
     send(message.value);
     message.value = '';
+    updateSubmit();
   });
-  dialog.querySelectorAll('[data-intent]').forEach(button => {
+  starters.querySelectorAll('[data-intent]').forEach(button => {
     button.addEventListener('click', () => send(button.textContent, button.dataset.intent));
   });
   dialog.querySelector('[data-margin-reset]').addEventListener('click', () => {
     respond = createMargin();
+    clearTimeout(replyTimer);
+    replyTimer = undefined;
+    replyQueue.length = 0;
+    typing.hidden = true;
+    lastAuthor = undefined;
     transcript.replaceChildren();
+    starters.hidden = false;
+    starters.scrollLeft = 0;
     message.value = '';
-    addMessage('Margin', { text: welcome });
-    message.focus();
+    updateSubmit();
+    addMessage('Margin', {text: welcome});
+    message.focus({preventScroll:true});
   });
-  addMessage('Margin', { text: welcome });
+  launcher.hidden = false;
+  // END MARGIN CHAT INTERFACE
 })();

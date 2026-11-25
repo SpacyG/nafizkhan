@@ -4,6 +4,11 @@
 
 Home, Work and About use the marked-up proof design. The homepage leads straight from the first-person hero to Work. Five concept samples include case notes and playable edits. The section menu and project-type email controls work with keyboard and touch. Privacy and Terms are static. The owner studio uses the Node server for publishing.
 
+## 2026-11-25 - Margin chat interface
+
+- Redesigned Margin as a corner chat window on desktop and a scroll-locked full-screen sheet on phones.
+- Added chat bubbles, a typing indicator, unread replies, a multiline composer, and keyboard focus restoration. Kept the existing replies and project brief flow.
+
 ## 2026-11-25 - Margin portfolio chat
 
 - Embedded Margin on Home, Work, and About. The widget answers common portfolio questions and prepares a brief for the visitor to send.

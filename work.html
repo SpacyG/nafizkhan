@@ -6,10 +6,10 @@
 <title>Writing Samples | Nafiz Khan</title>
 <meta name="description" content="Read copywriting samples by Nafiz Khan, including welcome emails, a sales page, and a landing page.">
 <link rel="icon" href="images/mark.svg" type="image/svg+xml">
-<link rel="stylesheet" href="site.css?v=20261125-margin">
+<link rel="stylesheet" href="site.css?v=20261125-margin-chat">
 <link rel="canonical" href="https://spacyg.github.io/nafizkhan/work.html">
 <script defer src="site.js?v=20261125-audit-fixes"></script>
-<script defer src="margin.js?v=20261125-margin"></script>
+<script defer src="margin.js?v=20261125-margin-chat"></script>
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Nafiz Khan">
 <meta property="og:title" content="Writing Samples | Nafiz Khan">
@@ -257,5 +257,41 @@
   </fieldset>
 </template>
 <!-- END: Compare the edit · Morning Ritual -->
+<!-- BEGIN MARGIN WIDGET -->
+<div class="margin-widget">
+  <button type="button" class="margin-launcher" aria-label="Chat with Margin" aria-haspopup="dialog" aria-controls="margin-dialog" aria-expanded="false" hidden>
+    <span class="margin-launch-mark" aria-hidden="true">M.</span>
+    <span class="margin-launch-label" aria-hidden="true">Chat with Margin</span>
+    <span class="margin-unread" aria-hidden="true" hidden></span>
+  </button>
+  <dialog id="margin-dialog" class="margin-dialog" role="dialog" aria-labelledby="margin-title">
+    <header class="margin-head">
+      <span class="margin-avatar" aria-hidden="true">M.</span>
+      <div class="margin-heading">
+        <h2 id="margin-title">Margin<span>.</span></h2>
+        <p>Nafiz Khan’s portfolio assistant</p>
+        <p class="margin-status">AI assistant</p>
+      </div>
+      <button type="button" data-margin-close aria-label="Close Margin"><span aria-hidden="true">×</span></button>
+    </header>
+    <div class="margin-thread">
+      <section data-margin-transcript role="log" aria-label="Conversation" aria-live="polite" tabindex="0"></section>
+      <div class="margin-typing" aria-hidden="true" hidden><span></span><span></span><span></span></div>
+    </div>
+    <div class="margin-starters" role="group" aria-label="Suggested messages">
+      <button type="button" data-intent="process">How it works</button>
+      <button type="button" data-intent="pricing">Pricing</button>
+      <button type="button" data-intent="sample">See a sample edit</button>
+      <button type="button" data-intent="start">Start a project</button>
+    </div>
+    <form class="margin-form">
+      <label class="margin-sr-only" for="margin-message">Message Margin</label>
+      <textarea id="margin-message" rows="1" maxlength="800" placeholder="Write a message…" enterkeyhint="send" required></textarea>
+      <button type="submit" disabled>Send</button>
+    </form>
+    <footer class="margin-foot"><p>Chat stays on this page.</p><button type="button" data-margin-reset>New chat</button></footer>
+  </dialog>
+</div>
+<!-- END MARGIN WIDGET -->
 </body>
 </html>
