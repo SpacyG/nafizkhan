@@ -484,9 +484,9 @@ function setupHeadline() {
   if (!headline) return;
   const lines = [...headline.querySelectorAll('.hero-headline')];
   if (lines.length < 2) return;
+  headline.closest('.masthead').classList.add('intro-playing');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const hover = matchMedia('(hover: hover)');
-  const splash = document.querySelector('#splash');
   let index = 0;
   let inView = !('IntersectionObserver' in window);
   let timer;
@@ -500,7 +500,7 @@ function setupHeadline() {
   function schedule() {
     clearTimeout(timer);
     if (reduced.matches || document.hidden || !inView ||
-        (splash && !splash.hidden) || (hover.matches && headline.matches(':hover'))) return;
+        (hover.matches && headline.matches(':hover'))) return;
     timer = setTimeout(() => {
       showLine((index + 1) % lines.length);
       schedule();
@@ -512,13 +512,6 @@ function setupHeadline() {
       inView = entry.isIntersecting;
       schedule();
     }).observe(headline);
-  }
-  if (splash && !splash.hidden) {
-    new MutationObserver((_, observer) => {
-      if (!splash.hidden) return;
-      observer.disconnect();
-      schedule();
-    }).observe(splash, { attributeFilter: ['hidden'] });
   }
   headline.addEventListener('pointerenter', schedule);
   headline.addEventListener('pointerleave', schedule);
@@ -694,7 +687,7 @@ function setupInkProgress() {
   if (!bar) return;
   const nav = [...siteHeader.querySelectorAll('nav a,.header-contact')];
   const sections = [...document.querySelectorAll('.home-page main section[id]')];
-  const targets = {home:'Home',work:'Work',services:'Services',approach:'Services',about:'About',contact:'Get in touch'};
+  const destinations = { approach: '#services', process: '#contact', faq: '#contact', reviews: '#contact' };
   let frame = 0;
   function update() {
     frame = 0;
@@ -703,8 +696,13 @@ function setupInkProgress() {
     if (!sections.length) return;
     const current = sections.filter(section=>section.getBoundingClientRect().top <= siteHeader.offsetHeight+innerHeight*.25).at(-1) || sections[0];
     const active = max > 0 && scrollY >= max - 2 ? sections.at(-1) : current;
-    const label = targets[active.id];
-    nav.forEach(link=>link.classList.toggle('current-section',link.textContent.trim().startsWith(label)));
+    const destination = destinations[active.id] || '#' + active.id;
+    nav.forEach(link => {
+      const isCurrent = link.hash === destination;
+      link.classList.toggle('current-section', isCurrent);
+      if (isCurrent) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
   }
   function queue(){ if (!frame) frame=requestAnimationFrame(update); }
   addEventListener('scroll',queue,{passive:true});

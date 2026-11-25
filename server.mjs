@@ -27,7 +27,7 @@ const assets = new Map([
   ['404.html', 'text/html'], ['terms.html', 'text/html'], ['privacy.html', 'text/html'], ['studio.html', 'text/html'],
   ['site.css', 'text/css'], ['site.js', 'text/javascript'], ['studio.js', 'text/javascript'],
   ['images/mark.svg', 'image/svg+xml'], ['images/nafiz-portrait.jpg', 'image/jpeg'], ['images/cosmic-hero.jpg', 'image/jpeg'], ['images/social-preview.png', 'image/png'],
-  ['robots.txt', 'text/plain'], ['sitemap.xml', 'application/xml']
+  ['robots.txt', 'text/plain'], ['llms.txt', 'text/plain'], ['sitemap.xml', 'application/xml']
 ]);
 const headers = {
   'Content-Security-Policy': "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; form-action 'self' https://formspree.io; base-uri 'none'; frame-ancestors 'none'; object-src 'none'",
@@ -125,9 +125,6 @@ export function createPortfolio({ origin, dataDir, host = '127.0.0.1', passwordH
   const publicUrl = new URL(origin);
   if (feedbackFrontendOrigin && (new URL(feedbackFrontendOrigin).origin !== feedbackFrontendOrigin ||
       !feedbackFrontendOrigin.startsWith('https://'))) throw Error('FEEDBACK_FRONTEND_ORIGIN must be an HTTPS origin.');
-  const splashScripts = [...readFileSync(resolve(root, 'index.html'), 'utf8').matchAll(/<script>([\s\S]*?)<\/script>/g)];
-  const splashHashes = splashScripts.map(([, script]) =>
-    "'sha256-" + createHash('sha256').update(script.replace(/\r\n?/g, '\n')).digest('base64') + "'").join(' ');
   const secure = publicUrl.protocol === 'https:';
   if (publicUrl.origin !== origin || (!secure && !/^http:\/\/(?:127\.0\.0\.1|localhost)(?::\d+)?$/.test(origin))) {
     throw Error('SITE_ORIGIN must be an HTTPS origin, or a local HTTP origin for development.');
@@ -366,7 +363,7 @@ export function createPortfolio({ origin, dataDir, host = '127.0.0.1', passwordH
     }
     if (name === 'index.html') {
       response.setHeader('Content-Security-Policy', headers['Content-Security-Policy'].replace(
-        "script-src 'self';", "script-src 'self' " + splashHashes + "; frame-src https://script.google.com https://*.googleusercontent.com;"
+        "script-src 'self';", "script-src 'self'; frame-src https://script.google.com https://*.googleusercontent.com;"
       ));
     }
     response.writeHead(status, {

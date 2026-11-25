@@ -4,6 +4,14 @@
 
 Home, Work and About use the marked-up proof design. The homepage leads straight from the first-person hero to Work. Five concept samples include case notes and playable edits. The section menu and project-type email controls work with keyboard and touch. Privacy and Terms are static. The owner studio uses the Node server for publishing.
 
+## 2026-11-25 - Portfolio audit fixes
+
+- Removed the full-screen intro so the portfolio is readable on first paint. Kept the on-page pen effects for visitors who allow motion.
+- Tightened the mobile hero, gave both actions clear focus states, and enlarged interactive targets.
+- Darkened muted copy and red text used on cream surfaces.
+- Added section links, a footer update date, availability copy, a WebSite and Person graph, and a root llms.txt.
+- Made the existing contact forms submit without JavaScript.
+
 ## 2026-11-25 - Viewport-aware sample comparisons
 
 - Start home comparisons on Practice draft and play through the edit only while the panel is in view. Picking a stage or using the slider pauses autoplay for that sample.

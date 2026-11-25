@@ -92,6 +92,10 @@ test('public pages, headers, assets, and protected paths', async () => {
     assert.equal(asset.status, 200);
     assert.equal(asset.headers.get('content-type'), 'image/jpeg');
   }
+  const llms = await request('/llms.txt');
+  assert.equal(llms.status, 200);
+  assert.match(llms.headers.get('content-type'), /^text\/plain/);
+  assert.match(await llms.text(), /^# Nafiz Khan/);
   const seeded = await (await request('/api/content.json')).json();
   assert.deepEqual(seeded.entries.map(entry => entry.id), ['sample-email', 'sample-sales', 'sample-landing', 'sample-bookstore', 'sample-lumaskin']);
   for (const name of ['/server.mjs', '/samples.json', '/data/portfolio.sqlite', '/.git/config']) {
@@ -204,7 +208,7 @@ test('public feedback validates submissions and survives restarting the server',
   await stop();
   await start({ dataDir });
   assert.deepEqual((await (await request(path)).json()).feedback, [message]);
-  assert.match((await request('/')).headers.get('content-security-policy'), /script-src 'self' 'sha256-/);
+  assert.match((await request('/')).headers.get('content-security-policy'), /script-src 'self'; frame-src https:\/\/script\.google\.com/);
 });
 
 

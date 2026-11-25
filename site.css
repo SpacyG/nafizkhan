@@ -10,10 +10,10 @@
   --guide-process-time: 920ms;
   --paper: #f5f0e6;
   --ink: #15130f;
-  --muted: #474039;
+  --muted: #3b342e;
   --accent: #e5472b;
   --surface: #fffaf1;
-  --accent-text: #a82c19;
+  --accent-text: #8d2516;
   --line: color-mix(in srgb, var(--ink) 24%, var(--paper));
   --rule: color-mix(in srgb, var(--ink) 11%, var(--surface));
   --highlight: color-mix(in srgb, var(--accent) 16%, var(--surface));
@@ -85,7 +85,6 @@
   --ease-arrive: cubic-bezier(.22, 1, .36, 1);
   --ease-crossfade: cubic-bezier(.4, 0, .2, 1);
   --page-fade: 280ms;
-  --splash-exit: 520ms;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -157,7 +156,6 @@ button, summary { cursor: pointer; }
 .hero-copy { position: relative; }
 .hero-copy h1 { font-size: var(--title); margin-inline-start: -.045em; }
 .hero-copy h2 { margin-top: var(--space-5); max-width: 17ch; font-size: var(--card-title); font-weight: 400; }
-.hero-copy .button { margin-top: var(--space-6); }
 .hero-edit, .pen-underline { display: inline-block; position: relative; isolation: isolate; }
 .edit-final { display: inline-block; position: relative; }
 .edit-draft { display: none; position: absolute; inset: 0 auto auto 0; color: var(--muted); font: 700 .7em/1.5 var(--sans); letter-spacing: -.045em; }
@@ -362,15 +360,15 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
   .sample-dialog[open] { animation: reveal-in var(--standard) var(--ease); }
   .is-revealing { animation: reveal-in var(--reveal-time) var(--ease) calc(var(--reveal-index, 0) * var(--stagger)) both; }
   .is-revealing:focus-within { animation: none; }
-  .edit-draft { display: block; opacity: 0; pointer-events: none; animation: remove-draft var(--rewrite-time) var(--ease) both; }
-  .edit-draft::after { animation: draw-strike var(--rewrite-time) var(--ease) both; }
-  .edit-final { animation: rewrite var(--rewrite-time) var(--ease) both; }
-  .edit-final::after { animation: draw-underline var(--rewrite-time) var(--ease) both; }
+  .intro-playing .edit-draft { display: block; opacity: 0; pointer-events: none; animation: remove-draft var(--rewrite-time) var(--ease) both; }
+  .intro-playing .edit-draft::after { animation: draw-strike var(--rewrite-time) var(--ease) both; }
+  .intro-playing .edit-final { animation: rewrite var(--rewrite-time) var(--ease) both; }
+  .intro-playing .edit-final::after { animation: draw-underline var(--rewrite-time) var(--ease) both; }
 }
 
 @keyframes reveal-in {
-  from { opacity: 0; transform: translateY(var(--rise)); }
-  to { opacity: 1; transform: none; }
+  from { transform: translateY(var(--rise)); }
+  to { transform: none; }
 }
 @keyframes remove-draft {
   0%, 42% { opacity: 1; transform: none; }
@@ -391,14 +389,15 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
 
 /* Marked-up proof cover */
 .home-page .site-header, .home-page .masthead { background: var(--ink); color: var(--paper); }
-.home-page .site-header a, .home-page .hero-intro, .home-page .hero-copy .eyebrow { color: var(--paper); }
+.home-page .site-header a, .home-page .hero-intro { color: var(--paper); }
+.home-page .brand-mark { border-color: currentColor; }
+.home-page .brand-mark span { color: var(--accent); }
 .home-page :is(.site-header,.masthead) :focus-visible { outline-color: var(--marker); }
 .home-page .masthead { width: 100%; overflow: hidden; padding: var(--space-8) var(--gutter); }
 .home-page .hero-spread { max-width: var(--frame); margin: auto; }
 .home-page .hero-copy h1 { line-height: .82; font-size: clamp(4.5rem, 10vw, 10rem); }
 .home-page .hero-copy h1 span { color: var(--accent); }
 .home-page .hero-copy .edit-draft { color: var(--paper); }
-.home-page .hero-copy .eyebrow { margin-bottom: var(--space-5); }
 .home-page .hero-art { color: var(--ink); }
 @media (min-width:55rem) {
   .home-page .hero-spread { grid-template-columns: 1fr 1fr; }
@@ -534,14 +533,14 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
   .home-page .intro-playing .hero-copy h1 { animation: proof-hero-name var(--proof-arrive) var(--ease) both; }
   .home-page .intro-playing .hero-copy h2 { animation: proof-hero-name var(--proof-arrive) var(--ease) var(--quick) both; }
   @keyframes proof-hero-name {
-    from { opacity: .3; transform: translateY(.35rem); }
+    from { transform: translateY(.35rem); }
     to { opacity: 1; transform: none; }
   }
 }
 @media (min-width: 55rem) and (prefers-reduced-motion: no-preference) {
   .home-page .intro-playing .hero-art { animation: proof-paper-arrive var(--proof-arrive) var(--ease) both; }
   @keyframes proof-paper-arrive {
-    from { opacity: .15; transform: translate(-2%, 4%) rotate(-1deg); }
+    from { transform: translate(-2%, 4%) rotate(-1deg); }
     to { opacity: 1; transform: rotate(-5deg); }
   }
 }
@@ -670,51 +669,14 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
     stroke-dasharray: 1; animation: guide-stroke var(--guide-mark-time) var(--ease) calc(var(--guide-step, 0) * var(--guide-step-gap)) both;
   }
 }
-@keyframes guide-write { from { opacity: .42; transform: translateY(.42rem); } to { opacity: 1; transform: none; } }
+@keyframes guide-write { from { transform: translateY(.42rem); } to { transform: none; } }
 @keyframes guide-highlight { from { background-size: 0 .53em; } }
-@keyframes guide-arrive { from { opacity: .52; transform: translateY(.35rem); } }
+@keyframes guide-arrive { from { transform: translateY(.35rem); } }
 @keyframes guide-line { from { transform: scaleX(0); } }
-@keyframes guide-float { from { opacity: .55; transform: translateY(.45rem) rotate(-2deg); } }
+@keyframes guide-float { from { transform: translateY(.45rem) rotate(-2deg); } }
 @keyframes guide-arrow { 45% { transform: translateX(.25rem); } }
 @keyframes guide-pen-thread { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 @keyframes guide-stroke { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
-/* ---- Intro splash (home page, once per session) ---- */
-.splash {
-  position: fixed; inset: 0; z-index: 20; display: grid; place-content: center; justify-items: center; gap: 1.1rem;
-  background: var(--paper); color: var(--ink); cursor: pointer;
-  animation: splash-out var(--splash-exit) var(--ease-crossfade) 2.15s forwards;
-}
-html.no-splash .splash { display: none; }
-.splash-mark { width: clamp(6.5rem, 22vw, 9.5rem); height: auto; overflow: visible; }
-.splash-n { fill: none; stroke: var(--ink); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
-.splash-dot { fill: var(--accent); transform-box: fill-box; transform-origin: center; }
-.splash-line { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
-.splash-name { font: 700 .8rem/1 var(--sans); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
-.splash-name span { color: var(--accent-text); }
-
-@keyframes splash-out { to { opacity: 0; transform: translateY(-.75rem); visibility: hidden; } }
-@keyframes splash-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
-@keyframes splash-pop { 0% { transform: scale(0); } 70% { transform: scale(1.35); } 100% { transform: scale(1); } }
-@keyframes splash-fade { from { opacity: 0; transform: translateY(.4rem); } to { opacity: 1; transform: none; } }
-@keyframes splash-fade-out { to { opacity: 0; visibility: hidden; } }
-
-@media (prefers-reduced-motion: no-preference) {
-  .splash-n { animation: splash-draw 900ms var(--ease) 250ms both; }
-  .splash-dot { animation: splash-pop 380ms var(--ease) 1.15s both; }
-  .splash-line { animation: splash-draw 520ms var(--ease) 1.3s both; }
-  .splash-name { animation: splash-fade 600ms var(--ease) 1.0s both; }
-  /* Pause the hero at its first frame until the splash actually closes. */
-  html.splash-wait:not(.splash-done) .home-page .intro-playing .hero-copy :is(h1,h2),
-  html.splash-wait:not(.splash-done) .home-page .intro-playing .hero-art,
-  html.splash-wait:not(.splash-done) :is(.edit-draft,.edit-final),
-  html.splash-wait:not(.splash-done) .edit-draft::after,
-  html.splash-wait:not(.splash-done) .edit-final::after { animation-play-state: paused; }
-}
-@media (prefers-reduced-motion: reduce) {
-  /* Present the hero immediately when motion is reduced. */
-  .splash { display: none; animation: none; }
-}
-
 /* Sample reading and feedback */
 :root { --sample-write-ms: 1250; }
 .home-page .masthead, .work-section, .portfolio-page .sample-index { position: relative; isolation: isolate; }
@@ -768,7 +730,7 @@ html.no-splash .splash { display: none; }
 .hero-proof > div + div { padding-top: var(--space-4); border-top: 1px solid var(--line); }
 .hero-proof dt { color: var(--accent-text); font: 700 .75rem/1.5 var(--sans); letter-spacing: .09em; text-transform: uppercase; }
 .hero-proof dd { margin-top: var(--space-1); font: italic clamp(1.4rem,3vw,2.85rem)/1.15 var(--display); }
-.hero-proof del { font-size: .78em; text-decoration-color: var(--accent-text); }
+.hero-proof del { color: var(--muted); font-size: .78em; text-decoration-color: var(--accent-text); }
 .hero-proof mark { color: var(--ink); background: var(--marker); padding-inline: .04em; box-decoration-break: clone; }
 @media (min-width: 55rem) {
   .home-page .hero-art { aspect-ratio: auto; }
@@ -996,3 +958,70 @@ html.no-splash .splash { display: none; }
   .ritual-edit, .ritual-edit * { transition: none; animation: none; }
 }
 /* END: Compare the edit · Morning Ritual */
+
+/* Portfolio navigation and first-screen layout */
+.home-page .masthead { padding-block: clamp(var(--space-5), 4vw, var(--space-9)); }
+.home-page .hero-spread { gap: var(--space-6); }
+.home-page .hero-copy { min-inline-size: 0; }
+.home-page .hero-copy h1 { font-size: clamp(2.8rem, 8.5vw, 7.75rem); }
+.home-page .hero-copy h2 {
+  margin-block-start: var(--space-3);
+  font-size: clamp(1.65rem, 3.8vw, 3.45rem);
+}
+.home-page .hero-intro {
+  max-inline-size: 65ch;
+  margin-block-start: var(--space-3);
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-4);
+  margin-block-start: var(--space-4);
+}
+.hero-primary { border-color: var(--accent); }
+.hero-primary:is(:hover, :focus-visible) {
+  background: var(--marker);
+  border-color: var(--marker);
+  box-shadow: none;
+}
+.hero-secondary {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 44px;
+  color: var(--paper);
+}
+.hero-secondary:hover { color: var(--marker); }
+.home-page .hero-art {
+  margin-block-start: 0;
+  background: var(--paper);
+  border: var(--stroke) solid var(--line);
+}
+.home-page .hero-art::after { border: 0; }
+.footer-date { display: inline-block; }
+.footer .footer-sections { flex-basis: 100%; }
+
+.header :is(.brand, .header-contact, nav a),
+.footer a,
+.guide-next a,
+.contact-email-actions a {
+  display: inline-flex;
+  align-items: center;
+}
+.header a, .footer a, .guide-next a, .contact-email-actions a,
+.feedback a, .skip, .sample summary,
+button, input[type="range"], .contact-form :is(input, select, textarea) {
+  min-block-size: 44px;
+  min-inline-size: 44px;
+}
+.sample summary { align-content: center; }
+.contact-email-actions a { max-inline-size: 100%; overflow-wrap: anywhere; }
+@media (width < 43rem) {
+  .site-header { position: relative; }
+  [id] { scroll-margin-block-start: var(--space-3); }
+  .header { gap: 0 var(--space-2); }
+  .header nav { gap: 0 var(--space-3); min-inline-size: 0; }
+  .header nav a { justify-content: center; }
+  .header-contact { gap: var(--space-1); }
+  .footer { row-gap: var(--space-1); }
+}
