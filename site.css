@@ -706,13 +706,6 @@ dialog img { max-height: 70vh; margin: var(--space-3) auto; object-fit: contain;
   .feedback:has(.feedback-list:not([hidden])) { grid-template-columns: minmax(0, 1fr) minmax(0, .85fr); }
 }
 
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .ink-pointer-on .ink-ring[data-mode=idle] {
-    background: linear-gradient(var(--accent), var(--accent)) center / 60% 1px no-repeat,
-      linear-gradient(var(--accent), var(--accent)) center / 1px 60% no-repeat;
-  }
-}
-
 
 .service-detail { margin-top: var(--space-2); color: var(--ink); font-weight: 700; }
 .about-hero, .about-page .section.split { padding-block: clamp(1.7rem,4.2vw,3.4rem); }
