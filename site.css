@@ -1201,3 +1201,42 @@ button, input[type="range"], .contact-form :is(input, select, textarea) {
 @media (width < 25rem) {
   .header-actions .header-contact > span { display: none; }
 }
+
+/* Intro signature stays inside the hero so the page is usable immediately. */
+.hero-signature {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  margin: 0 0 var(--space-3);
+  color: var(--paper);
+  font-size: .78rem;
+  letter-spacing: .055em;
+}
+.hero-signature svg { width: 34px; height: 36px; overflow: visible; flex: none; }
+.signature-n, .signature-stroke {
+  fill: none; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round;
+}
+.signature-n { stroke: var(--paper); }
+.signature-stroke { stroke: var(--accent); }
+.signature-dot { fill: var(--accent); }
+@media (prefers-reduced-motion: no-preference) {
+  .signature-n, .signature-stroke { stroke-dasharray: 1; animation: signature-draw .7s var(--ease-arrive) both; }
+  .signature-stroke { animation-delay: .35s; }
+  .signature-dot { animation: signature-dot .3s ease-out .4s both; }
+}
+@keyframes signature-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes signature-dot { from { opacity: 0; } to { opacity: 1; } }
+.contact-email-actions .contact-whatsapp {
+  display: flex;
+  align-items: center;
+  gap: .45em;
+  width: fit-content;
+  padding-inline: .75em;
+  margin-bottom: var(--space-2);
+  border: 1px solid var(--accent-text);
+  background: var(--surface);
+  color: var(--accent-text);
+  text-decoration: none;
+  font-weight: 700;
+}
+.contact-email-actions .contact-whatsapp:hover { background: var(--marker); color: var(--ink); }

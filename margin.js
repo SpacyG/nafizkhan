@@ -5,13 +5,58 @@
   const WORKER_URL = 'https://margin-chat.n-tonmoy-khan.workers.dev'; // Public Cloudflare Worker endpoint only.
   const CONTACT_EMAIL = 'n.tonmoy.khan@gmail.com'; // Match SITE_FACTS.email in the Worker.
   const WHATSAPP_LINK = 'https://wa.me/8801774495528'; // Only link to Nafiz's confirmed WhatsApp.
-  const FALLBACK = "I can't answer right now. Email Nafiz at " + CONTACT_EMAIL + '.';
+  const FALLBACK = "I couldn't get a reply just now. Try again, or contact Nafiz directly.";
+  const PORTFOLIO = 'https://spacyg.github.io/nafizkhan/';
+  const APPROVED_LINKS = new Map([
+    [WHATSAPP_LINK, 'Message Nafiz on WhatsApp'],
+    [PORTFOLIO + '#contact', 'Open the contact form'],
+    [PORTFOLIO + 'about.html', 'About Nafiz'],
+    [PORTFOLIO + 'work.html', 'See writing samples'],
+    ['https://github.com/SpacyG', 'Nafiz on GitHub'],
+    ['https://www.instagram.com/spacy_gambiot/', 'Nafiz on Instagram'],
+  ]);
   const REQUEST_TIMEOUT = 10_000;
   const MAX_MESSAGES = 8;
   const MAX_CHARACTERS = 500;
   const welcome = "I'm Margin, Nafiz's AI assistant. Ask me about his work, services, or putting together a project brief.";
 
+  function contactReply(input) {
+    const text = input.toLowerCase().replace(/[’']/g, '').trim();
+    const hasWhatsApp = /\b(?:whats\s*app|whatapp|wa\.me)\b/.test(text);
+    const isWhatsAppContact = /^whats\s*app[!?.,]*$/.test(text) || (
+      hasWhatsApp && (
+        /\b(?:number|link|contact|nafiz|your|his|reach|can i|do you|message you)\b/.test(text) ||
+        /\bwhats\s*app me\b/.test(text)
+      )
+    );
+    if (isWhatsAppContact && !/^what (?:is|does) whats\s*app[?!.]*$/.test(text)) {
+      return 'You can message Nafiz on WhatsApp at ' + WHATSAPP_LINK + '.';
+    }
+    if (/^(?:how (?:can|do) i (?:contact|reach) (?:you|nafiz)|contact nafiz|contact form)[?!.]*$/.test(text)) {
+      return 'You can use the contact form at ' + PORTFOLIO + '#contact or message Nafiz on WhatsApp at ' + WHATSAPP_LINK + '.';
+    }
+    return null;
+  }
+
+  function formatReply(reply) {
+    const links = [];
+    const text = reply.replace(/\[([^\]\r\n]+)\]\((https:\/\/[^\s)]+)\)/g, (_, label, url) => {
+      if (APPROVED_LINKS.has(url) && !links.some(([, href]) => href === url)) {
+        links.push([APPROVED_LINKS.get(url), url]);
+      }
+      return label;
+    });
+    for (const [url, label] of APPROVED_LINKS) {
+      if (text.includes(url) && !links.some(([, href]) => href === url)) {
+        links.push([label, url]);
+      }
+    }
+    return { text, links };
+  }
+
   async function getReply(messages, request) {
+    const contact = contactReply(messages.at(-1).content);
+    if (contact) return contact;
     const timer = setTimeout(() => request.abort(), REQUEST_TIMEOUT);
     try {
       const response = await fetch(WORKER_URL, {
@@ -160,11 +205,9 @@
       const context = [...reply].slice(0, MAX_CHARACTERS).join('');
       history = [...messages, { role: 'assistant', content: context }].slice(-MAX_MESSAGES);
     }
-    addMessage('Margin', reply ? {
-      text: reply,
-      links: reply.includes(WHATSAPP_LINK) ? [['Message Nafiz on WhatsApp', WHATSAPP_LINK]] : [],
-    } : {
-      text: FALLBACK, links: [['Email Nafiz', 'mailto:' + CONTACT_EMAIL]],
+    addMessage('Margin', reply ? formatReply(reply) : {
+      text: FALLBACK,
+      links: [['Message Nafiz on WhatsApp', WHATSAPP_LINK], ['Email Nafiz', 'mailto:' + CONTACT_EMAIL]],
     });
     if (!dialog.open) setUnread(true);
     typing.hidden = !replyQueue.length;

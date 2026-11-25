@@ -4,6 +4,12 @@
 
 Home, Work and About use the marked-up proof design. The homepage leads straight from the first-person hero to Work. Five concept samples include case notes and playable edits. The section menu and project-type email controls work with keyboard and touch. Privacy and Terms are static. The owner studio uses the Node server for publishing.
 
+## 2026-11-25 - Intro and contact fixes
+
+- Restored the animated signature inside the home hero, with a reduced-motion version.
+- Added direct WhatsApp links to the contact sections and instant contact answers in Margin.
+- Made approved links returned by the Worker clickable and clarified the network error message.
+
 ## 2026-11-25 - Portfolio upload package
 
 - Replaced draft timings and pricing placeholders with project-specific terms agreed in the quote.
