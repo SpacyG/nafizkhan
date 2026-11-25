@@ -4,6 +4,14 @@
 
 Home, Work and About use the marked-up proof design. The homepage leads straight from the first-person hero to Work. Five concept samples include case notes and playable edits. The section menu and project-type email controls work with keyboard and touch. Privacy and Terms are static. The owner studio uses the Node server for publishing.
 
+## 2026-11-25 - Readability and navigation refinement
+
+- Kept the Google Forms button and hid the feedback heading and feed area until configured.
+- Removed standalone symbols, the floating Next control and the decorative footer pen.
+- Increased the base type size and contrast, tightened About spacing and added an optional headshot slot.
+- Clarified sample links, listed service deliverables and added brief onboarding details near Contact.
+- Left proposed copy edits in HTML comments.
+
 ## 2026-11-25 - Cursor and hero cleanup
 
 - Kept the custom pointer active during mouse scrolling and refreshed the element under it.

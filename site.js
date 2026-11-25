@@ -29,7 +29,7 @@ function renderSample(entry) {
   const details = element('details');
   const text = element('div', '', 'sample-copy');
   text.append(element('p', entry.body, 'plain-copy'));
-  details.append(element('summary', 'Read the sample'), text);
+  details.append(element('summary', 'Read the full sample'), text);
   article.append(details);
   return article;
 }
@@ -53,7 +53,7 @@ function renderWorkCard(entry) {
   const description = element('div');
   description.append(element('strong', entry.title));
   if (entry.description) description.append(element('p', entry.description));
-  meta.append(description, element('span', 'Read full sample ↗'));
+  meta.append(description, element('span', 'Open sample preview ↗'));
   card.append(preview, meta);
   return card;
 }
@@ -350,7 +350,7 @@ function setupHeadline() {
   const headline = document.querySelector('.hero-copy h2');
   if (headline) {
     const original = [...headline.childNodes].map(node => node.cloneNode(true));
-    const choices = [null, 'Give your launch a line worth remembering.', 'Make the next step feel obvious.'];
+    const choices = [null, headline.dataset.altHeadline, 'Make the next step feel obvious.'];
     let index = 0;
     const cycle = element('button', '', 'headline-cycle');
     cycle.type = 'button';
@@ -431,28 +431,6 @@ function setupCopyEmail() {
       }
     });
   }
-}
-
-function setupFlourish() {
-  const pen = document.querySelector('.pen-flourish');
-  if (!pen) return;
-  pen.hidden = false;
-  function scribble() {
-    document.querySelector('.ink-scribble')?.remove();
-    const mark = element('span', '〰', 'ink-scribble');
-    mark.setAttribute('aria-hidden', 'true');
-    document.body.append(mark);
-    mark.addEventListener('animationend', () => mark.remove(), { once: true });
-    setTimeout(() => mark.remove(), 1800);
-  }
-  pen.addEventListener('click', scribble);
-  const sequence = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
-  let history = [];
-  document.addEventListener('keydown', e => {
-    if (e.target.closest?.('input,textarea,select,[contenteditable]')) return;
-    history = [...history.slice(1 - sequence.length), e.key];
-    if (history.join('|') === sequence.join('|')) scribble();
-  });
 }
 
 function setupInkPointer() {
@@ -536,7 +514,6 @@ function setupInkProgress() {
   const nav = [...siteHeader.querySelectorAll('nav a,.header-contact')];
   const sections = [...document.querySelectorAll('.home-page main section[id]')];
   const targets = {home:'Home',work:'Work',services:'Services',approach:'Services',about:'About',contact:'Get in touch'};
-  const nextPill = document.querySelector('.next-pill');
   let frame = 0;
   function update() {
     frame = 0;
@@ -546,14 +523,6 @@ function setupInkProgress() {
     const current = sections.filter(section=>section.getBoundingClientRect().top <= siteHeader.offsetHeight+innerHeight*.25).at(-1) || sections[0];
     const active = max > 0 && scrollY >= max - 2 ? sections.at(-1) : current;
     const label = targets[active.id];
-    if (nextPill) {
-      const next = sections[sections.indexOf(active) + 1];
-      nextPill.hidden = active.id === 'home' || !next;
-      if (next) {
-        nextPill.href = '#' + next.id;
-        nextPill.setAttribute('aria-label', 'Next section: ' + (next.querySelector('.proof-label')?.textContent.trim() || next.id));
-      }
-    }
     nav.forEach(link=>link.classList.toggle('current-section',link.textContent.trim().startsWith(label)));
   }
   function queue(){ if (!frame) frame=requestAnimationFrame(update); }
@@ -608,7 +577,8 @@ function setupFeedback() {
   if (!source || !/^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(source)) return;
   frame.src = source;
   frame.hidden = false;
-  frame.previousElementSibling.hidden = true;
+  frame.parentElement.hidden = false;
+  document.getElementById('feedback-title').hidden = false;
 }
 
 function setupWriting(blocks = document.querySelectorAll('[data-writing], .samples > .sample')) {
@@ -681,7 +651,7 @@ function setupInquiry() {
 }
 
 if (siteHeader) {
-  for (const setup of [setupHeadline, setupServices, setupCopyEmail, setupFlourish, setupInkPointer, setupInkProgress, setupFeedback, setupWriting, setupProofMotion, setupHeroProof, setupInquiry, attachWorkComparisons]) {
+  for (const setup of [setupHeadline, setupServices, setupCopyEmail, setupInkPointer, setupInkProgress, setupFeedback, setupWriting, setupProofMotion, setupHeroProof, setupInquiry, attachWorkComparisons]) {
     try {
       setup();
     } catch (error) {
