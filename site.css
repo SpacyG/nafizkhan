@@ -1309,17 +1309,12 @@ button, input[type="range"], .contact-form :is(input, select, textarea) {
   .home-page .hero-intro { font-size: 1rem; line-height: 1.48; }
 }
 
-/* Center the single-column hero on tablet and desktop. */
-@media (min-width: 43rem) {
-  .home-page .hero-copy {
-    justify-self: center;
-    inline-size: min(100%, 52rem);
-    text-align: center;
-  }
-  .home-page .hero-copy h1 { margin-inline: 0; }
-  .home-page .hero-copy h2 { max-inline-size: 21ch; }
-  .home-page .hero-copy h2,
-  .home-page .hero-intro,
-  .home-page .hero-role::after { margin-inline: auto; }
-  .home-page .hero-actions { justify-content: center; }
+.edit-sheet { width: min(100%, 29rem); margin: 0 auto; min-width: 0; }
+.edit-sheet svg { display: block; width: 100%; height: auto; aspect-ratio: 400 / 167; }
+.edit-sheet text { fill: var(--ink); }
+.edit-sheet .sheet-draft { font: 26px var(--display); }
+.edit-sheet .sheet-note { fill: var(--accent-text); font: italic 18px var(--display); }
+.edit-sheet .sheet-final { font: italic 37px var(--display); }
+@media (min-width: 60rem) {
+  .home-page .hero-spread { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: center; gap: clamp(2rem, 5vw, 6rem); }
 }
