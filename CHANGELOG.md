@@ -4,6 +4,40 @@
 
 Home, Work and About use the marked-up proof design. The homepage leads straight from the first-person hero to Work. Five concept samples include case notes and playable edits. The section menu and project-type email controls work with keyboard and touch. Privacy and Terms are static. The owner studio uses the Node server for publishing.
 
+## 2026-11-26 - Centered homepage hero
+
+- Centered the homepage hero on tablet and desktop, including the rotating headline, introduction, red line, and actions. Kept the compact, left-aligned phone layout.
+
+## 2026-11-26 - Simplified loading screen
+
+- Removed the duplicated description and action links from the opening screen. The animated title, line, and caption remain, and the description and links are in the hero.
+
+## 2026-11-26 - Separate loading screen and simpler hero
+
+- Moved the animated title to a full-screen opening with working Samples and Email links. The opening dismisses automatically and is skipped for section links and reduced motion.
+- Removed the before-and-after card from the homepage hero and let the headline and introduction use the space.
+
+## 2026-11-26 - Opening title cleanup
+
+- Removed obsolete desktop proof-art span styles that drew circles, rules, and a paragraph mark over the opening title. The animated pen rule now sits beneath the name.
+
+## 2026-11-26 - Opening title animation
+
+- Restored the Nafiz Khan title, red pen rule, and “A portfolio website” caption inside the first-screen proof card. The opening plays automatically and gives way to the editing example, with the intro and contact links available throughout.
+
+## 2026-11-26 - First-screen portfolio and clearer navigation
+
+- Removed the full-screen title overlay. The opening pen rule animates in place while the hero and its links are visible.
+- Made the yellow writing button primary, paired it with an email link, and introduced the portfolio’s services and audience.
+- Updated the inline example to show a concrete before and after edit and labeled the existing portrait for assistive technology.
+- Added direct Samples, Process, About, and Contact navigation, a dedicated pricing anchor, and updated the repo-root llms.txt.
+
+## 2026-11-26 - Sharper portfolio text
+
+- Straightened the hero proof, Services preview, and red revision notes while preserving the paper layers and marks.
+- Kept Work cards and sample panels flat during hover and focus, with the cursor spotlight still active. Replaced moving links and CTAs with their existing stationary hover feedback.
+- Refreshed stylesheet and script version tags for GitHub Pages.
+
 ## 2026-11-26 - Header quote
 
 - Replaced the header name with “Be the change you wish to see in the world” in the display serif.

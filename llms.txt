@@ -1,20 +1,18 @@
 # Nafiz Khan | Independent Copywriter
 
-> Nafiz Khan is an independent copywriter in Bangladesh who writes emails, sales pages, and landing pages.
-
-## Services
-
-- [What I write](https://spacyg.github.io/nafizkhan/#services): An overview of email, sales page, landing page, and website copywriting services.
+> Nafiz Khan writes emails, sales pages, and landing pages for small businesses and creators who need clearer copy.
 
 ## Samples
 
-- [Read the work](https://spacyg.github.io/nafizkhan/#work): Featured concept projects with examples of how copy changes during editing.
-- [Full writing portfolio](https://spacyg.github.io/nafizkhan/work.html): Browse complete writing samples for fictional brands.
+- [Featured samples](https://spacyg.github.io/nafizkhan/#work): Practice projects for fictional brands, with draft and rewrite comparisons.
+- [Full writing portfolio](https://spacyg.github.io/nafizkhan/work.html): Browse email, sales page, and landing page practice projects.
 
-## Process
+## Process and pricing
 
-- [How working together works](https://spacyg.github.io/nafizkhan/#process): From the first brief and fixed project quote to drafting, revisions, and delivery.
+- [How working together works](https://spacyg.github.io/nafizkhan/#process): Follow a project from the first brief through a quote, draft, and delivery.
+- [Pricing approach](https://spacyg.github.io/nafizkhan/#pricing): One fixed price per project, agreed before work starts, never per word or per hour.
 
-## Contact
+## About and contact
 
-- [Contact Nafiz](https://spacyg.github.io/nafizkhan/#contact): Send a project inquiry or find the public email address.
+- [About Nafiz](https://spacyg.github.io/nafizkhan/#about): Learn about Nafiz Khan, an independent copywriter in Bangladesh.
+- [Contact Nafiz](https://spacyg.github.io/nafizkhan/#contact): Send a project inquiry or get in touch by email.

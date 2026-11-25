@@ -593,9 +593,7 @@ function setupInkPointer() {
   const style = getComputedStyle(document.documentElement);
   const number = name => parseFloat(style.getPropertyValue(name));
   const follow = number('--ring-follow');
-  const tilt = number('--tilt-strength');
-  const pull = number('--magnet-strength');
-  let x = 0, y = 0, rx = 0, ry = 0, target, card, magnet, frame = 0;
+  let x = 0, y = 0, rx = 0, ry = 0, target, card, frame = 0;
   let needsHitTest = false;
   let pointerChanged = false;
   let lastPaint = 0;
@@ -606,8 +604,8 @@ function setupInkPointer() {
     pointerChanged = false;
     lastPaint = 0;
     document.body.classList.remove('ink-pointer-on', 'ink-pointer-native');
-    for (const item of [card,magnet]) item?.removeAttribute('data-reactive');
-    card = magnet = target = null;
+    card?.removeAttribute('data-reactive');
+    card = target = null;
   }
   function paint(now) {
     frame = 0;
@@ -635,28 +633,15 @@ function setupInkPointer() {
   }
   function updatePointerTarget() {
     const nextCard = target?.closest('.work-card,.sample');
-    const nextMagnet = target?.closest('.button,.header nav a,.header-contact');
-    const cardBox = nextCard?.getBoundingClientRect();
-    const magnetBox = nextMagnet?.getBoundingClientRect();
     if (card !== nextCard) card?.removeAttribute('data-reactive');
-    if (magnet !== nextMagnet) magnet?.removeAttribute('data-reactive');
     card = nextCard;
-    magnet = nextMagnet;
-    for (const item of [card,magnet]) {
-      if (!item) continue;
-      const box = item === card ? cardBox : magnetBox;
-      const px = Math.max(0,Math.min(1,(x-box.left)/box.width));
-      const py = Math.max(0,Math.min(1,(y-box.top)/box.height));
-      item.dataset.reactive = '';
-      if (item === card) {
-        item.style.setProperty('--pitch', ((.5-py)*tilt)+'deg');
-        item.style.setProperty('--yaw', ((px-.5)*tilt)+'deg');
-        item.style.setProperty('--spot-x', px*100+'%');
-        item.style.setProperty('--spot-y', py*100+'%');
-      } else {
-        item.style.setProperty('--pull-x', ((px-.5)*pull)+'px');
-        item.style.setProperty('--pull-y', ((py-.5)*pull)+'px');
-      }
+    if (card) {
+      const box = card.getBoundingClientRect();
+      const px = Math.max(0, Math.min(1, (x - box.left) / box.width));
+      const py = Math.max(0, Math.min(1, (y - box.top) / box.height));
+      card.dataset.reactive = '';
+      card.style.setProperty('--spot-x', px * 100 + '%');
+      card.style.setProperty('--spot-y', py * 100 + '%');
     }
     const control = target?.closest('a,button,summary,input');
     const nativeControl = target?.closest('.contact-form :is(input,select,textarea,button:disabled)');
@@ -687,7 +672,7 @@ function setupInkProgress() {
   if (!bar) return;
   const nav = [...siteHeader.querySelectorAll('nav a,.header-contact')];
   const sections = [...document.querySelectorAll('.home-page main section[id]')];
-  const destinations = { approach: '#services', process: '#contact', faq: '#contact', reviews: '#contact' };
+  const destinations = { approach: '#process', faq: '#contact', reviews: '#contact' };
   let frame = 0;
   function update() {
     frame = 0;
