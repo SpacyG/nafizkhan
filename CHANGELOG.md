@@ -4,6 +4,16 @@
 
 Home, Work and About use the marked-up proof design. The homepage leads straight from the first-person hero to Work. Five concept samples include case notes and playable edits. The section menu and project-type email controls work with keyboard and touch. Privacy and Terms are static. The owner studio uses the Node server for publishing.
 
+## 2026-11-25 - Portfolio upload package
+
+- Replaced draft timings and pricing placeholders with project-specific terms agreed in the quote.
+- Packaged the complete site with the live Worker URL and WhatsApp handoff.
+
+## 2026-11-25 - Margin Workers AI connection
+
+- Replaced browser-side canned replies with a Cloudflare Worker connection, capped conversation history, and a ten-second fallback.
+- Kept the chat widget's layout, controls, and reply bubbles.
+
 ## 2026-11-25 - Margin lead qualification
 
 - Grounded Margin's answers in portfolio services, samples, pricing, and process.

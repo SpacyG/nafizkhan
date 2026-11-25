@@ -8,7 +8,7 @@
 <link rel="icon" href="images/mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="site.css?v=20261125-profile-links">
 <script defer src="site.js?v=20261125-audit-fixes"></script>
-<script defer src="margin.js?v=20261125-qualification"></script>
+<script defer src="margin.js?v=20261125-margin-ready"></script>
 <link rel="canonical" href="https://spacyg.github.io/nafizkhan/">
 
 <meta property="og:type" content="website">
@@ -158,25 +158,25 @@
   <ol class="collab-steps">
     <li>
       <h3>Brief</h3>
-      <p class="collab-time">Within [brief reply time] of your email</p>
+      <p class="collab-time">After you send your brief</p>
       <p>I read your brief and ask about anything that could affect the work.</p>
       <p><strong>You:</strong> Send the basics below and answer any follow-up questions.</p>
     </li>
     <li>
       <h3>Quote</h3>
-      <p class="collab-time">Within [quote turnaround] of agreeing on the brief</p>
+      <p class="collab-time">Once we agree on the scope</p>
       <p>I send a fixed quote that spells out what I’ll deliver, when, and what’s included.</p>
       <p><strong>You:</strong> Check the scope, dates, and terms. Approve the quote before I start.</p>
     </li>
     <li>
       <h3>Work</h3>
-      <p class="collab-time">First draft within [first-draft turnaround] of kickoff</p>
+      <p class="collab-time">On the first-draft date agreed in the quote</p>
       <p>I review your material, do the agreed research, and write or edit the first draft.</p>
       <p><strong>You:</strong> Share any source material and flag facts, claims, or wording I need to preserve.</p>
     </li>
     <li>
       <h3>Delivery &amp; revisions</h3>
-      <p class="collab-time">Revised copy within [revision turnaround] of receiving your feedback</p>
+      <p class="collab-time">After you send your feedback</p>
       <p>I revise the copy based on your feedback and send a clean final version.</p>
       <p><strong>You:</strong> Send one set of comments per round and confirm when the copy is ready.</p>
     </li>
@@ -195,7 +195,7 @@
     <div>
       <h3>One project, one price, agreed before I start</h3>
       <p>I quote for the work involved. The price reflects the goal, who the copy is for, how much I need to write from scratch or rework, and how much research the job calls for.</p>
-      <p>Your quote lists what I’ll deliver, [number of revision rounds], and [payment terms]. If you ask for work outside the agreed scope, I’ll confirm the price with you before doing it.</p>
+      <p>Your quote lists what I’ll deliver, the revisions included, and how payment works. If you ask for work outside the agreed scope, I’ll confirm the price with you before doing it.</p>
     </div>
   </div>
 </section>
@@ -218,8 +218,7 @@
   </section>
 </section>
 <section class="contact-band" id="contact" data-writing>
-<div class="wrap contact"><div><p class="eyebrow proof-label"><span>05</span> Contact</p><!-- When a specific window is confirmed, append " for [MONTH OR SEASON]" to the line below. -->
-<p class="availability-badge" data-availability>Currently taking on projects</p><h2>Tell me what you’re <mark class="guide-highlight">working on.</mark></h2><svg class="proof-mark proof-arrow" viewBox="0 0 105 56" aria-hidden="true" focusable="false"><path d="M4 8c19 30 50 42 92 22m-24-8 25 7-14 19"/></svg><p>Send me a little about the project, who it’s for, and when you need it.</p></div>
+<div class="wrap contact"><div><p class="eyebrow proof-label"><span>05</span> Contact</p><p class="availability-badge" data-availability>Currently taking on projects</p><h2>Tell me what you’re <mark class="guide-highlight">working on.</mark></h2><svg class="proof-mark proof-arrow" viewBox="0 0 105 56" aria-hidden="true" focusable="false"><path d="M4 8c19 30 50 42 92 22m-24-8 25 7-14 19"/></svg><p>Send me a little about the project, who it’s for, and when you need it.</p></div>
 <div class="contact-actions">
   <form id="contact-form" class="contact-form" method="post" action="https://formspree.io/f/xgakrjwo" aria-describedby="contact-form-status">
     <fieldset>
@@ -368,7 +367,7 @@
     <a href="#contact">Contact</a>
     <a href="#reviews">Feedback</a>
   </nav>
-<nav aria-label="Footer"><a href="https://github.com/SpacyG">GitHub</a><a href="https://www.instagram.com/spacy_gambiot/">Instagram</a><!-- Replace this LinkedIn search URL with your profile URL when available. --><a href="https://www.linkedin.com/search/results/people/?keywords=Nafiz%20Khan%20Tonmoy">LinkedIn search</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></nav></footer>
+<nav aria-label="Footer"><a href="https://github.com/SpacyG">GitHub</a><a href="https://www.instagram.com/spacy_gambiot/">Instagram</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></nav></footer>
 <!-- START: Compare the edit · Morning Ritual -->
 <template id="morning-ritual-edit">
   <fieldset class="revision ritual-edit">
@@ -431,10 +430,10 @@
     </div>
     <form class="margin-form">
       <label class="margin-sr-only" for="margin-message">Message Margin</label>
-      <textarea id="margin-message" rows="1" maxlength="800" placeholder="Write a message…" enterkeyhint="send" required></textarea>
+      <textarea id="margin-message" rows="1" maxlength="500" placeholder="Write a message…" enterkeyhint="send" required></textarea>
       <button type="submit" disabled>Send</button>
     </form>
-    <footer class="margin-foot"><p>Chat stays on this page.</p><button type="button" data-margin-reset>New chat</button></footer>
+    <footer class="margin-foot"><p>Replies use Cloudflare Workers AI.</p><button type="button" data-margin-reset>New chat</button></footer>
   </dialog>
 </div>
 <!-- END MARGIN WIDGET -->
