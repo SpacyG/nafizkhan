@@ -121,6 +121,12 @@ button, summary { cursor: pointer; }
 .header a, .footer a { text-decoration: none; }
 .header nav a, .footer a { color: inherit; }
 .brand { display: inline-flex; align-items: center; gap: var(--space-2); width: fit-content; color: var(--ink); font-weight: 700; white-space: nowrap; }
+.brand:has(.brand-quote) { min-width: 0; max-width: 100%; white-space: normal; }
+.brand:has(.brand-quote) .brand-mark { flex: none; }
+.brand-quote {
+  max-inline-size: 37ch;
+  font: italic 500 clamp(.84rem, .65rem + .55vw, 1.12rem)/1.22 var(--display);
+}
 .brand-mark { display: grid; grid-auto-flow: column; place-content: center; min-width: 1.75em; min-height: 1.65em; border: var(--stroke) solid var(--ink); font: italic var(--brand-type)/1 var(--display); }
 .brand-mark span, .pen-period, .hero-copy h1 span { color: var(--accent-text); }
 .footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-4); margin-top: var(--section-space); padding-block: var(--space-5) var(--space-7); border-top-width: var(--stroke); color: var(--muted); }
