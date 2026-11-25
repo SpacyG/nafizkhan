@@ -679,18 +679,8 @@ function setupProofMotion() {
   document.querySelectorAll('[data-proof-motion]').forEach(mark => observer.observe(mark));
 }
 
-// Set one month here to update the badge on Home, Work, and About.
-const availabilityMonth = '';
-
-function setupAvailability() {
-  if (!availabilityMonth.trim()) return;
-  document.querySelectorAll('[data-availability]').forEach(badge => {
-    badge.textContent = 'Taking projects for ' + availabilityMonth.trim();
-  });
-}
-
 // Set this to the full endpoint from your Formspree dashboard.
-const formspreeEndpoint = '';
+const formspreeEndpoint = 'https://formspree.io/f/xgakrjwo';
 
 function setupContactForm() {
   const form = document.querySelector('.contact-form');
@@ -699,25 +689,34 @@ function setupContactForm() {
   const fields = form.querySelector('fieldset');
   const project = form.elements.namedItem('project_type');
   const ready = /^https:\/\/formspree\.io\/f\/[a-z0-9]+$/i.test(formspreeEndpoint.trim());
+  fields.disabled = false;
   if (ready) {
     form.action = formspreeEndpoint.trim();
-    fields.disabled = false;
     status.hidden = true;
+  } else {
+    form.querySelector('[type="submit"]').textContent = 'Open email draft';
+    status.textContent = 'This opens a draft in your email app. Send it from there.';
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      const fields = new FormData(form);
+      const subject = String(fields.get('project_type')) + ' inquiry';
+      const body = ['Hi Nafiz,', '', String(fields.get('message')), '',
+        'Name: ' + fields.get('name'), 'Email: ' + fields.get('email')].join('\r\n');
+      const email = form.parentElement.querySelector('.email').href;
+      location.href = email + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    });
   }
-  form.addEventListener('submit', event => {
-    if (!ready) event.preventDefault();
-  });
   document.querySelectorAll('[data-contact-project]').forEach(link => {
     const type = link.dataset.contactProject;
     link.addEventListener('click', () => {
       project.value = type;
-      requestAnimationFrame(() => (ready ? form.elements.namedItem('name') : status).focus({ preventScroll: true }));
+      requestAnimationFrame(() => form.elements.namedItem('name').focus({ preventScroll: true }));
     });
   });
 }
 
 if (siteHeader) {
-  for (const setup of [setupHeadline, setupServices, setupCopyEmail, setupInkPointer, setupInkProgress, setupFeedback, setupWriting, setupProofMotion, setupAvailability, setupContactForm, attachWorkComparisons]) {
+  for (const setup of [setupHeadline, setupServices, setupCopyEmail, setupInkPointer, setupInkProgress, setupFeedback, setupWriting, setupProofMotion, setupContactForm, attachWorkComparisons]) {
     try {
       setup();
     } catch (error) {

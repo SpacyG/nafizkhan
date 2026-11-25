@@ -55,7 +55,7 @@ The feedback link points to the existing Google Form. The homepage can display t
 
 ## Portfolio availability and LinkedIn
 
-Set the `availabilityMonth` value in `site.js` to a month such as December. Home, Work, and About then show “Taking projects for December”. Leave it empty to invite availability inquiries without listing a date.
+The website shows “Available for projects” on Home, Work, and About.
 
 The footer's LinkedIn link opens a name search. Replace it with your actual profile URL in the HTML files when you have it.
 
@@ -63,7 +63,7 @@ The preview image is `images/social-preview.png` (1200 × 630). The Open Graph a
 
 ## Contact and SEO
 
-Set `formspreeEndpoint` in `site.js` to the full endpoint from your Formspree dashboard, such as `https://formspree.io/f/your-id`. All three contact forms use it. Submit a test inquiry on the published site and check your inbox. Until configured, the email link and Copy email are available.
+Set `formspreeEndpoint` in `site.js` to the full endpoint from your Formspree dashboard, such as `https://formspree.io/f/your-id`. All three contact forms use it. Submit a test inquiry on the published site and check your inbox. Until configured, the form opens a prefilled email draft. The visitor sends it from their email app.
 
 The teardown button on Home opens the normal inquiry form with the project type selected. Edit FAQ answers in `index.html`; the Local Gym case study is in `work.html`.
 
