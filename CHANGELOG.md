@@ -20,6 +20,18 @@ Linked the homepage navigation directly to Writing samples and About Nafiz, clar
 
 Mapped the portfolio page links to their homepage sections and moved scroll tracking to the middle of the visible content.
 
+## 2026-11-26 - Owner controls and chat limits
+
+Bundled the rate-limited Worker and D1 schema, displayed quota feedback, and added private Windows Studio setup.
+
+## 2026-11-26 - Direct visitor forms
+
+Restored direct project and teardown submissions and the feedback form link. Visitor forms do not use the email-code Worker.
+
+## 2026-11-28 - Section navigation
+
+Removed both decorative arrows from the Next links.
+
 ## Current state
 
 Home, Work and About use the marked-up proof design. The homepage leads straight from the first-person hero to Work. Five concept samples include case notes and playable edits. The section menu and project-type email controls work with keyboard and touch. Privacy and Terms are static. The owner studio uses the Node server for publishing.

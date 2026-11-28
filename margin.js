@@ -66,6 +66,7 @@
         body: JSON.stringify({ messages: messages.slice(-MAX_MESSAGES) }),
         signal: request.signal,
       });
+      if (response.status === 429) return 'This connection has reached its chat limit. Please try again in 10 minutes.';
       if (!response.ok) return null;
       const { reply } = await response.json();
       return typeof reply === 'string' && reply.trim() ? reply.trim() : null;
